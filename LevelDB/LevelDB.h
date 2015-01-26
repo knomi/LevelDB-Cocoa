@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Pyrtsa. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Cocoa/Cocoa.h>
 
 //! Project version number for LevelDB.
 FOUNDATION_EXPORT double LevelDBVersionNumber;
