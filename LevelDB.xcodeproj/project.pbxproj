@@ -109,6 +109,8 @@
 		E0BF396B1A76EE4900FC96E0 /* WriteBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */; };
 		E0BF396D1A76F49500FC96E0 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF396C1A76F49500FC96E0 /* Key.swift */; };
 		E0BF396E1A76F49500FC96E0 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF396C1A76F49500FC96E0 /* Key.swift */; };
+		E0BF39701A776AC800FC96E0 /* TwoWayComparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF396F1A776AC800FC96E0 /* TwoWayComparable.swift */; };
+		E0BF39711A776AC800FC96E0 /* TwoWayComparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF396F1A776AC800FC96E0 /* TwoWayComparable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -288,6 +290,7 @@
 		E0BF39661A76ED1200FC96E0 /* LexicographicBytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexicographicBytes.swift; sourceTree = "<group>"; };
 		E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteBatch.swift; sourceTree = "<group>"; };
 		E0BF396C1A76F49500FC96E0 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
+		E0BF396F1A776AC800FC96E0 /* TwoWayComparable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwoWayComparable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -359,6 +362,7 @@
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
 				E0BF378D1A7674E400FC96E0 /* Supporting Files */,
 				E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */,
+				E0BF396F1A776AC800FC96E0 /* TwoWayComparable.swift */,
 			);
 			path = LevelDB;
 			sourceTree = "<group>";
@@ -882,6 +886,7 @@
 				E0BF38F41A76D10800FC96E0 /* status.cc in Sources */,
 				E0BF38D91A76D0AD00FC96E0 /* repair.cc in Sources */,
 				E0BF396A1A76EE4900FC96E0 /* WriteBatch.swift in Sources */,
+				E0BF39701A776AC800FC96E0 /* TwoWayComparable.swift in Sources */,
 				E0BF38DC1A76D0AD00FC96E0 /* version_set.cc in Sources */,
 				E0BF38DF1A76D0D200FC96E0 /* block_builder.cc in Sources */,
 				E0BF38E01A76D0D200FC96E0 /* filter_block.cc in Sources */,
@@ -944,6 +949,7 @@
 				E0BF39211A76D55300FC96E0 /* db_impl.cc in Sources */,
 				E0BF39311A76D55300FC96E0 /* version_set.cc in Sources */,
 				E0BF396B1A76EE4900FC96E0 /* WriteBatch.swift in Sources */,
+				E0BF39711A776AC800FC96E0 /* TwoWayComparable.swift in Sources */,
 				E0BF39251A76D55300FC96E0 /* cache.cc in Sources */,
 				E0BF39201A76D55300FC96E0 /* filename.cc in Sources */,
 				E0BF392F1A76D55300FC96E0 /* status.cc in Sources */,
