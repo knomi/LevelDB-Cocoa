@@ -22,6 +22,14 @@ extension NSData {
     }
 }
 
+func XCTAssertEqual<A : Equatable>(x: A?, y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    switch (x, y) {
+    case let (.Some(a), .Some(b)): XCTAssertEqual(a, b, message, file: file, line: line)
+    case let (.Some(a), .None   ): XCTAssertTrue(false, message, file: file, line: line)
+    case let (.None,    .Some(b)): XCTAssertTrue(false, message, file: file, line: line)
+    case let (.None,    .None   ): XCTAssertTrue(true, message, file: file, line: line)
+    }
+}
 
 func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
@@ -115,6 +123,20 @@ class LevelDBTests: XCTestCase {
 
         XCTAssertEqual(clampRevPairs, [("a",  "foo"),
                                        ("1",  "one")])
+
+    }
+    
+    func testStringDatabase() {
+    
+        let db = Database<String, String>()
+        
+        db["foo"] = "bar"
+        
+        XCTAssertEqual(db["foo"], Optional("bar"))
+
+        db["foo"] = nil
+    
+        XCTAssertNil(db["foo"])
 
     }
     

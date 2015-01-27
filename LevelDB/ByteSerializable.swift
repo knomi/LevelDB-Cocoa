@@ -32,3 +32,15 @@ extension NSData : ByteSerializable {
     }
 
 }
+
+extension String : ByteSerializable {
+    
+    public static func fromSerializedBytes(data: NSData) -> String? {
+        return NSString(data: data, encoding: NSUTF8StringEncoding)
+    }
+    
+    public var serializedBytes: NSData {
+        return dataUsingEncoding(NSUTF8StringEncoding)!
+    }
+
+}
