@@ -26,8 +26,8 @@ public final class Database<K : KeyType, V : ValueType> {
 // MARK: Data
 
     internal let handle: Handle
-    internal let readOptions = Handle(leveldb_readoptions_create(), leveldb_options_destroy)
-    internal let writeOptions = Handle(leveldb_writeoptions_create(), leveldb_options_destroy)
+    internal let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
+    internal let writeOptions = Handle(leveldb_writeoptions_create(), leveldb_writeoptions_destroy)
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization

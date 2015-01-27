@@ -68,8 +68,8 @@ class LevelDBTests: XCTestCase {
         XCTAssertNil(db[NSData()])
     }
     
-    func testImaginary() {
-        let db = ByteDatabase()
+    func testSnapshot() {
+        let db = ByteDatabase("/Users/pyrtsa/Desktop/leveldb-test")!
         for (k, v) in db.snapshot {
             XCTFail("Expected empty database")
         }
@@ -80,8 +80,11 @@ class LevelDBTests: XCTestCase {
         db["ab".UTF8] = "qux".UTF8
         db["1".UTF8]  = "one".UTF8
         
-        let pairs = Array(db.snapshot).map {(k, v) in
-            (k.UTF8String, v.UTF8String)
+        let snapshot = db.snapshot
+        db["2".UTF8]  = "two".UTF8
+        let pairs = Array(snapshot).map {(k, v) -> (String, String) in
+            db[k] = k
+            return (k.UTF8String, v.UTF8String)
         }
 
         XCTAssertEqual(pairs, [("",  ""),
@@ -90,6 +93,29 @@ class LevelDBTests: XCTestCase {
                                ("ab", "qux"),
                                ("b",  "bar")])
         
+        let revPairs = Array(snapshot.reverse).map {(k, v) -> (String, String) in
+            return (k.UTF8String, v.UTF8String)
+        }
+        XCTAssertEqual(revPairs, [("b",  "bar"),
+                                  ("ab", "qux"),
+                                  ("a",  "foo"),
+                                  ("1",  "one"),
+                                  ("",  "")])
+        
+        let clampPairs = Array(snapshot["aa".UTF8 ... "c".UTF8]).map {(k, v) -> (String, String) in
+            return (k.UTF8String, v.UTF8String)
+        }
+
+        XCTAssertEqual(clampPairs, [("ab", "qux"),
+                                    ("b",  "bar")])
+
+        let clampRevPairs = Array(snapshot.reverse["1".UTF8 ... "a".UTF8]).map {(k, v) -> (String, String) in
+            return (k.UTF8String, v.UTF8String)
+        }
+
+        XCTAssertEqual(clampRevPairs, [("a",  "foo"),
+                                       ("1",  "one")])
+
     }
     
     func testPerformanceExample() {

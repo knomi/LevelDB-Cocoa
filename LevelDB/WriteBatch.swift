@@ -12,4 +12,3 @@ import Foundation
 public final class WriteBatch<K : KeyType, V : ValueType> {
     
 }
-
