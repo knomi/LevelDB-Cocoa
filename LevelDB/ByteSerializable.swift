@@ -7,3 +7,28 @@
 //
 
 import Foundation
+
+/// TODO
+public protocol ByteSerializable {
+    
+    /// TODO
+    class func fromSerializedBytes(data: NSData) -> Self?
+
+    /// TODO
+    var serializedBytes: NSData { get }
+    
+}
+
+extension NSData : ByteSerializable {
+
+    /// TODO
+    public class func fromSerializedBytes(data: NSData) -> Self? {
+        return self(bytes: data.bytes, length: data.length)
+    }
+
+    /// TODO
+    public var serializedBytes: NSData {
+        return self
+    }
+
+}

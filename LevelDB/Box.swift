@@ -6,4 +6,9 @@
 //  Copyright (c) 2015 Pyrtsa. All rights reserved.
 //
 
-import Foundation
+public final class Box<T> {
+    public let unbox: T
+    public init(_ value: T) {
+        self.unbox = value
+    }
+}

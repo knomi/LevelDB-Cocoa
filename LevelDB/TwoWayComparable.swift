@@ -8,6 +8,12 @@
 
 import Foundation
 
+/// TODO
+public protocol TwoWayComparable : Comparable {
+    func twoWayCompare(to: Self) -> Ordering
+}
+
+/// TODO
 public enum Ordering : Int {
     case LT = -1
     case EQ = 0
@@ -17,6 +23,7 @@ public enum Ordering : Int {
     }
 }
 
+/// TODO
 public func compare<T : Comparable>(left: T, right: T) -> Ordering {
     if left < right { return .LT }
     if right < left { return .GT }
@@ -24,10 +31,7 @@ public func compare<T : Comparable>(left: T, right: T) -> Ordering {
     return .EQ
 }
 
-public protocol TwoWayComparable : Comparable {
-    func twoWayCompare(to: Self) -> Ordering
-}
-
+/// TODO
 public func compare<T : TwoWayComparable>(left: T, right: T) -> Ordering {
     return left.twoWayCompare(right)
 }
@@ -47,12 +51,14 @@ public func <= <T : TwoWayComparable>(left: T, right: T) -> Bool {
 // MARK: Swift & Foundation extensions
 
 public extension Ordering {
+    /// TODO
     public init(_ value: NSComparisonResult) {
         self.init(rawValue: value.rawValue)
     }
 }
 
 extension String : TwoWayComparable {
+    /// TODO
     public func twoWayCompare(to: String) -> Ordering {
         return Ordering(compare(to))
     }

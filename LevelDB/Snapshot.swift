@@ -9,23 +9,59 @@
 import Foundation
 
 /// TODO
-public struct SnapshotBy<C : ComparatorType>  {
+public struct SnapshotBy<C : ComparatorType where C.Reverse : ComparatorType>  {
 
     public typealias Comparator = C
     public typealias Key = C.Key
     public typealias Value = C.Value
     public typealias Element = (Key, Value)
 
-    /// TODO
-    public let database: DatabaseBy<C>
+    private let database: DatabaseBy<C>
+    private let start: Key?
+    private let end: Key?
+    private let isClosed: Bool
+
+//    public var reversed: SnapshotBy<Comparator.Reverse> {
+//        return undefined()
+//    }
     
 }
+extension SnapshotBy : SequenceType {
+    /// TODO
+    public typealias Generator = SnapshotGeneratorBy<Comparator>
+
+    /// TODO
+    public func generate() -> Generator {
+        return undefined()
+    }
+}
+
+extension SnapshotBy : CollectionType {
+
+    public typealias Index = SnapshotIndexBy<Comparator>
+
+    public var startIndex: Index {
+        return undefined()
+    }
+
+    public var endIndex: Index {
+        return undefined()
+    }
+
+    public subscript(index: Index) -> Element {
+        return undefined()
+    }
+    
+}
+
+// -----------------------------------------------------------------------------
+// MARK: Generator
 
 /// TODO
 public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
     
     /// TODO
-    public typealias Element = SnapshotBy<C>.Element
+    public typealias Element = (C.Key, C.Value)
     
     /// TODO
     public mutating func next() -> Element? {
@@ -34,17 +70,15 @@ public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
     
 }
 
-extension SnapshotBy : SequenceType {
-    /// TODO
-    public typealias Generator = SnapshotGeneratorBy<C>
+// -----------------------------------------------------------------------------
+// MARK: Index
 
-    /// TODO
-    public func generate() -> Generator {
-        return undefined()
-    }
-}
-
-public struct SnapshotIndexBy<C : ComparatorType> : BidirectionalIndexType {
+public struct SnapshotIndexBy<C : ComparatorType> {
+    
+    public typealias Comparator = C
+    public typealias Key = C.Key
+    
+    private var key: C.Key
     
     public func successor() -> SnapshotIndexBy {
         return undefined()
@@ -56,11 +90,13 @@ public struct SnapshotIndexBy<C : ComparatorType> : BidirectionalIndexType {
     
 }
 
-public func == <C : ComparatorType>(left: SnapshotIndexBy<C>,
-                                    right: SnapshotIndexBy<C>) -> Bool
-{
-    return undefined()
+extension SnapshotIndexBy : TwoWayComparable {
+    public func twoWayCompare(to: SnapshotIndexBy) -> Ordering {
+        return Comparator.compare(key, to.key)
+    }
 }
+
+extension SnapshotIndexBy : BidirectionalIndexType {}
 
 //extension SnapshotBy : CollectionType {
 //    

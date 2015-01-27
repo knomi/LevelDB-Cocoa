@@ -9,26 +9,24 @@
 import Foundation
 
 /// TODO
-public struct KeyBy<C : ComparatorType> : Comparable {
+public struct KeyBy<C : ComparatorType where C.Reverse : ComparatorType> : TwoWayComparable {
+
+    public typealias Comparator = C
+
     public let key: C.Key
     
     public init(_ key: C.Key) {
         self.key = key
     }
+    
+    public func twoWayCompare(to: KeyBy) -> Ordering {
+        return C.compare(key, to.key)
+    }
+
 }
 
 extension KeyBy : Printable {
     public var description: String {
         return "KeyBy" // TODO
     }
-}
-
-// MARK: Operators
-
-public func == <C : ComparatorType>(left: KeyBy<C>, right: KeyBy<C>) -> Bool {
-    return C.compare(left.key, right.key) == .OrderedSame
-}
-
-public func < <C : ComparatorType>(left: KeyBy<C>, right: KeyBy<C>) -> Bool {
-    return C.compare(left.key, right.key).rawValue < 0
 }

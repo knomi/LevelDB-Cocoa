@@ -17,3 +17,5 @@ FOUNDATION_EXPORT const unsigned char LevelDBVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <LevelDB/PublicHeader.h>
 
 #import "leveldb/c.h"
+
+leveldb_env_t* ext_leveldb_create_in_memory_env(leveldb_env_t* base_env);

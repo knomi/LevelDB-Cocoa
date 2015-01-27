@@ -18,17 +18,11 @@ public struct LexicographicBytes : ComparatorType {
     public static var name: StaticString { return "leveldb.LexicographicBytes" }
 
     /// TODO
-    public static func compare(left: Key, _ right: Key) -> NSComparisonResult {
+    public static func compare(left: Key, _ right: Key) -> Ordering {
         let c = memcmp(left.bytes, right.bytes, UInt(min(left.length, right.length)))
-        if c < 0 { return .OrderedAscending }
-        if c > 0 { return .OrderedDescending }
-        return compareSwift(left.length, right.length)
+        if c < 0 { return .LT }
+        if c > 0 { return .GT }
+        return LevelDB.compare(left.length, right.length)
     }
 
-}
-
-private func compareSwift<T : Comparable>(a: T, b: T) -> NSComparisonResult {
-    return a < b ? .OrderedAscending
-         : a > b ? .OrderedDescending
-         :         .OrderedSame
 }

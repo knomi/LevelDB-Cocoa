@@ -16,6 +16,14 @@ import Foundation
 //public typealias Key        = KeyBy        <DefaultComparator>
 //public typealias RevKey     = RevKeyBy     <DefaultComparator>
 
+public func destroyDatabase(directoryPath: String, inout error: String?) {
+    return undefined()
+}
+
+public func repairDatabase(directoryPath: String, inout error: String?) {
+    return undefined()
+}
+
 // MARK: implementation details
 
 #if DEBUG
