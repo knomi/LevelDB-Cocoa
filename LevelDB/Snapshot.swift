@@ -37,13 +37,13 @@ public struct SnapshotBy<C : ComparatorType>  {
 //        return undefined()
 //    }
 
-    public subscript(interval: ClosedInterval<C.Key>) -> SnapshotBy {
-        return undefined()
-    }
-    
-    public subscript(interval: HalfOpenInterval<C.Key>) -> SnapshotBy {
-        return undefined()
-    }
+//    public subscript(interval: ClosedInterval<C.Key>) -> SnapshotBy {
+//        return undefined()
+//    }
+//    
+//    public subscript(interval: HalfOpenInterval<C.Key>) -> SnapshotBy {
+//        return undefined()
+//    }
     
 }
 
