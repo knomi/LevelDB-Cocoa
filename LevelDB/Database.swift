@@ -24,14 +24,13 @@ public final class DatabaseBy<C : ComparatorType> {
 
     /// TODO
     public typealias Value = C.Value
-    
+
 // -----------------------------------------------------------------------------
 // MARK: Data
 
-    private var handle: Handle
-    private let readOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
-    private let writeOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
-    private let deleteOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
+    internal let handle: Handle
+    internal let readOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
+    internal let writeOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization
@@ -97,7 +96,7 @@ public final class DatabaseBy<C : ComparatorType> {
 
     /// TODO
     public var snapshot: SnapshotBy<Comparator> {
-        return undefined()
+        return SnapshotBy(database: self, start: nil, end: nil, isClosed: true)
     }
     
     /// TODO

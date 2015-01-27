@@ -11,21 +11,42 @@ import Foundation
 /// TODO
 public struct SnapshotBy<C : ComparatorType>  {
 
+    public typealias Database = DatabaseBy<C>
     public typealias Comparator = C
     public typealias Key = C.Key
     public typealias Value = C.Value
     public typealias Element = (Key, Value)
 
-    private let database: DatabaseBy<C>
-    private let start: Key?
-    private let end: Key?
-    private let isClosed: Bool
+    internal let database: Database
+    internal let handle: Handle
+    internal let start: Key?
+    internal let end: Key?
+    internal let isClosed: Bool
+    
+    internal init(database: Database, start: Key?, end: Key?, isClosed: Bool) {
+        self.database = database
+        self.handle = Handle(leveldb_create_snapshot(database.handle.pointer)) {pointer in
+            leveldb_release_snapshot(database.handle.pointer, pointer)
+        }
+        self.start = start
+        self.end = end
+        self.isClosed = isClosed
+    }
 
 //    public var reversed: SnapshotBy<Comparator.Reverse> {
 //        return undefined()
 //    }
+
+    public subscript(interval: ClosedInterval<C.Key>) -> SnapshotBy {
+        return undefined()
+    }
+    
+    public subscript(interval: HalfOpenInterval<C.Key>) -> SnapshotBy {
+        return undefined()
+    }
     
 }
+
 extension SnapshotBy : SequenceType {
     /// TODO
     public typealias Generator = SnapshotGeneratorBy<Comparator>
@@ -59,15 +80,57 @@ extension SnapshotBy : CollectionType {
 
 /// TODO
 public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
+
+    private let snapshot: SnapshotBy<C>
+    private let handle: Handle
+    
+    internal init(snapshot: SnapshotBy<C>) {
+        self.snapshot = snapshot
+        let db = snapshot.database
+        self.handle = Handle(
+            leveldb_create_iterator(db.handle.pointer, db.readOptions.pointer),
+            leveldb_iter_destroy)
+        if let data = snapshot.start?.serializedBytes {
+            leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(data.bytes), UInt(data.length))
+        } else {
+            leveldb_iter_seek_to_first(handle.pointer)
+        }
+    }
     
     /// TODO
     public typealias Element = (C.Key, C.Value)
     
     /// TODO
     public mutating func next() -> Element? {
-        return undefined()
+        while leveldb_iter_valid(handle.pointer) != 0 {
+            let keyData: NSData = {
+                var length: UInt = 0
+                let bytes = leveldb_iter_key(self.handle.pointer, &length)
+                return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
+            }()
+            let valueData: NSData = {
+                var length: UInt = 0
+                let bytes = leveldb_iter_key(self.handle.pointer, &length)
+                return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
+            }()
+            var element: Element?
+            if let key = C.Key.fromSerializedBytes(keyData) {
+                if let end = snapshot.end {
+                    switch C.compare(key, end) {
+                    case .LT: break
+                    case .EQ: if !snapshot.isClosed { return nil }
+                    case .GT: return nil
+                    }
+                }
+                if let value = C.Value.fromSerializedBytes(valueData) {
+                    element = (key, value)
+                }
+            }
+            leveldb_iter_next(handle.pointer)
+            if element != nil { return element }
+        }
+        return nil
     }
-    
 }
 
 // -----------------------------------------------------------------------------
