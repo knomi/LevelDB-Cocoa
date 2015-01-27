@@ -47,6 +47,13 @@ public enum Either<E, A> {
         case let .Value(a): return transform(a.unbox)
         }
     }
+    
+    public func either<T>(error: E -> T, _ value: A -> T) -> T {
+        switch self {
+        case let .Error(e): return error(e.unbox)
+        case let .Value(a): return value(a.unbox)
+        }
+    }
 }
 
 internal func tryC<T>(block: UnsafeMutablePointer<UnsafeMutablePointer<Int8>> -> T) -> Either<String, T> {

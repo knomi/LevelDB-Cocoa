@@ -29,6 +29,9 @@ public final class DatabaseBy<C : ComparatorType> {
 // MARK: Data
 
     private var handle: Handle
+    private let readOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
+    private let writeOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
+    private let deleteOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization
@@ -70,6 +73,7 @@ public final class DatabaseBy<C : ComparatorType> {
         }
     }
     
+    /// TODO
     private class func openHandle(directoryPath: String) -> Either<String, Handle> {
         let options = Handle(leveldb_options_create(), leveldb_options_destroy)
         leveldb_options_set_create_if_missing(options.pointer, 1)
@@ -104,31 +108,69 @@ public final class DatabaseBy<C : ComparatorType> {
     /// TODO
     public subscript(key: Key) -> Value? {
         get {
-            return undefined()
+            return get(key).either({error in
+                println(error)
+                return nil
+            }, {value in
+                value
+            })
         }
         set {
             if let value = newValue {
-                // put
-                return undefined()
-            } else {
-                // delete
-                return undefined()
+                return put(key, value).either({error in
+                    println(error)
+                }, {_ in
+                    ()
+                })
+            } else { // delete
+                return delete(key).either({error in
+                    println(error)
+                }, {_ in
+                    ()
+                })
             }
         }
     }
     
     /// TODO
-    public func get(key: Key) -> Either<String, Value> {
-        return undefined()
+    public func get(key: Key) -> Either<String, Value?> {
+        let keyData = key.serializedBytes
+        var length: UInt = 0
+        return tryC {error in
+            ext_leveldb_get(self.handle.pointer,
+                            self.readOptions.pointer,
+                            UnsafePointer<Int8>(keyData.bytes),
+                            UInt(keyData.length),
+                            error) as NSData?
+        }.map {value in
+            value.flatMap {data in return Value.fromSerializedBytes(data) }
+        }
     }
     
     /// TODO
-    public func put(key: Key, value: Value) -> Either<String, ()> {
-        return undefined()
+    public func put(key: Key, _ value: Value) -> Either<String, ()> {
+        let keyData = key.serializedBytes
+        let valueData = value.serializedBytes
+        return tryC {error in
+            leveldb_put(self.handle.pointer,
+                        self.writeOptions.pointer,
+                        UnsafePointer<Int8>(keyData.bytes),
+                        UInt(keyData.length),
+                        UnsafePointer<Int8>(valueData.bytes),
+                        UInt(valueData.length),
+                        error)
+        }
     }
     
     /// TODO
     public func delete(key: Key) -> Either<String, ()> {
-        return undefined()
+        let keyData = key.serializedBytes
+        return tryC {error in
+            leveldb_delete(self.handle.pointer,
+                           self.writeOptions.pointer,
+                           UnsafePointer<Int8>(keyData.bytes),
+                           UInt(keyData.length),
+                           error)
+        }
     }
 }

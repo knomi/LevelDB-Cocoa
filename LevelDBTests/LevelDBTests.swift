@@ -22,18 +22,25 @@ class LevelDBTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
-        
-        let _: () = {
-            let db = Database()
-        }()
-        
-        let _: () = {
-            let db = Database("/Users/pyrtsa/Desktop/leveldb-test")
-        }()
-        
+    func testInMemory() {
+        let db = Database()
+        XCTAssertNil(db[NSData()])
+        db[NSData()] = NSData()
+        XCTAssertNotNil(db[NSData()])
+        db[NSData()] = nil
+        XCTAssertNil(db[NSData()])
+    }
+    
+    func testOnDisk() {
+        let maybeDb = Database("/Users/pyrtsa/Desktop/leveldb-test")
+        XCTAssertNotNil(maybeDb)
+        if maybeDb == nil { return }
+        let db = maybeDb!
+        XCTAssertNil(db[NSData()])
+        db[NSData()] = NSData()
+        XCTAssertNotNil(db[NSData()])
+        db[NSData()] = nil
+        XCTAssertNil(db[NSData()])
     }
     
     func testPerformanceExample() {

@@ -19,3 +19,9 @@ FOUNDATION_EXPORT const unsigned char LevelDBVersionString[];
 #import "leveldb/c.h"
 
 leveldb_env_t* ext_leveldb_create_in_memory_env(leveldb_env_t* base_env);
+
+NSData *ext_leveldb_get(leveldb_t *db,
+                        const leveldb_readoptions_t *options,
+                        const char *key,
+                        size_t keylen,
+                        char **errptr);

@@ -117,10 +117,12 @@
 		E0BF39771A77925600FC96E0 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39751A77925600FC96E0 /* Box.swift */; };
 		E0BF39791A77928400FC96E0 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39781A77928400FC96E0 /* Either.swift */; };
 		E0BF397A1A77928400FC96E0 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39781A77928400FC96E0 /* Either.swift */; };
-		E0BF397C1A779A6E00FC96E0 /* InMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397B1A779A6E00FC96E0 /* InMemory.mm */; };
-		E0BF397D1A779A6E00FC96E0 /* InMemory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397B1A779A6E00FC96E0 /* InMemory.mm */; };
+		E0BF397C1A779A6E00FC96E0 /* LevelDB.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */; };
+		E0BF397D1A779A6E00FC96E0 /* LevelDB.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */; };
 		E0BF397F1A779E1500FC96E0 /* Handle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397E1A779E1500FC96E0 /* Handle.swift */; };
 		E0BF39801A779E1500FC96E0 /* Handle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397E1A779E1500FC96E0 /* Handle.swift */; };
+		E0BF39821A77BEE600FC96E0 /* Optional+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */; };
+		E0BF39831A77BEE600FC96E0 /* Optional+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -304,8 +306,9 @@
 		E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteSerializable.swift; sourceTree = "<group>"; };
 		E0BF39751A77925600FC96E0 /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		E0BF39781A77928400FC96E0 /* Either.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
-		E0BF397B1A779A6E00FC96E0 /* InMemory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InMemory.mm; sourceTree = "<group>"; };
+		E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LevelDB.mm; sourceTree = "<group>"; };
 		E0BF397E1A779E1500FC96E0 /* Handle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Handle.swift; sourceTree = "<group>"; };
+		E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+LevelDB.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -373,16 +376,17 @@
 				E0BF39631A76ECBB00FC96E0 /* ComparatorType.swift */,
 				E0BF39601A76EC9E00FC96E0 /* Database.swift */,
 				E0BF39781A77928400FC96E0 /* Either.swift */,
+				E0BF397E1A779E1500FC96E0 /* Handle.swift */,
 				E0BF396C1A76F49500FC96E0 /* Key.swift */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
+				E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 				E0BF39661A76ED1200FC96E0 /* LexicographicBytes.swift */,
+				E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */,
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
 				E0BF378D1A7674E400FC96E0 /* Supporting Files */,
 				E0BF396F1A776AC800FC96E0 /* TwoWayComparable.swift */,
 				E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */,
-				E0BF397B1A779A6E00FC96E0 /* InMemory.mm */,
-				E0BF397E1A779E1500FC96E0 /* Handle.swift */,
 			);
 			path = LevelDB;
 			sourceTree = "<group>";
@@ -892,7 +896,7 @@
 				E0BF38CF1A76D0AD00FC96E0 /* builder.cc in Sources */,
 				E0BF38F21A76D10800FC96E0 /* logging.cc in Sources */,
 				E0BF38DA1A76D0AD00FC96E0 /* table_cache.cc in Sources */,
-				E0BF397D1A779A6E00FC96E0 /* InMemory.mm in Sources */,
+				E0BF397D1A779A6E00FC96E0 /* LevelDB.mm in Sources */,
 				E0BF38E91A76D10800FC96E0 /* cache.cc in Sources */,
 				E0BF38D71A76D0AD00FC96E0 /* log_writer.cc in Sources */,
 				E0BF38DE1A76D0D200FC96E0 /* block.cc in Sources */,
@@ -912,6 +916,7 @@
 				E0BF39701A776AC800FC96E0 /* TwoWayComparable.swift in Sources */,
 				E0BF38DC1A76D0AD00FC96E0 /* version_set.cc in Sources */,
 				E0BF38DF1A76D0D200FC96E0 /* block_builder.cc in Sources */,
+				E0BF39831A77BEE600FC96E0 /* Optional+LevelDB.swift in Sources */,
 				E0BF38E01A76D0D200FC96E0 /* filter_block.cc in Sources */,
 				E0BF38DB1A76D0AD00FC96E0 /* version_edit.cc in Sources */,
 				E0BF39771A77925600FC96E0 /* Box.swift in Sources */,
@@ -960,7 +965,7 @@
 				E0BF39151A76D55300FC96E0 /* comparator.cc in Sources */,
 				E0BF39331A76D55300FC96E0 /* filter_block.cc in Sources */,
 				E0BF391D1A76D55300FC96E0 /* port_posix.cc in Sources */,
-				E0BF397C1A779A6E00FC96E0 /* InMemory.mm in Sources */,
+				E0BF397C1A779A6E00FC96E0 /* LevelDB.mm in Sources */,
 				E0BF39351A76D55300FC96E0 /* c.cc in Sources */,
 				E0BF39341A76D55300FC96E0 /* version_edit.cc in Sources */,
 				E0BF39371A76D55300FC96E0 /* env_posix.cc in Sources */,
@@ -980,6 +985,7 @@
 				E0BF39711A776AC800FC96E0 /* TwoWayComparable.swift in Sources */,
 				E0BF39251A76D55300FC96E0 /* cache.cc in Sources */,
 				E0BF39201A76D55300FC96E0 /* filename.cc in Sources */,
+				E0BF39821A77BEE600FC96E0 /* Optional+LevelDB.swift in Sources */,
 				E0BF392F1A76D55300FC96E0 /* status.cc in Sources */,
 				E0BF39381A76D55300FC96E0 /* env.cc in Sources */,
 				E0BF39761A77925600FC96E0 /* Box.swift in Sources */,
