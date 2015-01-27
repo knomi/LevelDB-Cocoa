@@ -66,4 +66,26 @@ NSData *ext_leveldb_get(leveldb_t *db,
     }
 }
 
+NSData *ext_leveldb_iter_key_unsafe(const leveldb_iterator_t *iter)
+{
+    size_t length = 0;
+    const char *bytes = leveldb_iter_key(iter, &length);
+    return [NSData dataWithBytesNoCopy:(void *)bytes length:length freeWhenDone:false];
+}
+
+NSData *ext_leveldb_iter_value_unsafe(leveldb_iterator_t *iter)
+{
+    size_t length = 0;
+    const char *bytes = leveldb_iter_value(iter, &length);
+    return [NSData dataWithBytesNoCopy:(void *)bytes length:length freeWhenDone:false];
+}
+
+/*
+            let keyData: NSData = {
+                var length: UInt = 0
+                let bytes = leveldb_iter_key(self.handle.pointer, &length)
+                return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
+            }()
+*/
+
 } // extern "C"

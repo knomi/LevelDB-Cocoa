@@ -93,7 +93,7 @@ public final class Database<K : KeyType, V : ValueType> {
 
     /// TODO
     public var snapshot: Snapshot<K, V> {
-        return Snapshot(database: self, start: nil, end: nil, isClosed: true)
+        return Snapshot(database: self, interval: RealInterval(.MinBound ... .MaxBound))
     }
     
     /// TODO

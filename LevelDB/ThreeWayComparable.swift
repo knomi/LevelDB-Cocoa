@@ -37,15 +37,27 @@ public func compare<T : ThreeWayComparable>(left: T, right: T) -> Ordering {
 }
 
 public func == <T : ThreeWayComparable>(left: T, right: T) -> Bool {
-    return compare(left, right) == .EQ
+    return left.threeWayCompare(right) == .EQ
+}
+
+public func != <T : ThreeWayComparable>(left: T, right: T) -> Bool {
+    return left.threeWayCompare(right) != .EQ
 }
 
 public func < <T : ThreeWayComparable>(left: T, right: T) -> Bool {
-    return compare(left, right) == .LT
+    return left.threeWayCompare(right) == .LT
+}
+
+public func > <T : ThreeWayComparable>(left: T, right: T) -> Bool {
+    return left.threeWayCompare(right) == .GT
 }
 
 public func <= <T : ThreeWayComparable>(left: T, right: T) -> Bool {
-    return compare(left, right) != .GT
+    return left.threeWayCompare(right) != .GT
+}
+
+public func >= <T : ThreeWayComparable>(left: T, right: T) -> Bool {
+    return left.threeWayCompare(right) != .LT
 }
 
 // MARK: Swift & Foundation extensions

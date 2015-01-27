@@ -18,31 +18,45 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     internal let database: Database
     internal let handle: Handle
-    internal let start: Key?
-    internal let end: Key?
-    internal let isClosed: Bool
+    internal let interval: RealInterval<AddBounds<K>>
     
-    internal init(database: Database, start: Key?, end: Key?, isClosed: Bool) {
+    internal init(database: Database,
+                  handle: Handle,
+                  interval: RealInterval<AddBounds<K>>) {
+        self.database = database
+        self.handle = handle
+        self.interval = interval
+    }
+
+    internal init(database: Database, interval: RealInterval<AddBounds<K>>) {
         self.database = database
         self.handle = Handle(leveldb_create_snapshot(database.handle.pointer)) {pointer in
             leveldb_release_snapshot(database.handle.pointer, pointer)
         }
-        self.start = start
-        self.end = end
-        self.isClosed = isClosed
+        self.interval = interval
     }
 
 //    public var reversed: SnapshotBy<Comparator.Reverse> {
 //        return undefined()
 //    }
 
-//    public subscript(interval: ClosedInterval<C.Key>) -> SnapshotBy {
-//        return undefined()
-//    }
-//    
-//    public subscript(interval: HalfOpenInterval<C.Key>) -> SnapshotBy {
-//        return undefined()
-//    }
+    /// TODO
+    public subscript(interval: ClosedInterval<Key>) -> Snapshot {
+        let capped = AddBounds(interval.start) ... AddBounds(interval.end)
+        let clamped = self.interval.clamp(RealInterval(capped))
+        return Snapshot(database: database,
+                        handle: handle,
+                        interval: clamped)
+    }
+    
+    /// TODO
+    public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
+        let capped = AddBounds(interval.start) ..< AddBounds(interval.end)
+        let clamped = self.interval.clamp(RealInterval(capped))
+        return Snapshot(database: database,
+                        handle: handle,
+                        interval: clamped)
+    }
     
 }
 
@@ -52,27 +66,27 @@ extension Snapshot : SequenceType {
 
     /// TODO
     public func generate() -> Generator {
-        return undefined()
+        return Generator(snapshot: self)
     }
 }
 
-extension Snapshot : CollectionType {
-
-    public typealias Index = SnapshotIndex<Key, Value>
-
-    public var startIndex: Index {
-        return undefined()
-    }
-
-    public var endIndex: Index {
-        return undefined()
-    }
-
-    public subscript(index: Index) -> Element {
-        return undefined()
-    }
-    
-}
+//extension Snapshot : CollectionType {
+//
+//    public typealias Index = SnapshotIndex<Key, Value>
+//
+//    public var startIndex: Index {
+//        return undefined()
+//    }
+//
+//    public var endIndex: Index {
+//        return undefined()
+//    }
+//
+//    public subscript(index: Index) -> Element {
+//        return undefined()
+//    }
+//    
+//}
 
 // -----------------------------------------------------------------------------
 // MARK: Generator
@@ -89,10 +103,26 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
         self.handle = Handle(
             leveldb_create_iterator(db.handle.pointer, db.readOptions.pointer),
             leveldb_iter_destroy)
-        if let data = snapshot.start?.serializedBytes {
-            leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(data.bytes), UInt(data.length))
-        } else {
+        switch snapshot.interval.start {
+        case .MinBound:
             leveldb_iter_seek_to_first(handle.pointer)
+        case let .NoBound(start):
+            let data = start.serializedBytes
+            leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(data.bytes), UInt(data.length))
+            if !snapshot.interval.closedStart {
+                let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
+                if let key = K.fromSerializedBytes(keyData) {
+                    // skip over the open start of interval
+                    switch start.threeWayCompare(key) {
+                    case .LT: break
+                    case .EQ: leveldb_iter_next(handle.pointer)
+                    case .GT: assert(false, "Found key beyond the limited interval: \(keyData)")
+                    }
+                }
+            }
+        case .MaxBound:
+            // just leave the iterator in its initial invalid state so the iteration will stop
+            assert(leveldb_iter_valid(handle.pointer) == 0)
         }
     }
     
@@ -102,31 +132,21 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
     /// TODO
     public mutating func next() -> Element? {
         while leveldb_iter_valid(handle.pointer) != 0 {
-            let keyData: NSData = {
-                var length: UInt = 0
-                let bytes = leveldb_iter_key(self.handle.pointer, &length)
-                return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
-            }()
-            let valueData: NSData = {
-                var length: UInt = 0
-                let bytes = leveldb_iter_key(self.handle.pointer, &length)
-                return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
-            }()
+            let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
+            let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)
             var element: Element?
             if let key = K.fromSerializedBytes(keyData) {
-                if let end = snapshot.end {
-                    switch key.threeWayCompare(end) {
-                    case .LT: break
-                    case .EQ: if !snapshot.isClosed { return nil }
-                    case .GT: return nil
-                    }
+                if !snapshot.interval.contains(AddBounds(key)) {
+                    return nil
                 }
                 if let value = V.fromSerializedBytes(valueData) {
                     element = (key, value)
                 }
             }
             leveldb_iter_next(handle.pointer)
-            if element != nil { return element }
+            if element != nil {
+                return element
+            }
         }
         return nil
     }

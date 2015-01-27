@@ -117,6 +117,8 @@
 		E0BF39801A779E1500FC96E0 /* Handle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF397E1A779E1500FC96E0 /* Handle.swift */; };
 		E0BF39821A77BEE600FC96E0 /* Optional+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */; };
 		E0BF39831A77BEE600FC96E0 /* Optional+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */; };
+		E0BF39851A781EE000FC96E0 /* Interval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39841A781EE000FC96E0 /* Interval.swift */; };
+		E0BF39861A781EE000FC96E0 /* Interval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39841A781EE000FC96E0 /* Interval.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -300,6 +302,7 @@
 		E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LevelDB.mm; sourceTree = "<group>"; };
 		E0BF397E1A779E1500FC96E0 /* Handle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Handle.swift; sourceTree = "<group>"; };
 		E0BF39811A77BEE600FC96E0 /* Optional+LevelDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+LevelDB.swift"; sourceTree = "<group>"; };
+		E0BF39841A781EE000FC96E0 /* Interval.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interval.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -367,6 +370,7 @@
 				E0BF39601A76EC9E00FC96E0 /* Database.swift */,
 				E0BF39781A77928400FC96E0 /* Either.swift */,
 				E0BF397E1A779E1500FC96E0 /* Handle.swift */,
+				E0BF39841A781EE000FC96E0 /* Interval.swift */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
 				E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
@@ -894,6 +898,7 @@
 				E0BF38F31A76D10800FC96E0 /* options.cc in Sources */,
 				E0BF39801A779E1500FC96E0 /* Handle.swift in Sources */,
 				E0BF38E31A76D0D200FC96E0 /* merger.cc in Sources */,
+				E0BF39861A781EE000FC96E0 /* Interval.swift in Sources */,
 				E0BF395E1A76E43D00FC96E0 /* Snapshot.swift in Sources */,
 				E0BF38F41A76D10800FC96E0 /* status.cc in Sources */,
 				E0BF38D91A76D0AD00FC96E0 /* repair.cc in Sources */,
@@ -960,6 +965,7 @@
 				E0BF39391A76D55300FC96E0 /* crc32c.cc in Sources */,
 				E0BF397F1A779E1500FC96E0 /* Handle.swift in Sources */,
 				E0BF39301A76D55300FC96E0 /* repair.cc in Sources */,
+				E0BF39851A781EE000FC96E0 /* Interval.swift in Sources */,
 				E0BF395F1A76E43D00FC96E0 /* Snapshot.swift in Sources */,
 				E0BF39211A76D55300FC96E0 /* db_impl.cc in Sources */,
 				E0BF39311A76D55300FC96E0 /* version_set.cc in Sources */,
@@ -1283,6 +1289,7 @@
 				E0BF37A21A7674E400FC96E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E0BF37A31A7674E400FC96E0 /* Build configuration list for PBXNativeTarget "LevelDBTests-iOS" */ = {
 			isa = XCConfigurationList;
@@ -1291,6 +1298,7 @@
 				E0BF37A51A7674E400FC96E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E0BF390F1A76D49D00FC96E0 /* Build configuration list for PBXNativeTarget "LevelDB-Mac" */ = {
 			isa = XCConfigurationList;
@@ -1299,6 +1307,7 @@
 				E0BF39111A76D49D00FC96E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E0BF39121A76D49D00FC96E0 /* Build configuration list for PBXNativeTarget "LevelDBTests-Mac" */ = {
 			isa = XCConfigurationList;
@@ -1307,6 +1316,7 @@
 				E0BF39141A76D49D00FC96E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -10,6 +10,27 @@ import Foundation
 import XCTest
 import LevelDB
 
+extension String {
+    var UTF8: NSData {
+        return dataUsingEncoding(NSUTF8StringEncoding)!
+    }
+}
+
+extension NSData {
+    var UTF8String: String {
+        return NSString(data: self, encoding: NSUTF8StringEncoding)!
+    }
+}
+
+
+func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
+    for (x, y) in Zip2(xs, ys) {
+        XCTAssertEqual(x.0, y.0, message, file: file, line: line)
+        XCTAssertEqual(x.1, y.1, message, file: file, line: line)
+    }
+}
+
 class LevelDBTests: XCTestCase {
     
     override func setUp() {
@@ -34,21 +55,43 @@ class LevelDBTests: XCTestCase {
     func testOnDisk() {
         let maybeDb = ByteDatabase("/Users/pyrtsa/Desktop/leveldb-test")
         XCTAssertNotNil(maybeDb)
+        
         if maybeDb == nil { return }
         let db = maybeDb!
         XCTAssertNil(db[NSData()])
+        
         db[NSData()] = NSData()
         XCTAssertNotNil(db[NSData()])
+        
         db[NSData()] = nil
         XCTAssertNil(db[NSData()])
+        
+        destroyDatabase("/Users/pyrtsa/Desktop/leveldb-test")
     }
     
     func testImaginary() {
-        #if IMAGINARY
-        let db = ByteDatabase
+        let db = ByteDatabase()
+        for (k, v) in db.snapshot {
+            XCTFail("Expected empty database")
+        }
         
+        db[NSData()]  = NSData()
+        db["a".UTF8]  = "foo".UTF8
+        db["b".UTF8]  = "bar".UTF8
+        db["ab".UTF8] = "qux".UTF8
+        db["1".UTF8]  = "one".UTF8
         
-        #endif
+        let pairs = Array(db.snapshot).map {(k, v) in
+            (k.UTF8String, v.UTF8String)
+        }
+        
+
+        XCTAssertEqual(pairs, [("",  ""),
+                               ("1",  "one"),
+                               ("a",  "foo"),
+                               ("ab", "qux"),
+                               ("b",  "bar")])
+        
     }
     
     func testPerformanceExample() {
