@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+import LevelDB
 
 class LevelDBTests: XCTestCase {
     
@@ -24,6 +25,15 @@ class LevelDBTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         XCTAssert(true, "Pass")
+        
+        let _: () = {
+            let db = Database()
+        }()
+        
+        let _: () = {
+            let db = Database("/Users/pyrtsa/Desktop/leveldb-test")
+        }()
+        
     }
     
     func testPerformanceExample() {

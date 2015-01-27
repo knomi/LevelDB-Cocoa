@@ -9,7 +9,7 @@
 import Foundation
 
 /// TODO
-public struct SnapshotBy<C : ComparatorType where C.Reverse : ComparatorType>  {
+public struct SnapshotBy<C : ComparatorType>  {
 
     public typealias Comparator = C
     public typealias Key = C.Key

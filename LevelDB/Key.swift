@@ -9,7 +9,7 @@
 import Foundation
 
 /// TODO
-public struct KeyBy<C : ComparatorType where C.Reverse : ComparatorType> : TwoWayComparable {
+public struct KeyBy<C : ComparatorType> : TwoWayComparable {
 
     public typealias Comparator = C
 

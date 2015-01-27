@@ -9,13 +9,13 @@
 import Foundation
 
 /// TODO
-public struct LexicographicBytes : ComparatorType {
+public struct BytewiseComparator : ComparatorType {
 
     public typealias Key = NSData
     public typealias Value = NSData
 
     /// TODO
-    public static var name: StaticString { return "leveldb.LexicographicBytes" }
+    public static var name: StaticString { return "leveldb.BytewiseComparator" }
 
     /// TODO
     public static func compare(left: Key, _ right: Key) -> Ordering {

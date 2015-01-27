@@ -11,7 +11,7 @@ import Foundation
 private var inMemoryCounter: Int32 = 0
 
 /// TODO
-public final class DatabaseBy<C : ComparatorType where C.Reverse : ComparatorType> {
+public final class DatabaseBy<C : ComparatorType> {
 
 // -----------------------------------------------------------------------------
 // MARK: Types
@@ -28,45 +28,64 @@ public final class DatabaseBy<C : ComparatorType where C.Reverse : ComparatorTyp
 // -----------------------------------------------------------------------------
 // MARK: Data
 
-    private let db: Handle
+    private var handle: Handle
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization
     
-    private init(db: Handle) {
-        self.db = db
+    private init(handle: Handle) {
+        self.handle = handle
     }
     
     /// TODO (in-memory database)
     public convenience init() {
         let defaultEnv = leveldb_create_default_env()
         let memoryEnv = ext_leveldb_create_in_memory_env(defaultEnv)
-        let options = leveldb_options_create()
-        leveldb_options_set_env(options, memoryEnv)
+        let options = Handle(leveldb_options_create(), leveldb_options_destroy)
+        leveldb_options_set_create_if_missing(options.pointer, 1)
+        leveldb_options_set_env(options.pointer, memoryEnv)
         let name = "in-memory-\(OSAtomicIncrement32(&inMemoryCounter))"
-        switch tryCall(leveldb_open, options, name) {
-        default:
-//        case let .Error(e):
-//            fatalError(e.unbox)
-            self.init(db: Handle(nil, {_ in}))
-//        case let .Value(x):
-//            let db = x.unbox
-//            self.init(db: Handle(db) {db in
-//                leveldb_close(db)
-//                leveldb_env_destroy(memoryEnv)
-//                leveldb_env_destroy(defaultEnv)
-//            })
+        switch tryC({error in leveldb_open(options.pointer, name, error)}) {
+        case let .Error(e):
+            fatalError(e.unbox)
+        case let .Value(x):
+            let ptr = x.unbox
+            self.init(handle: Handle(ptr) {db in
+                leveldb_close(db)
+                leveldb_env_destroy(memoryEnv)
+                leveldb_env_destroy(defaultEnv)
+            })
         }
     }
     
     /// TODO
     public convenience init?(_ directoryPath: String) {
-        fatalError("unimplemented")
+        switch DatabaseBy.openHandle(directoryPath) {
+        case let .Error(e):
+            // TODO: Log the error?
+            self.init(handle: Handle())
+            return nil
+        case let .Value(handle):
+            self.init(handle: handle.unbox)
+        }
+    }
+    
+    private class func openHandle(directoryPath: String) -> Either<String, Handle> {
+        let options = Handle(leveldb_options_create(), leveldb_options_destroy)
+        leveldb_options_set_create_if_missing(options.pointer, 1)
+        let name = (directoryPath as NSString).UTF8String
+        return tryC({error in
+            leveldb_open(options.pointer, name, error)
+        }).map {pointer in
+            Handle(pointer, leveldb_close)
+        }
     }
     
     /// TODO
     public class func open(directoryPath: String) -> Either<String, DatabaseBy> {
-        return undefined()
+        return openHandle(directoryPath).map {handle in
+            DatabaseBy(handle: handle)
+        }
     }
     
 // -----------------------------------------------------------------------------

@@ -8,20 +8,24 @@
 
 import Foundation
 
-//public typealias DefaultComparator = LexicographicBytes
-//
-//public typealias Database   = DatabaseBy   <DefaultComparator>
-//public typealias Snapshot   = SnapshotBy   <DefaultComparator>
-//public typealias WriteBatch = WriteBatchBy <DefaultComparator>
-//public typealias Key        = KeyBy        <DefaultComparator>
-//public typealias RevKey     = RevKeyBy     <DefaultComparator>
+public typealias DefaultComparator = BytewiseComparator
 
-public func destroyDatabase(directoryPath: String, inout error: String?) {
-    return undefined()
+public typealias Database   = DatabaseBy   <DefaultComparator>
+public typealias Snapshot   = SnapshotBy   <DefaultComparator>
+public typealias WriteBatch = WriteBatchBy <DefaultComparator>
+public typealias Key        = KeyBy        <DefaultComparator>
+//public typealias RevKey     = KeyBy        <DefaultComparator.Reverse>
+
+public func destroyDatabase(directoryPath: String) -> Either<String, ()> {
+    let options = Handle(leveldb_options_create(), leveldb_options_destroy)
+    let name = (directoryPath as NSString).UTF8String
+    return tryC({error in leveldb_destroy_db(options.pointer, name, error)})
 }
 
-public func repairDatabase(directoryPath: String, inout error: String?) {
-    return undefined()
+public func repairDatabase(directoryPath: String) -> Either<String, ()> {
+    let options = Handle(leveldb_options_create(), leveldb_options_destroy)
+    let name = (directoryPath as NSString).UTF8String
+    return tryC({error in leveldb_repair_db(options.pointer, name, error)})
 }
 
 // MARK: implementation details

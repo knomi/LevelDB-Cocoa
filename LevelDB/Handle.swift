@@ -10,7 +10,11 @@ import Foundation
 
 internal final class Handle {
     internal let pointer: COpaquePointer
-    internal let destroy: COpaquePointer -> ()
+    private let destroy: COpaquePointer -> ()
+    internal init() {
+        self.pointer = nil
+        self.destroy = {_ in ()}
+    }
     internal init(_ pointer: COpaquePointer, _ destroy: COpaquePointer -> ()) {
         self.pointer = pointer
         self.destroy = destroy

@@ -9,7 +9,7 @@
 import Foundation
 
 /// TODO
-public final class WriteBatchBy<C : ComparatorType where C.Reverse : ComparatorType> {
+public final class WriteBatchBy<C : ComparatorType> {
     
 }
 

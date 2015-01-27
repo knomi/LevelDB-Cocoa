@@ -49,38 +49,14 @@ public enum Either<E, A> {
     }
 }
 
-internal func tryCall<R, A>(f: (A, UnsafeMutablePointer<UnsafeMutablePointer<Int8>>) -> R, a: A) -> Either<String, R> {
+internal func tryC<T>(block: UnsafeMutablePointer<UnsafeMutablePointer<Int8>> -> T) -> Either<String, T> {
     var error = UnsafeMutablePointer<Int8>.null()
-    let r = f(a, &error)
+    let result = block(&error)
     if error != nil {
         let string = String.fromCString(error)!
         leveldb_free(error)
         return .error(string)
     } else {
-        return .value(r)
-    }
-}
-
-internal func tryCall<R, A, B>(f: (A, B, UnsafeMutablePointer<UnsafeMutablePointer<Int8>>) -> R, a: A, b: B) -> Either<String, R> {
-    var error = UnsafeMutablePointer<Int8>.null()
-    let r = f(a, b, &error)
-    if error != nil {
-        let string = String.fromCString(error)!
-        leveldb_free(error)
-        return .error(string)
-    } else {
-        return .value(r)
-    }
-}
-
-internal func tryCall<R, A, B, C>(f: (A, B, C, UnsafeMutablePointer<UnsafeMutablePointer<Int8>>) -> R, a: A, b: B, c: C) -> Either<String, R> {
-    var error = UnsafeMutablePointer<Int8>.null()
-    let r = f(a, b, c, &error)
-    if error != nil {
-        let string = String.fromCString(error)!
-        leveldb_free(error)
-        return .error(string)
-    } else {
-        return .value(r)
+        return .value(result)
     }
 }

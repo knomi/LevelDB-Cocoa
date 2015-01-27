@@ -17,8 +17,8 @@ public protocol ComparatorType {
     /// TODO
     typealias Value : ByteSerializable
     
-    /// TODO
-    typealias Reverse /* : ComparatorType */ = Reversed<Self>
+//    /// TODO
+//    typealias Reverse /* : ComparatorType */ = Reversed<Self>
 
     /// TODO
     class var name: StaticString { get }
@@ -35,7 +35,7 @@ public struct Reversed<C : ComparatorType> : ComparatorType {
     
     public typealias Value = C.Value
     
-    public typealias Reverse = C
+//    public typealias Reverse = C
     
     public static var name: StaticString { return "" }
     
