@@ -40,6 +40,7 @@ class LevelDBTests: XCTestCase {
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        destroyDatabase("/Users/pyrtsa/Desktop/leveldb-test")
         super.tearDown()
     }
     
@@ -65,8 +66,6 @@ class LevelDBTests: XCTestCase {
         
         db[NSData()] = nil
         XCTAssertNil(db[NSData()])
-        
-        destroyDatabase("/Users/pyrtsa/Desktop/leveldb-test")
     }
     
     func testImaginary() {
@@ -84,7 +83,6 @@ class LevelDBTests: XCTestCase {
         let pairs = Array(db.snapshot).map {(k, v) in
             (k.UTF8String, v.UTF8String)
         }
-        
 
         XCTAssertEqual(pairs, [("",  ""),
                                ("1",  "one"),

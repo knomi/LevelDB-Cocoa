@@ -157,9 +157,9 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
 
 public struct SnapshotIndex<K : KeyType, V : ValueType> {
     
-    public typealias Key = K
+    private var key: AddBounds<K>
     
-    private var key: Key
+    
     
     public func successor() -> SnapshotIndex {
         return undefined()
@@ -178,71 +178,3 @@ extension SnapshotIndex : ThreeWayComparable {
 }
 
 extension SnapshotIndex : BidirectionalIndexType {}
-
-//extension SnapshotBy : CollectionType {
-//    
-//    /// TODO
-//    public struct Index : BidirectionalIndexType {
-//    
-//        /// TODO
-//        public typealias Distance = Int
-//        
-//        /// TODO
-//        public func successor() -> Index {
-//            return undefined()
-//        }
-//
-//        /// TODO
-//        public func predecessor() -> Index {
-//            return undefined()
-//        }
-//    }
-//    
-//    /// TODO
-//    public var startIndex: Index {
-//        return undefined()
-//    }
-//    
-//    /// TODO
-//    public var endIndex: Index {
-//        return undefined()
-//    }
-//    
-//    /// TODO
-//    public subscript (position: Index) -> Generator.Element {
-//        return undefined()
-//    }
-//    
-//    /// TODO
-//    public subscript (interval: HalfOpenInterval<Key>) -> SnapshotBy {
-//        return undefined()
-//    }
-//    
-//    /// TODO
-//    public subscript (interval: ClosedInterval<Key>) -> SnapshotBy {
-//        return undefined()
-//    }
-//    
-//}
-//
-//public func == <C : ComparatorType>(_: SnapshotBy<C>.Index, _: SnapshotBy<C>.Index) -> Bool {
-//    return undefined()
-//}
-//
-//extension SnapshotBy : Printable {
-//
-//    /// TODO
-//    public var description: String {
-//        return "Snapshot" // TODO
-//    }
-//
-//}
-//
-//extension SnapshotBy : DebugPrintable {
-//
-//    /// TODO
-//    public var debugDescription: String {
-//        return "Snapshot" // TODO
-//    }
-//
-//}
