@@ -23,7 +23,7 @@ class LevelDBTests: XCTestCase {
     }
     
     func testInMemory() {
-        let db = Database()
+        let db = ByteDatabase()
         XCTAssertNil(db[NSData()])
         db[NSData()] = NSData()
         XCTAssertNotNil(db[NSData()])
@@ -32,7 +32,7 @@ class LevelDBTests: XCTestCase {
     }
     
     func testOnDisk() {
-        let maybeDb = Database("/Users/pyrtsa/Desktop/leveldb-test")
+        let maybeDb = ByteDatabase("/Users/pyrtsa/Desktop/leveldb-test")
         XCTAssertNotNil(maybeDb)
         if maybeDb == nil { return }
         let db = maybeDb!
@@ -45,7 +45,7 @@ class LevelDBTests: XCTestCase {
     
     func testImaginary() {
         #if IMAGINARY
-        let db = Database
+        let db = ByteDatabase
         
         
         #endif

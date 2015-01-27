@@ -9,7 +9,7 @@
 import Foundation
 
 /// TODO
-public final class WriteBatchBy<C : ComparatorType> {
+public final class WriteBatch<K : KeyType, V : ValueType> {
     
 }
 

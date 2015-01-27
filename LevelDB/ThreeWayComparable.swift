@@ -1,5 +1,5 @@
 //
-//  TwoWayComparable.swift
+//  ThreeWayComparable.swift
 //  LevelDB
 //
 //  Created by Pyry Jahkola on 27.01.2015.
@@ -9,8 +9,8 @@
 import Foundation
 
 /// TODO
-public protocol TwoWayComparable : Comparable {
-    func twoWayCompare(to: Self) -> Ordering
+public protocol ThreeWayComparable : Comparable {
+    func threeWayCompare(to: Self) -> Ordering
 }
 
 /// TODO
@@ -32,19 +32,19 @@ public func compare<T : Comparable>(left: T, right: T) -> Ordering {
 }
 
 /// TODO
-public func compare<T : TwoWayComparable>(left: T, right: T) -> Ordering {
-    return left.twoWayCompare(right)
+public func compare<T : ThreeWayComparable>(left: T, right: T) -> Ordering {
+    return left.threeWayCompare(right)
 }
 
-public func == <T : TwoWayComparable>(left: T, right: T) -> Bool {
+public func == <T : ThreeWayComparable>(left: T, right: T) -> Bool {
     return compare(left, right) == .EQ
 }
 
-public func < <T : TwoWayComparable>(left: T, right: T) -> Bool {
+public func < <T : ThreeWayComparable>(left: T, right: T) -> Bool {
     return compare(left, right) == .LT
 }
 
-public func <= <T : TwoWayComparable>(left: T, right: T) -> Bool {
+public func <= <T : ThreeWayComparable>(left: T, right: T) -> Bool {
     return compare(left, right) != .GT
 }
 
@@ -57,15 +57,25 @@ public extension Ordering {
     }
 }
 
-extension String : TwoWayComparable {
+extension String : ThreeWayComparable {
     /// TODO
-    public func twoWayCompare(to: String) -> Ordering {
+    public func threeWayCompare(to: String) -> Ordering {
         return Ordering(compare(to))
     }
 }
 
-//extension Array : TwoWayComparable {
-//    public func twoWayCompare(to: Array) -> Ordering {
+extension NSData : ThreeWayComparable {
+    /// TODO
+    public func threeWayCompare(to: NSData) -> Ordering {
+        let c = memcmp(bytes, to.bytes, UInt(min(length, to.length)))
+        if c < 0 { return .LT }
+        if c > 0 { return .GT }
+        return compare(length, to.length)
+    }
+}
+
+//extension Array : ThreeWayComparable {
+//    public func threeWayCompare(to: Array) -> Ordering {
 //        return .EQ
 //    }
 //}

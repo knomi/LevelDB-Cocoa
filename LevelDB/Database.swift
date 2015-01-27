@@ -11,26 +11,23 @@ import Foundation
 private var inMemoryCounter: Int32 = 0
 
 /// TODO
-public final class DatabaseBy<C : ComparatorType> {
+public final class Database<K : KeyType, V : ValueType> {
 
 // -----------------------------------------------------------------------------
 // MARK: Types
 
     /// TODO
-    public typealias Comparator = C
+    public typealias Key = K
 
     /// TODO
-    public typealias Key = C.Key
-
-    /// TODO
-    public typealias Value = C.Value
+    public typealias Value = V
 
 // -----------------------------------------------------------------------------
 // MARK: Data
 
     internal let handle: Handle
-    internal let readOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
-    internal let writeOptions = Handle(leveldb_options_create(), leveldb_options_destroy)
+    internal let readOptions = Handle(leveldb_readoptions_create(), leveldb_options_destroy)
+    internal let writeOptions = Handle(leveldb_writeoptions_create(), leveldb_options_destroy)
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization
@@ -62,7 +59,7 @@ public final class DatabaseBy<C : ComparatorType> {
     
     /// TODO
     public convenience init?(_ directoryPath: String) {
-        switch DatabaseBy.openHandle(directoryPath) {
+        switch Database.openHandle(directoryPath) {
         case let .Error(e):
             // TODO: Log the error?
             self.init(handle: Handle())
@@ -85,9 +82,9 @@ public final class DatabaseBy<C : ComparatorType> {
     }
     
     /// TODO
-    public class func open(directoryPath: String) -> Either<String, DatabaseBy> {
+    public class func open(directoryPath: String) -> Either<String, Database> {
         return openHandle(directoryPath).map {handle in
-            DatabaseBy(handle: handle)
+            Database(handle: handle)
         }
     }
     
@@ -95,12 +92,12 @@ public final class DatabaseBy<C : ComparatorType> {
 // MARK: Database access
 
     /// TODO
-    public var snapshot: SnapshotBy<Comparator> {
-        return SnapshotBy(database: self, start: nil, end: nil, isClosed: true)
+    public var snapshot: Snapshot<K, V> {
+        return Snapshot(database: self, start: nil, end: nil, isClosed: true)
     }
     
     /// TODO
-    public func write(block: WriteBatchBy<Comparator> -> ()) {
+    public func write(block: WriteBatch<K, V> -> ()) {
         return undefined()
     }
     

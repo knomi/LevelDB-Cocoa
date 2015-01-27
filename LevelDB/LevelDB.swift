@@ -8,13 +8,10 @@
 
 import Foundation
 
-public typealias DefaultComparator = BytewiseComparator
+public typealias KeyType = protocol<ByteSerializable, ThreeWayComparable>
+public typealias ValueType = ByteSerializable
 
-public typealias Database   = DatabaseBy   <DefaultComparator>
-public typealias Snapshot   = SnapshotBy   <DefaultComparator>
-public typealias WriteBatch = WriteBatchBy <DefaultComparator>
-public typealias Key        = KeyBy        <DefaultComparator>
-//public typealias RevKey     = KeyBy        <DefaultComparator.Reverse>
+public typealias ByteDatabase = Database<NSData, NSData>
 
 public func destroyDatabase(directoryPath: String) -> Either<String, ()> {
     let options = Handle(leveldb_options_create(), leveldb_options_destroy)

@@ -55,10 +55,6 @@ NSData *ext_leveldb_get(leveldb_t *db,
                         char **errptr)
 {
     std::string tmp;
-    const char zero[1] = "";
-    if (keylen == 0 && !key) {
-        key = zero;
-    }
     leveldb::Status s = db->rep->Get(options->rep, leveldb::Slice(key, keylen), &tmp);
     if (s.ok()) {
         return [NSData dataWithBytes:tmp.c_str() length:tmp.size()];

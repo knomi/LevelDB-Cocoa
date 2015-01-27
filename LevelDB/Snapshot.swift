@@ -9,12 +9,11 @@
 import Foundation
 
 /// TODO
-public struct SnapshotBy<C : ComparatorType>  {
+public struct Snapshot<K : KeyType, V : ValueType>  {
 
-    public typealias Database = DatabaseBy<C>
-    public typealias Comparator = C
-    public typealias Key = C.Key
-    public typealias Value = C.Value
+    public typealias Database = LevelDB.Database<K, V>
+    public typealias Key = K
+    public typealias Value = V
     public typealias Element = (Key, Value)
 
     internal let database: Database
@@ -47,9 +46,9 @@ public struct SnapshotBy<C : ComparatorType>  {
     
 }
 
-extension SnapshotBy : SequenceType {
+extension Snapshot : SequenceType {
     /// TODO
-    public typealias Generator = SnapshotGeneratorBy<Comparator>
+    public typealias Generator = SnapshotGenerator<Key, Value>
 
     /// TODO
     public func generate() -> Generator {
@@ -57,9 +56,9 @@ extension SnapshotBy : SequenceType {
     }
 }
 
-extension SnapshotBy : CollectionType {
+extension Snapshot : CollectionType {
 
-    public typealias Index = SnapshotIndexBy<Comparator>
+    public typealias Index = SnapshotIndex<Key, Value>
 
     public var startIndex: Index {
         return undefined()
@@ -79,12 +78,12 @@ extension SnapshotBy : CollectionType {
 // MARK: Generator
 
 /// TODO
-public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
+public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
 
-    private let snapshot: SnapshotBy<C>
+    private let snapshot: Snapshot<K, V>
     private let handle: Handle
     
-    internal init(snapshot: SnapshotBy<C>) {
+    internal init(snapshot: Snapshot<K, V>) {
         self.snapshot = snapshot
         let db = snapshot.database
         self.handle = Handle(
@@ -98,7 +97,7 @@ public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
     }
     
     /// TODO
-    public typealias Element = (C.Key, C.Value)
+    public typealias Element = (K, V)
     
     /// TODO
     public mutating func next() -> Element? {
@@ -114,15 +113,15 @@ public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
                 return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
             }()
             var element: Element?
-            if let key = C.Key.fromSerializedBytes(keyData) {
+            if let key = K.fromSerializedBytes(keyData) {
                 if let end = snapshot.end {
-                    switch C.compare(key, end) {
+                    switch key.threeWayCompare(end) {
                     case .LT: break
                     case .EQ: if !snapshot.isClosed { return nil }
                     case .GT: return nil
                     }
                 }
-                if let value = C.Value.fromSerializedBytes(valueData) {
+                if let value = V.fromSerializedBytes(valueData) {
                     element = (key, value)
                 }
             }
@@ -136,30 +135,29 @@ public struct SnapshotGeneratorBy<C : ComparatorType> : GeneratorType {
 // -----------------------------------------------------------------------------
 // MARK: Index
 
-public struct SnapshotIndexBy<C : ComparatorType> {
+public struct SnapshotIndex<K : KeyType, V : ValueType> {
     
-    public typealias Comparator = C
-    public typealias Key = C.Key
+    public typealias Key = K
     
-    private var key: C.Key
+    private var key: Key
     
-    public func successor() -> SnapshotIndexBy {
+    public func successor() -> SnapshotIndex {
         return undefined()
     }
     
-    public func predecessor() -> SnapshotIndexBy {
+    public func predecessor() -> SnapshotIndex {
         return undefined()
     }
     
 }
 
-extension SnapshotIndexBy : TwoWayComparable {
-    public func twoWayCompare(to: SnapshotIndexBy) -> Ordering {
-        return Comparator.compare(key, to.key)
+extension SnapshotIndex : ThreeWayComparable {
+    public func threeWayCompare(to: SnapshotIndex) -> Ordering {
+        return key.threeWayCompare(to.key)
     }
 }
 
-extension SnapshotIndexBy : BidirectionalIndexType {}
+extension SnapshotIndex : BidirectionalIndexType {}
 
 //extension SnapshotBy : CollectionType {
 //    
