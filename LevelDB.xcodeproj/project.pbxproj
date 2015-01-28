@@ -367,24 +367,16 @@
 				E0BF39601A76EC9E00FC96E0 /* Database.swift */,
 				E0BF39781A77928400FC96E0 /* Either.swift */,
 				E0BF397E1A779E1500FC96E0 /* Handle.swift */,
+				E0BF378E1A7674E400FC96E0 /* Info.plist */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
 				E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 				E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */,
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
-				E0BF378D1A7674E400FC96E0 /* Supporting Files */,
 				E0BF396F1A776AC800FC96E0 /* ThreeWayComparable.swift */,
 				E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */,
 			);
 			path = LevelDB;
-			sourceTree = "<group>";
-		};
-		E0BF378D1A7674E400FC96E0 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				E0BF378E1A7674E400FC96E0 /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		E0BF37991A7674E400FC96E0 /* LevelDBTests */ = {
