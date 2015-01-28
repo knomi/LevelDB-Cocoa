@@ -97,7 +97,7 @@ public final class Database<K : KeyType, V : ValueType> {
 
     /// TODO
     public func snapshot() -> Snapshot<K, V> {
-        return Snapshot(database: self, interval: RealInterval(.MinBound ... .MaxBound))
+        return Snapshot(database: self, byteInterval: RealInterval(.MinBound ... .MaxBound))
     }
     
     /// TODO
