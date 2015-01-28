@@ -78,6 +78,13 @@ extension String : ThreeWayComparable {
 extension NSData : ThreeWayComparable {
     /// TODO
     public func threeWayCompare(to: NSData) -> Ordering {
+        let infinity = NSData.infinity
+        switch (self === infinity, to === infinity) {
+        case (false, false): break
+        case (false,   _  ): return .LT
+        case (  _  , false): return .GT
+        case (  _  ,   _  ): return .EQ
+        }
         let c = memcmp(bytes, to.bytes, UInt(min(length, to.length)))
         if c < 0 { return .LT }
         if c > 0 { return .GT }

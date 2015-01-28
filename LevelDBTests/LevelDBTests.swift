@@ -157,17 +157,17 @@ class LevelDBTests: XCTestCase {
                                   ("1",  "one"),
                                   ("",  "")])
         
-        let clampPairs = Array(snapshot["aa".UTF8 ... "c".UTF8]).map {(k, v) -> (String, String) in
+        let clampPairs = Array(snapshot["aa".UTF8 ..< "c".UTF8]).map {(k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }
 
         XCTAssertEqual(clampPairs, [("ab", "qux"),
                                     ("b",  "bar")])
 
-        let clampRevPairs = Array(snapshot.reverse["1".UTF8 ... "a".UTF8]).map {(k, v) -> (String, String) in
+        let clampRevPairs = Array(snapshot.reverse["1".UTF8 ..< "a ".UTF8]).map {(k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }
-
+        println(clampRevPairs)
         XCTAssertEqual(clampRevPairs, [("a",  "foo"),
                                        ("1",  "one")])
 
@@ -264,7 +264,7 @@ class LevelDBTests: XCTestCase {
         let people = snapshot.prefix("/people/".UTF8)
         let pets   = snapshot.prefix("/pets/".UTF8)
         let peh    = snapshot.prefix("/pe".UTF8)
-        let dehcat = snapshot.bound(AddBounds("/people/deh".UTF8) ... AddBounds("/pets/cat".UTF8))
+        let dehcat = snapshot.bound("/people/deh".UTF8 ..< "/pets/cat ".UTF8)
         
         XCTAssertEqual(people.values.array, ["bar", "foo"])
         XCTAssertEqual(pets.values.array, ["meow", "barf"])
@@ -278,26 +278,25 @@ class LevelDBTests: XCTestCase {
     }
     
     func testNextAfter() {
-        XCTAssertEqual(nextAfter(AddBounds.min),       AddBounds(NSData()))
-        XCTAssertEqual(nextAfter(AddBounds(NSData())), AddBounds.max)
-        XCTAssertEqual(nextAfter(AddBounds.max),       AddBounds.max)
+        XCTAssertEqual(NSData().lexicographicSuccessor(),        NSData.infinity)
+        XCTAssertEqual(NSData.infinity.lexicographicSuccessor(), NSData.infinity)
 
-        XCTAssertEqual(nextAfter(AddBounds("A".UTF8)),   AddBounds("B".UTF8))
-        XCTAssertEqual(nextAfter(AddBounds("Ab".UTF8)),  AddBounds("Ac".UTF8))
-        XCTAssertEqual(nextAfter(AddBounds("x 8".UTF8)), AddBounds("x 9".UTF8))
+        XCTAssertEqual("A".UTF8.lexicographicSuccessor(), "B".UTF8)
+        XCTAssertEqual("Ab".UTF8.lexicographicSuccessor(), "Ac".UTF8)
+        XCTAssertEqual("x 8".UTF8.lexicographicSuccessor(), "x 9".UTF8)
 
-        let bytes = {(var array: [UInt8]) -> AddBounds<NSData> in
-            AddBounds(NSData(bytes: &array, length: array.count))
+        let bytes = {(var array: [UInt8]) -> NSData in
+            NSData(bytes: &array, length: array.count)
         }
         
         let m = UInt8.max
-        XCTAssertEqual(nextAfter(bytes([m])),       AddBounds.max)
-        XCTAssertEqual(nextAfter(bytes([m, m])),    AddBounds.max)
-        XCTAssertEqual(nextAfter(bytes([m, m, m])), AddBounds.max)
-        XCTAssertEqual(nextAfter(bytes([m, m, 9])), bytes([m, m, 10]))
-        XCTAssertEqual(nextAfter(bytes([m, 0, m])), bytes([m, 1, 0]))
-        XCTAssertEqual(nextAfter(bytes([m, 1, m])), bytes([m, 2, 0]))
-        XCTAssertEqual(nextAfter(bytes([5, m, m])), bytes([6, 0, 0]))
+        XCTAssertEqual(bytes([m]).lexicographicSuccessor(),       NSData.infinity)
+        XCTAssertEqual(bytes([m, m]).lexicographicSuccessor(),    NSData.infinity)
+        XCTAssertEqual(bytes([m, m, m]).lexicographicSuccessor(), NSData.infinity)
+        XCTAssertEqual(bytes([m, m, 9]).lexicographicSuccessor(), bytes([m, m, 10]))
+        XCTAssertEqual(bytes([m, 0, m]).lexicographicSuccessor(), bytes([m, 1, 0]))
+        XCTAssertEqual(bytes([m, 1, m]).lexicographicSuccessor(), bytes([m, 2, 0]))
+        XCTAssertEqual(bytes([5, m, m]).lexicographicSuccessor(), bytes([6, 0, 0]))
     }
     
     func testPerformanceExample() {

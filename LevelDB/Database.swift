@@ -97,7 +97,7 @@ public final class Database<K : KeyType, V : ValueType> {
 
     /// TODO
     public func snapshot() -> Snapshot<K, V> {
-        return Snapshot(database: self, byteInterval: .MinBound ... .MaxBound)
+        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
     }
     
     /// TODO
@@ -148,7 +148,7 @@ public final class Database<K : KeyType, V : ValueType> {
                             UInt(keyData.length),
                             error) as NSData?
         }.map {value in
-            value.flatMap {data in return Value.fromSerializedBytes(data) }
+            value.map {data in return Value.fromSerializedBytes(data) }?
         }
     }
     

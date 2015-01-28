@@ -7,6 +7,9 @@
 
 import Foundation
 
+// -----------------------------------------------------------------------------
+// MARK: - Protocol
+
 public protocol SnapshotType : SequenceType {
     
     /// TODO
@@ -19,27 +22,24 @@ public protocol SnapshotType : SequenceType {
     typealias Element = (Key, Value)
     
     /// TODO
-    var byteInterval: ByteInterval { get }
+    var dataInterval: DataInterval { get }
 
-    /// TODO
-    var interval: ClosedInterval<Key>? { get }
-    
     /// TODO
     func prefix(prefix: NSData) -> Self
 
     /// TODO
-    func bound(interval: ByteInterval) -> Self
+    func bound(dataInterval: DataInterval) -> Self
 
     /// TODO
     subscript(key: Key) -> Value? { get }
 
     /// TODO
-    subscript(interval: ClosedInterval<Key>) -> Self { get }
-
-    /// TODO
     subscript(interval: HalfOpenInterval<Key>) -> Self { get }
     
 }
+
+// -----------------------------------------------------------------------------
+// MARK: - Snapshot
 
 /// TODO
 public struct Snapshot<K : KeyType, V : ValueType>  {
@@ -51,37 +51,27 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     internal let database: Database
     internal let handle: Handle
-    public let byteInterval: ByteInterval
+    public let dataInterval: DataInterval
 
-    /// TODO
-    public var interval: ClosedInterval<K>? {
-        var ga = generate()
-        var gb = reverse.generate()
-        switch (ga.next(), gb.next()) {
-        case let (.Some(a), .Some(b)): return a.0 ... b.0
-        default: return nil
-        }
-    }
-    
     internal init(database: Database,
                   handle: Handle,
-                  byteInterval: ByteInterval) {
+                  dataInterval: DataInterval) {
         self.database = database
         self.handle = handle
-        self.byteInterval = byteInterval
+        self.dataInterval = dataInterval
     }
 
-    internal init(database: Database, byteInterval: ByteInterval) {
+    internal init(database: Database, dataInterval: DataInterval) {
         self.database = database
         self.handle = Handle(leveldb_create_snapshot(database.handle.pointer)) {pointer in
             leveldb_release_snapshot(database.handle.pointer, pointer)
         }
-        self.byteInterval = byteInterval
+        self.dataInterval = dataInterval
     }
 
     /// TODO
     public func cast<K1, V1>() -> Snapshot<K1, V1> {
-        return Snapshot<K1, V1>(database: database.cast(), handle: handle, byteInterval: byteInterval)
+        return Snapshot<K1, V1>(database: database.cast(), handle: handle, dataInterval: dataInterval)
     }
 
     /// TODO
@@ -100,40 +90,26 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
             NSLog("[WARN] %@ -- LevelDB.Database.get", error)
             return nil
         }, {value in
-            value.flatMap {data in return Value.fromSerializedBytes(data) }
+            value.map {data in return Value.fromSerializedBytes(data) }?
         })
     }
 
     /// TODO
     public func prefix(prefix: NSData) -> Snapshot {
-        return bound(AddBounds(prefix) ..< nextAfter(AddBounds(prefix)))
+        return bound(prefix ..< prefix.lexicographicSuccessor())
     }
 
     /// TODO
-    public func bound(interval: ByteInterval) -> Snapshot {
-        let clamped = byteInterval.clamp(interval)
+    public func bound(dataInterval: DataInterval) -> Snapshot {
+        let clamped = self.dataInterval.clamp(dataInterval)
         return Snapshot(database: database,
                         handle: handle,
-                        byteInterval: clamped)
+                        dataInterval: clamped)
     }
 
-
-    /// TODO
-    public subscript(interval: ClosedInterval<Key>) -> Snapshot {
-        let capped = RealInterval(AddBounds(interval.start) ... AddBounds(interval.end))
-        let mapped = capped.map {bound in
-            bound.map {key in key.serializedBytes}
-        }
-        return bound(mapped)
-    }
-    
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
-        let capped = RealInterval(AddBounds(interval.start) ..< AddBounds(interval.end))
-        let mapped = capped.map {bound in
-            bound.map {key in key.serializedBytes}
-        }
-        return bound(mapped)
+        return bound(interval.start.serializedBytes ..< interval.end.serializedBytes)
     }
     
     /// TODO
@@ -171,6 +147,9 @@ extension Snapshot {
 
 extension Snapshot : SnapshotType {}
 
+// -----------------------------------------------------------------------------
+// MARK: - Reverse
+
 public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     
     internal typealias Database = LevelDB.Database<K, V>
@@ -182,13 +161,8 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     public let reverse: Snapshot<Key, Value>
     
     /// TODO
-    public var byteInterval: ByteInterval {
-        return reverse.byteInterval
-    }
-    
-    /// TODO
-    public var interval: ClosedInterval<Key>? {
-        return reverse.interval
+    public var dataInterval: DataInterval {
+        return reverse.dataInterval
     }
     
     /// TODO
@@ -197,8 +171,8 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     }
 
     /// TODO
-    public func bound(interval: ByteInterval) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse.bound(interval))
+    public func bound(dataInterval: DataInterval) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.bound(dataInterval))
     }
 
     /// TODO
@@ -206,11 +180,6 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
         return reverse[key]
     }
 
-    /// TODO
-    public subscript(interval: ClosedInterval<Key>) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse[interval])
-    }
-    
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> ReverseSnapshot {
         return ReverseSnapshot(reverse: reverse[interval])
@@ -242,26 +211,8 @@ extension ReverseSnapshot : SequenceType {
 
 extension ReverseSnapshot : SnapshotType {}
 
-//extension Snapshot : CollectionType {
-//
-//    public typealias Index = SnapshotIndex<Key, Value>
-//
-//    public var startIndex: Index {
-//        return undefined()
-//    }
-//
-//    public var endIndex: Index {
-//        return undefined()
-//    }
-//
-//    public subscript(index: Index) -> Element {
-//        return undefined()
-//    }
-//    
-//}
-
 // -----------------------------------------------------------------------------
-// MARK: Generator
+// MARK: - Generators
 
 /// TODO
 public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
@@ -277,25 +228,12 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
         self.handle = Handle(
             leveldb_create_iterator(db.handle.pointer, readOptions.pointer),
             leveldb_iter_destroy)
-        switch snapshot.byteInterval.start {
-        case .MinBound:
+        let start = snapshot.dataInterval.start
+        if start.isInfinity {
+            leveldb_iter_seek_to_last(handle.pointer)
+        } else {
             leveldb_iter_seek_to_first(handle.pointer)
-        case let .NoBound(start):
             leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(start.bytes), UInt(start.length))
-            if !snapshot.byteInterval.closedStart {
-                let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
-                if let key = K.fromSerializedBytes(keyData) {
-                    // skip over the open start of interval
-                    switch start.threeWayCompare(keyData) {
-                    case .LT: break
-                    case .EQ: leveldb_iter_next(handle.pointer)
-                    case .GT: assert(false, "Found key beyond the limited interval: \(keyData)")
-                    }
-                }
-            }
-        case .MaxBound:
-            // just leave the iterator in its initial invalid state so the iteration will stop
-            assert(leveldb_iter_valid(handle.pointer) == 0)
         }
     }
     
@@ -306,12 +244,12 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
     public mutating func next() -> Element? {
         while leveldb_iter_valid(handle.pointer) != 0 {
             let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
+            if keyData.threeWayCompare(snapshot.dataInterval.end) != .LT {
+                return nil
+            }
             let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)
             var element: Element?
             if let key = K.fromSerializedBytes(keyData) {
-                if !snapshot.byteInterval.contains(AddBounds(keyData)) {
-                    return nil
-                }
                 if let value = V.fromSerializedBytes(valueData) {
                     element = (key, value)
                 }
@@ -338,25 +276,13 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
         self.handle = Handle(
             leveldb_create_iterator(db.handle.pointer, readOptions.pointer),
             leveldb_iter_destroy)
-        switch reverse.byteInterval.end {
-        case .MaxBound:
+        let end = reverse.dataInterval.end
+        if end.isInfinity {
             leveldb_iter_seek_to_last(handle.pointer)
-        case let .NoBound(end):
+        } else {
+            leveldb_iter_seek_to_first(handle.pointer)
             leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(end.bytes), UInt(end.length))
-            if !reverse.byteInterval.closedEnd {
-                let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
-                if let key = K.fromSerializedBytes(keyData) {
-                    // skip over the open end of interval
-                    switch end.threeWayCompare(keyData) {
-                    case .GT: break
-                    case .EQ: leveldb_iter_prev(handle.pointer)
-                    case .LT: assert(false, "Found key beyond the limited interval: \(keyData)")
-                    }
-                }
-            }
-        case .MinBound:
-            // just leave the iterator in its initial invalid state so the iteration will stop
-            assert(leveldb_iter_valid(handle.pointer) == 0)
+            leveldb_iter_prev(handle.pointer)
         }
     }
     
@@ -367,12 +293,12 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
     public mutating func next() -> Element? {
         while leveldb_iter_valid(handle.pointer) != 0 {
             let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
+            if keyData.threeWayCompare(reverse.dataInterval.start) == .LT {
+                return nil
+            }
             let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)
             var element: Element?
             if let key = K.fromSerializedBytes(keyData) {
-                if !reverse.byteInterval.contains(AddBounds(keyData)) {
-                    return nil
-                }
                 if let value = V.fromSerializedBytes(valueData) {
                     element = (key, value)
                 }
@@ -385,30 +311,3 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
         return nil
     }
 }
-
-// -----------------------------------------------------------------------------
-// MARK: Index
-
-//public struct SnapshotIndex<K : KeyType, V : ValueType> {
-//    
-//    private var key: AddBounds<K>
-//    
-//    
-//    
-//    public func successor() -> SnapshotIndex {
-//        return undefined()
-//    }
-//    
-//    public func predecessor() -> SnapshotIndex {
-//        return undefined()
-//    }
-//    
-//}
-//
-//extension SnapshotIndex : ThreeWayComparable {
-//    public func threeWayCompare(to: SnapshotIndex) -> Ordering {
-//        return key.threeWayCompare(to.key)
-//    }
-//}
-//
-//extension SnapshotIndex : BidirectionalIndexType {}

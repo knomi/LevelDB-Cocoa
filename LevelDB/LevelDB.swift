@@ -8,9 +8,12 @@
 import Foundation
 
 public typealias KeyType = protocol<ByteSerializable, ThreeWayComparable>
+
 public typealias ValueType = ByteSerializable
 
 public typealias ByteDatabase = Database<NSData, NSData>
+
+public typealias DataInterval = HalfOpenInterval<NSData>
 
 public func destroyDatabase(directoryPath: String) -> Either<String, ()> {
     let options = Handle(leveldb_options_create(), leveldb_options_destroy)
