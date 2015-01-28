@@ -148,6 +148,12 @@ class LevelDBTests: XCTestCase {
                                ("ab", "qux"),
                                ("b",  "bar")])
         
+        if true {
+            XCTAssertEqual(snapshot["".UTF8], "".UTF8)
+            XCTAssertEqual(snapshot["1".UTF8], "one".UTF8)
+            XCTAssertNil(snapshot["2".UTF8])
+        }
+        
         let revPairs = Array(snapshot.reverse).map {(k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }

@@ -81,7 +81,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
         let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
         leveldb_readoptions_set_snapshot(readOptions.pointer, handle.pointer)
         return tryC {error in
-            ext_leveldb_get(self.handle.pointer,
+            ext_leveldb_get(self.database.handle.pointer,
                             readOptions.pointer,
                             UnsafePointer<Int8>(keyData.bytes),
                             UInt(keyData.length),
