@@ -23,12 +23,7 @@ extension NSData {
 }
 
 func XCTAssertEqual<A : Equatable>(x: A?, y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
-    switch (x, y) {
-    case let (.Some(a), .Some(b)): XCTAssertEqual(a, b, message, file: file, line: line)
-    case let (.Some(a), .None   ): XCTAssertTrue(false, message, file: file, line: line)
-    case let (.None,    .Some(b)): XCTAssertTrue(false, message, file: file, line: line)
-    case let (.None,    .None   ): XCTAssertTrue(true, message, file: file, line: line)
-    }
+    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
 }
 
 func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
@@ -40,15 +35,21 @@ func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ 
 }
 
 class LevelDBTests: XCTestCase {
+
+    var path = ""
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        path = NSTemporaryDirectory().stringByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString)
+        
+        NSLog("using temp path: %@", path)
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        destroyDatabase("/Users/pyrtsa/Desktop/leveldb-test")
+        destroyDatabase(path)
+        assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
         super.tearDown()
     }
     
@@ -62,7 +63,7 @@ class LevelDBTests: XCTestCase {
     }
     
     func testOnDisk() {
-        let maybeDb = ByteDatabase("/Users/pyrtsa/Desktop/leveldb-test")
+        let maybeDb = ByteDatabase(path)
         XCTAssertNotNil(maybeDb)
         
         if maybeDb == nil { return }
@@ -77,8 +78,8 @@ class LevelDBTests: XCTestCase {
     }
     
     func testSnapshot() {
-        let db = ByteDatabase("/Users/pyrtsa/Desktop/leveldb-test")!
-        for (k, v) in db.snapshot {
+        let db = ByteDatabase(path)!
+        for (k, v) in db.snapshot() {
             XCTFail("Expected empty database")
         }
         
@@ -88,7 +89,7 @@ class LevelDBTests: XCTestCase {
         db["ab".UTF8] = "qux".UTF8
         db["1".UTF8]  = "one".UTF8
         
-        let snapshot = db.snapshot
+        let snapshot = db.snapshot()
         db["2".UTF8]  = "two".UTF8
         let pairs = Array(snapshot).map {(k, v) -> (String, String) in
             db[k] = k
