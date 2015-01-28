@@ -35,6 +35,14 @@ public enum AddBounds<T : ThreeWayComparable> : ThreeWayComparable {
             }
         }
     }
+    
+    public func map<U>(orderPreservingTransform: T -> U) -> AddBounds<U> {
+        switch self {
+        case     .MinBound:   return .MinBound
+        case let .NoBound(x): return .NoBound(orderPreservingTransform(x))
+        case     .MaxBound:   return .MaxBound
+        }
+    }
 }
 
 public struct RealInterval<T : ThreeWayComparable> : IntervalType {
@@ -111,5 +119,10 @@ public struct RealInterval<T : ThreeWayComparable> : IntervalType {
         return !hasInterior
     }
     
-    
+    public func map<U>(orderPreservingTransform: T -> U) -> RealInterval<U> {
+        return RealInterval<U>(closedStart,
+                               closedEnd,
+                               orderPreservingTransform(start),
+                               orderPreservingTransform(end))
+    }
 }

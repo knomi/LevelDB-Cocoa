@@ -92,6 +92,11 @@ public final class Database<K : KeyType, V : ValueType> {
 // MARK: Database access
 
     /// TODO
+    public func cast<K1, V1>() -> Database<K1, V1> {
+        return Database<K1, V1>(handle: handle)
+    }
+
+    /// TODO
     public func snapshot() -> Snapshot<K, V> {
         return Snapshot(database: self, interval: RealInterval(.MinBound ... .MaxBound))
     }

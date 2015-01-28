@@ -133,7 +133,14 @@ class LevelDBTests: XCTestCase {
         
         db["foo"] = "bar"
         
-        XCTAssertEqual(db["foo"], Optional("bar"))
+        let byteValued = db.cast() as Database<String, NSData>
+        let byteKeyed = db.cast() as Database<NSData, String>
+        let byteDb = db.cast() as Database<NSData, NSData>
+
+        XCTAssertEqual(db["foo"],             Optional("bar"))
+        XCTAssertEqual(byteValued["foo"],     Optional("bar".UTF8))
+        XCTAssertEqual(byteKeyed["foo".UTF8], Optional("bar"))
+        XCTAssertEqual(byteDb["foo".UTF8],    Optional("bar".UTF8))
 
         db["foo"] = nil
     
