@@ -28,3 +28,5 @@ NSData *ext_leveldb_get(leveldb_t *db,
 
 NSData *ext_leveldb_iter_key_unsafe(const leveldb_iterator_t *iter);
 NSData *ext_leveldb_iter_value_unsafe(const leveldb_iterator_t *iter);
+
+void ext_leveldb_writebatch_iterate(leveldb_writebatch_t *batch, void (^block)(NSData *key, NSData *optionalValue));

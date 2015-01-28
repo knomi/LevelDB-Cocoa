@@ -16,6 +16,45 @@ extension String {
     }
 }
 
+private func forkEqualRange<Ix : RandomAccessIndexType>
+    (range: Range<Ix>, ord: Ix -> Ordering) -> (lower: Range<Ix>,
+                                                upper: Range<Ix>)
+{
+    var (lo, hi) = (range.startIndex, range.endIndex)
+    while lo < hi {
+        let m = midIndex(lo, hi)
+        switch ord(m) {
+        case .LT: lo = m.successor()
+        case .EQ: return (lo ..< m, m ..< hi)
+        case .GT: hi = m
+        }
+    }
+    return (lo ..< lo, lo ..< lo)
+}
+
+private func midIndex<Ix : RandomAccessIndexType>(start: Ix, end: Ix) -> Ix {
+    return start.advancedBy(start.distanceTo(end) / 2)
+}
+
+extension WriteBatch {
+    
+    var diff: [(Key, Value?)] {
+        var diffs: [(Key, Value?)] = []
+        enumerate {key, value in
+            let (lower, upper) = forkEqualRange(indices(diffs)) {i in
+                return diffs[i].0.threeWayCompare(key)
+            }
+            if lower.startIndex != upper.endIndex {
+                diffs[lower.endIndex] = (key, value)
+            } else {
+                diffs.insert((key, value), atIndex: lower.endIndex)
+            }
+        }
+        return diffs
+    }
+    
+}
+
 extension NSData {
     var UTF8String: String {
         return NSString(data: self, encoding: NSUTF8StringEncoding)!
@@ -34,6 +73,14 @@ func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ 
     }
 }
 
+func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], ys: [(A, B?)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
+    for (x, y) in Zip2(xs, ys) {
+        XCTAssertEqual(x.0, y.0, message, file: file, line: line)
+        XCTAssertEqual(x.1, y.1, message, file: file, line: line)
+    }
+}
+
 class LevelDBTests: XCTestCase {
 
     var path = ""
@@ -42,8 +89,7 @@ class LevelDBTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         path = NSTemporaryDirectory().stringByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString)
-        
-        NSLog("using temp path: %@", path)
+        // NSLog("using temp path: %@", path)
     }
     
     override func tearDown() {
@@ -146,6 +192,59 @@ class LevelDBTests: XCTestCase {
     
         XCTAssertNil(db["foo"])
 
+    }
+    
+    func testWriteBatch() {
+    
+        let batch = WriteBatch<String, String>()
+        
+        batch.put("foo", "bar")
+        batch.delete("foo")
+        
+        XCTAssertEqual(batch.diff, [("foo", nil)])
+
+        batch.put("qux", "abc")
+        batch.delete("def")
+        batch.delete("bar")
+        batch.put("foo", "def")
+
+        XCTAssertEqual(batch.diff, [("bar", nil),
+                                    ("def", nil),
+                                    ("foo", "def"),
+                                    ("qux", "abc")])
+    
+        let db1 = Database<String, String>()
+        
+        db1["bar"] = "ghi"
+        db1["baz"] = "jkl"
+        
+        XCTAssertEqual(db1["bar"], "ghi")
+        XCTAssertEqual(db1["baz"], "jkl")
+        
+        XCTAssertNil(db1.write(batch).justError)
+        
+        XCTAssertEqual(db1["bar"], nil)
+        XCTAssertEqual(db1["baz"], "jkl")
+        XCTAssertEqual(db1["def"], nil)
+        XCTAssertEqual(db1["foo"], "def")
+        XCTAssertEqual(db1["qux"], "abc")
+
+        let db2 = Database<String, String>(path)!
+        
+        db2["def"] = "ghi"
+        db2["baz"] = "jkl"
+        
+        XCTAssertEqual(db2["def"], "ghi")
+        XCTAssertEqual(db2["baz"], "jkl")
+        
+        XCTAssertNil(db2.write(batch).justError)
+        
+        XCTAssertEqual(db2["bar"], nil)
+        XCTAssertEqual(db2["baz"], "jkl")
+        XCTAssertEqual(db2["def"], nil)
+        XCTAssertEqual(db2["foo"], "def")
+        XCTAssertEqual(db2["qux"], "abc")
+        
     }
     
     func testPerformanceExample() {

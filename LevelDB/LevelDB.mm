@@ -80,12 +80,26 @@ NSData *ext_leveldb_iter_value_unsafe(leveldb_iterator_t *iter)
     return [NSData dataWithBytesNoCopy:(void *)bytes length:length freeWhenDone:false];
 }
 
-/*
-            let keyData: NSData = {
-                var length: UInt = 0
-                let bytes = leveldb_iter_key(self.handle.pointer, &length)
-                return NSData(bytesNoCopy: UnsafeMutablePointer<Void>(bytes), length: Int(length), freeWhenDone: false)
-            }()
-*/
+struct writebatch_iterator_t {
+    void (^block)(NSData *key, NSData *optionalValue);
+};
+
+static void writebatch_put(void *iter, const char *key, size_t keylen, const char *value, size_t valuelen) {
+    writebatch_iterator_t *it = static_cast<writebatch_iterator_t *>(iter);
+    it->block([NSData dataWithBytesNoCopy:(void *)key   length:keylen   freeWhenDone:NO],
+              [NSData dataWithBytesNoCopy:(void *)value length:valuelen freeWhenDone:NO]);
+}
+
+static void writebatch_deleted(void *iter, const char *key, size_t keylen) {
+    writebatch_iterator_t *it = static_cast<writebatch_iterator_t *>(iter);
+    it->block([NSData dataWithBytesNoCopy:(void *)key length:keylen freeWhenDone:NO], nil);
+}
+
+void ext_leveldb_writebatch_iterate(leveldb_writebatch_t *batch, void (^block)(NSData *key, NSData *optionalValue))
+{
+    writebatch_iterator_t iter;
+    iter.block = block;
+    leveldb_writebatch_iterate(batch, &iter, writebatch_put, writebatch_deleted);
+}
 
 } // extern "C"

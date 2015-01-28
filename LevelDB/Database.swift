@@ -102,8 +102,13 @@ public final class Database<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func write(block: WriteBatch<K, V> -> ()) {
-        return undefined()
+    public func write(batch: WriteBatch<K, V>) -> Either<String, ()> {
+        return tryC {error in
+            leveldb_write(self.handle.pointer,
+                          self.writeOptions.pointer,
+                          batch.handle.pointer,
+                          error)
+        }
     }
     
     /// TODO

@@ -37,4 +37,22 @@ public final class WriteBatch<K : KeyType, V : ValueType> {
         leveldb_writebatch_clear(handle.pointer)
     }
     
+    public func enumerate(block: (K, V?) -> ()) {
+        ext_leveldb_writebatch_iterate(handle.pointer) {(k: NSData!, v: NSData?) in
+            if let key = K.fromSerializedBytes(k!) {
+                if let data = v {
+                    if let value = V.fromSerializedBytes(data) {
+                        block(key, value)
+                    } else {
+                        NSLog("[WARN] batch contains value that can't be deserialized -- LevelDB.WriteBatch.enumerate")
+                    }
+                } else {
+                    block(key, nil)
+                }
+            } else {
+                NSLog("[WARN] batch contains key that can't be deserialized -- LevelDB.WriteBatch.enumerate")
+            }
+        }
+    }
+    
 }
