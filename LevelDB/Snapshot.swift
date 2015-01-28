@@ -65,7 +65,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
                             UInt(keyData.length),
                             error) as NSData?
         }.either({error in
-            println(error)
+            NSLog("[WARN] %@ -- LevelDB.Database.get", error)
             return nil
         }, {value in
             value.flatMap {data in return Value.fromSerializedBytes(data) }

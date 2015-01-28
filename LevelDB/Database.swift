@@ -105,7 +105,7 @@ public final class Database<K : KeyType, V : ValueType> {
     public subscript(key: Key) -> Value? {
         get {
             return get(key).either({error in
-                println(error)
+                NSLog("[WARN] %@ -- LevelDB.Database.get", error)
                 return nil
             }, {value in
                 value
@@ -114,13 +114,13 @@ public final class Database<K : KeyType, V : ValueType> {
         set {
             if let value = newValue {
                 return put(key, value).either({error in
-                    println(error)
+                    NSLog("[WARN] %@ -- LevelDB.Database.put", error)
                 }, {_ in
                     ()
                 })
             } else { // delete
                 return delete(key).either({error in
-                    println(error)
+                    NSLog("[WARN] %@ -- LevelDB.Database.delete", error)
                 }, {_ in
                     ()
                 })
