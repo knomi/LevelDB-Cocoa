@@ -5,45 +5,6 @@
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
-public enum AddBounds<T : ThreeWayComparable> : ThreeWayComparable {
-    case MinBound
-    case NoBound(T)
-    case MaxBound
-    
-    public init(_ value: T) {
-        self = .NoBound(value)
-    }
-    
-    public func threeWayCompare(to: AddBounds) -> Ordering {
-        switch self {
-        case .MinBound:
-            switch to {
-            case .MinBound: return .EQ
-            default:        return .LT
-            }
-        case .MaxBound:
-            switch to {
-            case .MaxBound: return .EQ
-            default:        return .GT
-            }
-        case let .NoBound(x):
-            switch to {
-            case     .MaxBound:   return .LT
-            case let .NoBound(y): return x.threeWayCompare(y)
-            case     .MinBound:   return .GT
-            }
-        }
-    }
-    
-    public func map<U>(orderPreservingTransform: T -> U) -> AddBounds<U> {
-        switch self {
-        case     .MinBound:   return .MinBound
-        case let .NoBound(x): return .NoBound(orderPreservingTransform(x))
-        case     .MaxBound:   return .MaxBound
-        }
-    }
-}
-
 public struct RealInterval<T : ThreeWayComparable> : IntervalType {
 
     public typealias Bound = T

@@ -247,6 +247,29 @@ class LevelDBTests: XCTestCase {
         
     }
     
+    func testNextAfter() {
+        XCTAssertEqual(nextAfter(AddBounds.min),       AddBounds(NSData()))
+        XCTAssertEqual(nextAfter(AddBounds(NSData())), AddBounds.max)
+        XCTAssertEqual(nextAfter(AddBounds.max),       AddBounds.max)
+
+        XCTAssertEqual(nextAfter(AddBounds("A".UTF8)),   AddBounds("B".UTF8))
+        XCTAssertEqual(nextAfter(AddBounds("Ab".UTF8)),  AddBounds("Ac".UTF8))
+        XCTAssertEqual(nextAfter(AddBounds("x 8".UTF8)), AddBounds("x 9".UTF8))
+
+        let bytes = {(var array: [UInt8]) -> AddBounds<NSData> in
+            AddBounds(NSData(bytes: &array, length: array.count))
+        }
+        
+        let m = UInt8.max
+        XCTAssertEqual(nextAfter(bytes([m])),       AddBounds.max)
+        XCTAssertEqual(nextAfter(bytes([m, m])),    AddBounds.max)
+        XCTAssertEqual(nextAfter(bytes([m, m, m])), AddBounds.max)
+        XCTAssertEqual(nextAfter(bytes([m, m, 9])), bytes([m, m, 10]))
+        XCTAssertEqual(nextAfter(bytes([m, 0, m])), bytes([m, 1, 0]))
+        XCTAssertEqual(nextAfter(bytes([m, 1, m])), bytes([m, 2, 0]))
+        XCTAssertEqual(nextAfter(bytes([5, m, m])), bytes([6, 0, 0]))
+    }
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock() {
