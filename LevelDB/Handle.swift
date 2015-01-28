@@ -2,8 +2,7 @@
 //  Handle.swift
 //  LevelDB
 //
-//  Created by Pyry Jahkola on 27.01.2015.
-//  Copyright (c) 2015 Pyrtsa. All rights reserved.
+//  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
 import Foundation
