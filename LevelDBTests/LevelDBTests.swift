@@ -273,8 +273,14 @@ class LevelDBTests: XCTestCase {
         
     }
     
-    func testBound() {
-    
+    func testInfinity() {
+        XCTAssertEqual(NSData(),      NSData())
+        XCTAssertLessThan(NSData(),   "a".UTF8)
+        XCTAssertLessThan(NSData(),   NSData.infinity)
+        XCTAssertLessThan("a".UTF8,   "zzz".UTF8)
+        XCTAssertLessThan("a".UTF8,   NSData.infinity)
+        XCTAssertLessThan("zzz".UTF8, NSData.infinity)
+        XCTAssertEqual(NSData.infinity, NSData.infinity)
     }
     
     func testNextAfter() {

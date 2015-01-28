@@ -78,8 +78,7 @@ extension String : ThreeWayComparable {
 extension NSData : ThreeWayComparable {
     /// TODO
     public func threeWayCompare(to: NSData) -> Ordering {
-        let infinity = NSData.infinity
-        switch (self === infinity, to === infinity) {
+        switch (isInfinity, to.isInfinity) {
         case (false, false): break
         case (false,   _  ): return .LT
         case (  _  , false): return .GT

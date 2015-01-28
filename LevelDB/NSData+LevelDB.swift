@@ -19,12 +19,12 @@ public extension NSData {
     }
     
     @objc public var isInfinity: Bool {
-        return self === NSData.infinity
+        return self is Infinity
     }
 
     /// TODO
     public func lexicographicSuccessor() -> NSData {
-        if self === NSData.infinity {
+        if isInfinity {
             return NSData.infinity
         }
         let copy = mutableCopy() as NSMutableData
@@ -79,7 +79,7 @@ private class Infinity: NSData {
     
     override func getBytes(buffer: UnsafeMutablePointer<Void>, range: NSRange) {
         let bytes = UnsafeMutableBufferPointer<UInt8>(start: UnsafeMutablePointer(buffer), count: range.length)
-        for i in 0 ..< length {
+        for i in 0 ..< range.length {
             bytes[i] = UInt8.max
         }
     }
@@ -90,9 +90,8 @@ private class Infinity: NSData {
         return data
     }
     
-//    override func rangeOfData(dataToFind: NSData, options mask: NSDataSearchOptions, range searchRange: NSRange) -> NSRange {
-//        assertionFailure("\(__FUNCTION__): \(infinityError)")
-//    }
+    // Default implementation is "okay".
+//    override func rangeOfData(dataToFind: NSData, options mask: NSDataSearchOptions, range searchRange: NSRange) -> NSRange
     
     override func base64EncodedDataWithOptions(options: NSDataBase64EncodingOptions) -> NSData {
         assertionFailure("\(__FUNCTION__): \(infinityError)")
@@ -105,11 +104,11 @@ private class Infinity: NSData {
     }
     
     override func isEqualToData(other: NSData) -> Bool {
-        return self === other
+        return other is Infinity
     }
     
     override func isEqual(other: AnyObject?) -> Bool {
-        return self === other
+        return other is Infinity
     }
     
     override func writeToFile(path: String, atomically useAuxiliaryFile: Bool) -> Bool {
