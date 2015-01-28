@@ -1,5 +1,5 @@
 //
-//  Interval.swift
+//  RealInterval.swift
 //  LevelDB
 //
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
@@ -85,4 +85,15 @@ public struct RealInterval<T : ThreeWayComparable> : IntervalType {
                                orderPreservingTransform(start),
                                orderPreservingTransform(end))
     }
+}
+
+/// TODO
+public func ... <T : ThreeWayComparable>(start: T, end: T) -> RealInterval<T> {
+    return RealInterval(ClosedInterval(start ... end))
+}
+
+
+/// TODO
+public func ..< <T : ThreeWayComparable>(start: T, end: T) -> RealInterval<T> {
+    return RealInterval(HalfOpenInterval(start ..< end))
 }

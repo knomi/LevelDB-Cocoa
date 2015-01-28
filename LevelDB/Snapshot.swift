@@ -23,6 +23,12 @@ public protocol SnapshotType : SequenceType {
 
     /// TODO
     var interval: ClosedInterval<Key>? { get }
+    
+    /// TODO
+    func prefix(prefix: NSData) -> Self
+
+    /// TODO
+    func bound(interval: ByteInterval) -> Self
 
     /// TODO
     subscript(key: Key) -> Value? { get }
@@ -99,27 +105,45 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
-    public subscript(interval: ClosedInterval<Key>) -> Snapshot {
-        let capped = AddBounds(interval.start) ... AddBounds(interval.end)
-        let mapped = RealInterval(capped).map {bound in
-            bound.map {key in key.serializedBytes }
-        }
-        let clamped = byteInterval.clamp(mapped)
+    public func prefix(prefix: NSData) -> Snapshot {
+        return bound(AddBounds(prefix) ..< nextAfter(AddBounds(prefix)))
+    }
+
+    /// TODO
+    public func bound(interval: ByteInterval) -> Snapshot {
+        let clamped = byteInterval.clamp(interval)
         return Snapshot(database: database,
                         handle: handle,
                         byteInterval: clamped)
     }
+
+
+    /// TODO
+    public subscript(interval: ClosedInterval<Key>) -> Snapshot {
+        let capped = RealInterval(AddBounds(interval.start) ... AddBounds(interval.end))
+        let mapped = capped.map {bound in
+            bound.map {key in key.serializedBytes}
+        }
+        return bound(mapped)
+    }
     
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
-        let capped = AddBounds(interval.start) ..< AddBounds(interval.end)
-        let mapped = RealInterval(capped).map {bound in
+        let capped = RealInterval(AddBounds(interval.start) ..< AddBounds(interval.end))
+        let mapped = capped.map {bound in
             bound.map {key in key.serializedBytes}
         }
-        let clamped = byteInterval.clamp(mapped)
-        return Snapshot(database: database,
-                        handle: handle,
-                        byteInterval: clamped)
+        return bound(mapped)
+    }
+    
+    /// TODO
+    public var keys: LazySequence<MapSequenceView<Snapshot, K>> {
+        return lazy(self).map {(k, _) in k}
+    }
+    
+    /// TODO
+    public var values: LazySequence<MapSequenceView<Snapshot, V>> {
+        return lazy(self).map {(_, v) in v}
     }
     
 }
@@ -168,6 +192,16 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     }
     
     /// TODO
+    public func prefix(prefix: NSData) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.prefix(prefix))
+    }
+
+    /// TODO
+    public func bound(interval: ByteInterval) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.bound(interval))
+    }
+
+    /// TODO
     public subscript(key: Key) -> Value? {
         return reverse[key]
     }
@@ -180,6 +214,16 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> ReverseSnapshot {
         return ReverseSnapshot(reverse: reverse[interval])
+    }
+    
+    /// TODO
+    public var keys: LazySequence<MapSequenceView<ReverseSnapshot, K>> {
+        return lazy(self).map {(k, _) in k}
+    }
+    
+    /// TODO
+    public var values: LazySequence<MapSequenceView<ReverseSnapshot, V>> {
+        return lazy(self).map {(_, v) in v}
     }
     
 }

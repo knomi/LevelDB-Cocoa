@@ -247,6 +247,36 @@ class LevelDBTests: XCTestCase {
         
     }
     
+    func testPrefix() {
+        let db = Database<String, String>(path)!
+        
+        db["/z"]          = "end"
+        db["/people/foo"] = "foo"
+        db["/people/bar"] = "bar"
+        db["/pets/cat"]   = "meow"
+        db["/pets/dog"]   = "barf"
+        db["/other"]      = "other"
+
+        let snapshot = db.snapshot()
+        
+        XCTAssertEqual(snapshot.values.array, ["other", "bar", "foo", "meow", "barf", "end"])
+        
+        let people = snapshot.prefix("/people/".UTF8)
+        let pets   = snapshot.prefix("/pets/".UTF8)
+        let peh    = snapshot.prefix("/pe".UTF8)
+        let dehcat = snapshot.bound(AddBounds("/people/deh".UTF8) ... AddBounds("/pets/cat".UTF8))
+        
+        XCTAssertEqual(people.values.array, ["bar", "foo"])
+        XCTAssertEqual(pets.values.array, ["meow", "barf"])
+        XCTAssertEqual(peh.values.array, ["bar", "foo", "meow", "barf"])
+        XCTAssertEqual(dehcat.values.array, ["foo", "meow"])
+        
+    }
+    
+    func testBound() {
+    
+    }
+    
     func testNextAfter() {
         XCTAssertEqual(nextAfter(AddBounds.min),       AddBounds(NSData()))
         XCTAssertEqual(nextAfter(AddBounds(NSData())), AddBounds.max)
