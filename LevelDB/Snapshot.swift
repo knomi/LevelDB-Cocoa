@@ -31,7 +31,7 @@ public protocol SnapshotType : SequenceType {
     func prefix(#key: Key) -> Self
 
     /// TODO
-    func bound(dataInterval: DataInterval) -> Self
+    func delimit(dataInterval: DataInterval) -> Self
 
     /// TODO
     subscript(key: Key) -> Value? { get }
@@ -39,6 +39,8 @@ public protocol SnapshotType : SequenceType {
     /// TODO
     subscript(interval: HalfOpenInterval<Key>) -> Self { get }
     
+    /// TODO
+    subscript(interval: ClosedInterval<Key>) -> Self { get }
 }
 
 // -----------------------------------------------------------------------------
@@ -98,7 +100,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     /// TODO
     public func prefix(#data: NSData) -> Snapshot {
-        return bound(data ..< data.lexicographicSuccessor())
+        return delimit(data ..< data.lexicographicSuccessor())
     }
 
     /// TODO
@@ -107,7 +109,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
-    public func bound(dataInterval: DataInterval) -> Snapshot {
+    public func delimit(dataInterval: DataInterval) -> Snapshot {
         let clamped = self.dataInterval.clamp(dataInterval)
         return Snapshot(database: database,
                         handle: handle,
@@ -116,7 +118,16 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
-        return bound(interval.start.serializedBytes ..< interval.end.serializedBytes)
+        return delimit(interval.start.serializedBytes ..< interval.end.serializedBytes)
+    }
+    
+    /// TODO
+    public subscript(interval: ClosedInterval<Key>) -> Snapshot {
+        let fromEnd = delimit(interval.end.serializedBytes ..< NSData.infinity).keys
+        let pastEnd = fromEnd.filter {key in interval.end < key}
+        var g = pastEnd.generate()
+        let endData = g.next()?.serializedBytes ?? NSData.infinity
+        return delimit(interval.start.serializedBytes ..< endData)
     }
     
     /// TODO
@@ -183,8 +194,8 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     }
 
     /// TODO
-    public func bound(dataInterval: DataInterval) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse.bound(dataInterval))
+    public func delimit(dataInterval: DataInterval) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.delimit(dataInterval))
     }
 
     /// TODO
@@ -194,6 +205,11 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
 
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse[interval])
+    }
+    
+    /// TODO
+    public subscript(interval: ClosedInterval<Key>) -> ReverseSnapshot {
         return ReverseSnapshot(reverse: reverse[interval])
     }
     
