@@ -22,7 +22,7 @@ public protocol SnapshotType : SequenceType {
     typealias Element = (key: Key, value: Value)
     
     /// TODO
-    var dataInterval: DataInterval { get }
+    var dataInterval: HalfOpenInterval<NSData> { get }
 
     /// TODO
     func prefix(#data: NSData) -> Self
@@ -31,7 +31,10 @@ public protocol SnapshotType : SequenceType {
     func prefix(#key: Key) -> Self
 
     /// TODO
-    func delimit(dataInterval: DataInterval) -> Self
+    func delimit(dataInterval: HalfOpenInterval<NSData>) -> Self
+
+    /// TODO
+    func delimit(dataInterval: ClosedInterval<NSData>) -> Self
 
     /// TODO
     subscript(key: Key) -> Value? { get }
@@ -55,17 +58,17 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     internal let database: Database
     internal let handle: Handle
-    public let dataInterval: DataInterval
+    public let dataInterval: HalfOpenInterval<NSData>
 
     internal init(database: Database,
                   handle: Handle,
-                  dataInterval: DataInterval) {
+                  dataInterval: HalfOpenInterval<NSData>) {
         self.database = database
         self.handle = handle
         self.dataInterval = dataInterval
     }
 
-    internal init(database: Database, dataInterval: DataInterval) {
+    internal init(database: Database, dataInterval: HalfOpenInterval<NSData>) {
         self.database = database
         self.handle = Handle(leveldb_create_snapshot(database.handle.pointer)) {pointer in
             leveldb_release_snapshot(database.handle.pointer, pointer)
@@ -109,11 +112,20 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
-    public func delimit(dataInterval: DataInterval) -> Snapshot {
+    public func delimit(dataInterval: HalfOpenInterval<NSData>) -> Snapshot {
         let clamped = self.dataInterval.clamp(dataInterval)
         return Snapshot(database: database,
                         handle: handle,
                         dataInterval: clamped)
+    }
+
+    /// TODO
+    public func delimit(dataInterval: ClosedInterval<NSData>) -> Snapshot {
+        let fromEnd: Snapshot<NSData, NSData> = delimit(dataInterval.end ..< NSData.infinity).cast()
+        let pastEnd = fromEnd.keys.filter {key in key > dataInterval.end}
+        var g = pastEnd.generate()
+        let endData = g.next() ?? NSData.infinity
+        return delimit(dataInterval.start ..< endData)
     }
 
     /// TODO
@@ -123,11 +135,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     
     /// TODO
     public subscript(interval: ClosedInterval<Key>) -> Snapshot {
-        let fromEnd = delimit(interval.end.serializedBytes ..< NSData.infinity).keys
-        let pastEnd = fromEnd.filter {key in interval.end < key}
-        var g = pastEnd.generate()
-        let endData = g.next()?.serializedBytes ?? NSData.infinity
-        return delimit(interval.start.serializedBytes ..< endData)
+        return delimit(interval.start.serializedBytes ... interval.end.serializedBytes)
     }
     
     /// TODO
@@ -179,7 +187,7 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     public let reverse: Snapshot<Key, Value>
     
     /// TODO
-    public var dataInterval: DataInterval {
+    public var dataInterval: HalfOpenInterval<NSData> {
         return reverse.dataInterval
     }
     
@@ -194,7 +202,11 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     }
 
     /// TODO
-    public func delimit(dataInterval: DataInterval) -> ReverseSnapshot {
+    public func delimit(dataInterval: HalfOpenInterval<NSData>) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.delimit(dataInterval))
+    }
+
+    public func delimit(dataInterval: ClosedInterval<NSData>) -> ReverseSnapshot {
         return ReverseSnapshot(reverse: reverse.delimit(dataInterval))
     }
 

@@ -13,8 +13,6 @@ public typealias ValueType = ByteSerializable
 
 public typealias ByteDatabase = Database<NSData, NSData>
 
-public typealias DataInterval = HalfOpenInterval<NSData>
-
 public func destroyDatabase(directoryPath: String) -> Either<String, ()> {
     let options = Handle(leveldb_options_create(), leveldb_options_destroy)
     let name = (directoryPath as NSString).UTF8String
