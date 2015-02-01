@@ -20,6 +20,15 @@ public final class Database<K : KeyType, V : ValueType> {
 
     /// TODO
     public typealias Value = V
+    
+    /// TODO
+    public typealias Element = (key: Key, value: Value)
+    
+    /// TODO
+    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
+    
+    /// TODO
+    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
 
 // -----------------------------------------------------------------------------
 // MARK: Data
@@ -96,12 +105,12 @@ public final class Database<K : KeyType, V : ValueType> {
     }
 
     /// TODO
-    public func snapshot() -> Snapshot<K, V> {
+    public func snapshot() -> Snapshot {
         return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
     }
     
     /// TODO
-    public func write(batch: WriteBatch<K, V>) -> Either<String, ()> {
+    public func write(batch: WriteBatch) -> Either<String, ()> {
         return tryC {error in
             leveldb_write(self.handle.pointer,
                           self.writeOptions.pointer,

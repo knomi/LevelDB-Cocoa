@@ -19,13 +19,16 @@ public protocol SnapshotType : SequenceType {
     typealias Value : ValueType
 
     /// TODO
-    typealias Element = (Key, Value)
+    typealias Element = (key: Key, value: Value)
     
     /// TODO
     var dataInterval: DataInterval { get }
 
     /// TODO
-    func prefix(prefix: NSData) -> Self
+    func prefix(#data: NSData) -> Self
+
+    /// TODO
+    func prefix(#key: Key) -> Self
 
     /// TODO
     func bound(dataInterval: DataInterval) -> Self
@@ -47,7 +50,6 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     internal typealias Database = LevelDB.Database<K, V>
     public typealias Key = K
     public typealias Value = V
-    public typealias Element = (Key, Value)
 
     internal let database: Database
     internal let handle: Handle
@@ -95,8 +97,13 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
-    public func prefix(prefix: NSData) -> Snapshot {
-        return bound(prefix ..< prefix.lexicographicSuccessor())
+    public func prefix(#data: NSData) -> Snapshot {
+        return bound(data ..< data.lexicographicSuccessor())
+    }
+
+    /// TODO
+    public func prefix(#key: Key) -> Snapshot {
+        return prefix(data: key.serializedBytes)
     }
 
     /// TODO
@@ -155,7 +162,7 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     internal typealias Database = LevelDB.Database<K, V>
     public typealias Key = K
     public typealias Value = V
-    public typealias Element = (Key, Value)
+    public typealias Element = (key: Key, value: Value)
 
     /// TODO
     public let reverse: Snapshot<Key, Value>
@@ -166,8 +173,13 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func prefix(prefix: NSData) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse.prefix(prefix))
+    public func prefix(#data: NSData) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.prefix(data: data))
+    }
+
+    /// TODO
+    public func prefix(#key: Key) -> ReverseSnapshot {
+        return prefix(data: key.serializedBytes)
     }
 
     /// TODO
@@ -238,7 +250,7 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
     }
     
     /// TODO
-    public typealias Element = (K, V)
+    public typealias Element = (key: K, value: V)
     
     /// TODO
     public mutating func next() -> Element? {
@@ -251,7 +263,7 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
             var element: Element?
             if let key = K.fromSerializedBytes(keyData) {
                 if let value = V.fromSerializedBytes(valueData) {
-                    element = (key, value)
+                    element = (key: key, value: value)
                 }
             }
             leveldb_iter_next(handle.pointer)
@@ -287,7 +299,7 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
     }
     
     /// TODO
-    public typealias Element = (K, V)
+    public typealias Element = (key: K, value: V)
     
     /// TODO
     public mutating func next() -> Element? {
@@ -300,7 +312,7 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
             var element: Element?
             if let key = K.fromSerializedBytes(keyData) {
                 if let value = V.fromSerializedBytes(valueData) {
-                    element = (key, value)
+                    element = (key: key, value: value)
                 }
             }
             leveldb_iter_prev(handle.pointer)
