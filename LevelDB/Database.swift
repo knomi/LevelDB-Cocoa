@@ -35,7 +35,12 @@ public final class Database<K : KeyType, V : ValueType> {
 
     internal let handle: Handle
     internal let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
-    internal let writeOptions = Handle(leveldb_writeoptions_create(), leveldb_writeoptions_destroy)
+    internal let asyncWriteOptions = Handle(leveldb_writeoptions_create(), leveldb_writeoptions_destroy)
+    internal let syncWriteOptions: Handle = {() -> Handle in
+        let handle = Handle(leveldb_writeoptions_create(), leveldb_writeoptions_destroy)
+        leveldb_writeoptions_set_sync(handle.pointer, 1)
+        return handle
+    }()
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization
@@ -110,10 +115,11 @@ public final class Database<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func write(batch: WriteBatch) -> Either<String, ()> {
+    public func write(batch: WriteBatch, sync: Bool = false) -> Either<String, ()> {
+        let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
         return tryC {error in
             leveldb_write(self.handle.pointer,
-                          self.writeOptions.pointer,
+                          opts.pointer,
                           batch.handle.pointer,
                           error)
         }
@@ -167,7 +173,7 @@ public final class Database<K : KeyType, V : ValueType> {
         let valueData = value.serializedBytes
         return tryC {error in
             leveldb_put(self.handle.pointer,
-                        self.writeOptions.pointer,
+                        self.syncWriteOptions.pointer,
                         UnsafePointer<Int8>(keyData.bytes),
                         UInt(keyData.length),
                         UnsafePointer<Int8>(valueData.bytes),
@@ -181,7 +187,7 @@ public final class Database<K : KeyType, V : ValueType> {
         let keyData = key.serializedBytes
         return tryC {error in
             leveldb_delete(self.handle.pointer,
-                           self.writeOptions.pointer,
+                           self.syncWriteOptions.pointer,
                            UnsafePointer<Int8>(keyData.bytes),
                            UInt(keyData.length),
                            error)
