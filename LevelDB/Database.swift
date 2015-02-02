@@ -96,7 +96,7 @@ public final class Database<K : KeyType, V : ValueType> {
     public convenience init?(_ directoryPath: String) {
         switch Database.open(directoryPath, createIfMissing: true, bloomFilterBits: 10) {
         case let .Error(e):
-            // TODO: Log the error?
+            NSLog("[WARN] %@ -- LevelDB.Database.init", e.unbox)
             self.init(handle: Handle())
             return nil
         case let .Value(db):
