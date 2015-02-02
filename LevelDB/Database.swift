@@ -51,11 +51,11 @@ public final class Database<K : KeyType, V : ValueType> {
     
     /// TODO (in-memory database)
     public convenience init() {
-        let defaultEnv = leveldb_create_default_env()
-        let memoryEnv = ext_leveldb_create_in_memory_env(defaultEnv)
+        var defaultEnv = Handle(leveldb_create_default_env(), leveldb_env_destroy)
+        var memoryEnv = Handle(ext_leveldb_create_in_memory_env(defaultEnv.pointer), leveldb_env_destroy)
         let options = Handle(leveldb_options_create(), leveldb_options_destroy)
         leveldb_options_set_create_if_missing(options.pointer, 1)
-        leveldb_options_set_env(options.pointer, memoryEnv)
+        leveldb_options_set_env(options.pointer, memoryEnv.pointer)
         let name = "in-memory-\(OSAtomicIncrement32(&inMemoryCounter))"
         switch tryC({error in leveldb_open(options.pointer, name, error)}) {
         case let .Error(e):
@@ -64,40 +64,80 @@ public final class Database<K : KeyType, V : ValueType> {
             let ptr = x.unbox
             self.init(handle: Handle(ptr) {db in
                 leveldb_close(db)
-                leveldb_env_destroy(memoryEnv)
-                leveldb_env_destroy(defaultEnv)
+                memoryEnv = Handle()
+                defaultEnv = Handle()
             })
         }
     }
     
     /// TODO
+    public class func open(directoryPath:   String,
+                           createIfMissing: Bool = false,
+                           errorIfExists:   Bool = false,
+                           paranoidChecks:  Bool = false,
+                           maxOpenFiles:    Int  = 1000,
+                           bloomFilterBits: Int  = 0,
+                           cacheCapacity:   Int  = 0)
+        -> Either<String, Database>
+    {
+        return openHandle(directoryPath,
+                          createIfMissing: createIfMissing,
+                          errorIfExists:   errorIfExists,
+                          paranoidChecks:  paranoidChecks,
+                          maxOpenFiles:    maxOpenFiles,
+                          bloomFilterBits: bloomFilterBits,
+                          cacheCapacity:   cacheCapacity)
+        .map {handle in
+            Database(handle: handle)
+        }
+    }
+    
+    /// TODO
     public convenience init?(_ directoryPath: String) {
-        switch Database.openHandle(directoryPath) {
+        switch Database.open(directoryPath, createIfMissing: true, bloomFilterBits: 10) {
         case let .Error(e):
             // TODO: Log the error?
             self.init(handle: Handle())
             return nil
-        case let .Value(handle):
-            self.init(handle: handle.unbox)
+        case let .Value(db):
+            self.init(handle: db.unbox.handle)
         }
     }
     
     /// TODO
-    private class func openHandle(directoryPath: String) -> Either<String, Handle> {
+    private class func openHandle(directoryPath:   String,
+                                  createIfMissing: Bool,
+                                  errorIfExists:   Bool,
+                                  paranoidChecks:  Bool,
+                                  maxOpenFiles:    Int,
+                                  bloomFilterBits: Int,
+                                  cacheCapacity:   Int)
+        -> Either<String, Handle>
+    {
         let options = Handle(leveldb_options_create(), leveldb_options_destroy)
-        leveldb_options_set_create_if_missing(options.pointer, 1)
+        leveldb_options_set_create_if_missing(options.pointer, createIfMissing ? 1 : 0)
+        leveldb_options_set_error_if_exists  (options.pointer, errorIfExists ? 1 : 0)
+        leveldb_options_set_paranoid_checks  (options.pointer, paranoidChecks ? 1 : 0)
+        leveldb_options_set_max_open_files   (options.pointer, Int32(maxOpenFiles))
+        var bloomFilter = Handle()
+        if bloomFilterBits > 0 {
+            bloomFilter = Handle(leveldb_filterpolicy_create_bloom(Int32(bloomFilterBits)), leveldb_filterpolicy_destroy)
+            leveldb_options_set_filter_policy(options.pointer, bloomFilter.pointer)
+        }
+        var cache = Handle()
+        if cacheCapacity > 0 {
+            cache = Handle(leveldb_cache_create_lru(UInt(cacheCapacity)), leveldb_cache_destroy)
+            leveldb_options_set_cache(options.pointer, cache.pointer)
+        }
         let name = (directoryPath as NSString).UTF8String
         return tryC({error in
             leveldb_open(options.pointer, name, error)
         }).map {pointer in
-            Handle(pointer, leveldb_close)
-        }
-    }
-    
-    /// TODO
-    public class func open(directoryPath: String) -> Either<String, Database> {
-        return openHandle(directoryPath).map {handle in
-            Database(handle: handle)
+            Handle(pointer) {pointer in
+                leveldb_close(pointer)
+                cache = Handle()
+                bloomFilter = Handle()
+            }
         }
     }
     
@@ -115,7 +155,7 @@ public final class Database<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func write(batch: WriteBatch, sync: Bool = false) -> Either<String, ()> {
+    public func write(batch: WriteBatch, sync: Bool = true) -> Either<String, ()> {
         let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
         return tryC {error in
             leveldb_write(self.handle.pointer,

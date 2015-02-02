@@ -287,6 +287,42 @@ class LevelDBTests: XCTestCase {
         
     }
     
+    func testOpenFailures() {
+        XCTAssertNotNil(Database<String, String>.open(path).justError, "should fail with `createIfMissing: false`")
+        XCTAssertNotNil(Database<String, String>.open(path, createIfMissing: true).justValue, "should succeed with `createIfMissing: true`")
+        XCTAssertNotNil(Database<String, String>.open(path, errorIfExists: true).justError, "should fail with `errorIfExists: true`")
+    }
+    
+    func testFilterPolicyOption() {
+        let either = Database<String, String>.open(path,
+            createIfMissing: true,
+            bloomFilterBits: 10)
+        if let error = either.justError {
+            XCTFail("Database.open failed with error: \(error)")
+            return
+        }
+        let db = either.justValue!
+        
+        db["foo"] = "bar"
+        
+        XCTAssertEqual(db["foo"], "bar")
+    }
+    
+    func testCacheOption() {
+        let either = Database<String, String>.open(path,
+            createIfMissing: true,
+            cacheCapacity: 2 << 20)
+        if let error = either.justError {
+            XCTFail("Database.open failed with error: \(error)")
+            return
+        }
+        let db = either.justValue!
+        
+        db["foo"] = "bar"
+        
+        XCTAssertEqual(db["foo"], "bar")
+    }
+    
     func testInfinity() {
         XCTAssertEqual(NSData(),      NSData())
         XCTAssertLessThan(NSData(),   "a".UTF8)
