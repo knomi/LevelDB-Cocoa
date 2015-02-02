@@ -23,9 +23,9 @@ public extension NSData {
     }
 
     /// TODO
-    public func lexicographicSuccessor() -> NSData {
+    public func lexicographicNextSibling() -> NSData {
         if isInfinity {
-            return NSData.infinity
+            return self
         }
         let copy = mutableCopy() as NSMutableData
         let bytes = UnsafeMutableBufferPointer<UInt8>(
@@ -42,6 +42,19 @@ public extension NSData {
             }
         }
         return NSData.infinity
+    }
+
+    /// TODO
+    public func lexicographicFirstChild() -> NSData {
+        if isInfinity {
+            return self
+        }
+        let copy = mutableCopy() as NSMutableData
+        [UInt8(0)].withUnsafeBufferPointer {bytes -> () in
+            copy.appendBytes(bytes.baseAddress, length: bytes.count)
+            return ()
+        }
+        return NSData(data: copy)
     }
 
 }

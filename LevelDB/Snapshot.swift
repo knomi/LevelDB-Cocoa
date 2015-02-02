@@ -103,7 +103,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     /// TODO
     public func prefix(#data: NSData) -> Snapshot {
-        return delimit(data ..< data.lexicographicSuccessor())
+        return delimit(data ..< data.lexicographicNextSibling())
     }
 
     /// TODO
@@ -121,11 +121,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     /// TODO
     public func delimit(dataInterval: ClosedInterval<NSData>) -> Snapshot {
-        let fromEnd: Snapshot<NSData, NSData> = delimit(dataInterval.end ..< NSData.infinity).cast()
-        let pastEnd = fromEnd.keys.filter {key in key > dataInterval.end}
-        var g = pastEnd.generate()
-        let endData = g.next() ?? NSData.infinity
-        return delimit(dataInterval.start ..< endData)
+        return delimit(dataInterval.start ..< dataInterval.end.lexicographicFirstChild())
     }
 
     /// TODO
