@@ -29,6 +29,9 @@ public protocol SnapshotType : SequenceType {
 
     /// TODO
     func clamp(#from: Key?, through: Key?) -> Self
+    
+    /// TODO
+    func after(key: Key) -> Self
 
     /// TODO
     func prefix(key: Key) -> Self
@@ -121,6 +124,12 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
+    public func after(key: Key) -> Snapshot {
+        let start = key.serializedBytes.lexicographicFirstChild()
+        return clamp(start ..< dataInterval.end)
+    }
+
+    /// TODO
     public func prefix(key: Key) -> Snapshot {
         let data = key.serializedBytes
         return clamp(data ..< data.lexicographicNextSibling())
@@ -197,6 +206,11 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     /// TODO
     public func clamp(#from: Key?, through: Key?) -> ReverseSnapshot {
         return ReverseSnapshot(reverse: reverse.clamp(from: from, through: through))
+    }
+    
+    /// TODO
+    public func after(key: Key) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.after(key))
     }
     
     /// TODO

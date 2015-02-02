@@ -274,6 +274,7 @@ class LevelDBTests: XCTestCase {
         let dehcat1 = snapshot["/people/deh" ..< "/pets/cat "]
         let dehcat2 = snapshot["/people/deh" ... "/pets/cat"]
         let dehdog  = snapshot["/people/deh" ... "/pets/dog"]
+        let postcat = snapshot.after("/pets/cat")
         
         XCTAssertEqual(people.values.array, ["bar", "foo"])
         XCTAssertEqual(pets.values.array, ["meow", "barf"])
@@ -282,6 +283,7 @@ class LevelDBTests: XCTestCase {
         XCTAssertEqual(dehcat1.values.array, ["foo", "meow"])
         XCTAssertEqual(dehcat2.values.array, ["foo", "meow"])
         XCTAssertEqual(dehdog.values.array, ["foo", "meow", "barf"])
+        XCTAssertEqual(postcat.values.array, ["barf", "end"])
         
     }
     
