@@ -323,6 +323,22 @@ class LevelDBTests: XCTestCase {
         XCTAssertEqual(db["foo"], "bar")
     }
     
+    func testReadOptions() {
+        let db = Database<String, String>(path)!
+        
+        db["foo"] = "FOO"
+        db["bar"] = "BAR"
+        
+        let snapshot = db.snapshot()
+        
+        let foo = snapshot.verifyingChecksums {snap in snap["foo"]}
+        let bar = snapshot.keepingCache {snap in snap["bar"]}
+        let all = snapshot.keepingCache {snap in snap.values.array}
+        XCTAssertEqual(foo, "FOO")
+        XCTAssertEqual(bar, "BAR")
+        XCTAssertEqual(all, ["BAR", "FOO"])
+    }
+    
     func testInfinity() {
         XCTAssertEqual(NSData(),      NSData())
         XCTAssertLessThan(NSData(),   "a".UTF8)

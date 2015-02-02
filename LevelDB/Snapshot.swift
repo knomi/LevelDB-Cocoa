@@ -58,38 +58,73 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
 
     internal let database: Database
     internal let handle: Handle
+    internal let readOptions: Handle
     public let dataInterval: HalfOpenInterval<NSData>
 
     internal init(database: Database,
                   handle: Handle,
-                  dataInterval: HalfOpenInterval<NSData>) {
+                  readOptions: Handle,
+                  dataInterval: HalfOpenInterval<NSData>)
+    {
         self.database = database
         self.handle = handle
+        self.readOptions = readOptions
         self.dataInterval = dataInterval
     }
 
-    internal init(database: Database, dataInterval: HalfOpenInterval<NSData>) {
-        self.database = database
-        self.handle = Handle(leveldb_create_snapshot(database.handle.pointer)) {pointer in
+    internal init(database: Database,
+                  dataInterval: HalfOpenInterval<NSData>)
+    {
+        let handle = Handle(leveldb_create_snapshot(database.handle.pointer)) {pointer in
             leveldb_release_snapshot(database.handle.pointer, pointer)
         }
-        self.dataInterval = dataInterval
+        let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
+        leveldb_readoptions_set_snapshot(readOptions.pointer, handle.pointer)
+        self.init(database: database,
+                  handle: handle,
+                  readOptions: readOptions,
+                  dataInterval: dataInterval)
     }
 
     /// TODO
     public func cast<K1, V1>() -> Snapshot<K1, V1> {
-        return Snapshot<K1, V1>(database: database.cast(), handle: handle, dataInterval: dataInterval)
+        return Snapshot<K1, V1>(database: database.cast(),
+                                handle: handle,
+                                readOptions: readOptions,
+                                dataInterval: dataInterval)
+    }
+    
+    /// TODO
+    public func keepingCache<T>(block: Snapshot -> T) -> T
+    {
+        let customOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
+        leveldb_readoptions_set_snapshot(customOptions.pointer, handle.pointer)
+        leveldb_readoptions_set_fill_cache(customOptions.pointer, 0)
+        return block(Snapshot(database: database,
+                              handle: handle,
+                              readOptions: customOptions,
+                              dataInterval: dataInterval))
+    }
+
+    /// TODO
+    public func verifyingChecksums<T>(block: Snapshot -> T) -> T
+    {
+        let customOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
+        leveldb_readoptions_set_snapshot(customOptions.pointer, handle.pointer)
+        leveldb_readoptions_set_verify_checksums(customOptions.pointer, 1)
+        return block(Snapshot(database: database,
+                              handle: handle,
+                              readOptions: customOptions,
+                              dataInterval: dataInterval))
     }
 
     /// TODO
     public subscript(key: Key) -> Value? {
         let keyData = key.serializedBytes
         var length: UInt = 0
-        let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
-        leveldb_readoptions_set_snapshot(readOptions.pointer, handle.pointer)
         return tryC {error in
             ext_leveldb_get(self.database.handle.pointer,
-                            readOptions.pointer,
+                            self.readOptions.pointer,
                             UnsafePointer<Int8>(keyData.bytes),
                             UInt(keyData.length),
                             error) as NSData?
@@ -106,6 +141,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
         let clamped = self.dataInterval.clamp(dataInterval)
         return Snapshot(database: database,
                         handle: handle,
+                        readOptions: readOptions,
                         dataInterval: clamped)
     }
 
@@ -271,10 +307,8 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
     internal init(snapshot: Snapshot<K, V>) {
         self.snapshot = snapshot
         let db = snapshot.database
-        let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
-        leveldb_readoptions_set_snapshot(readOptions.pointer, snapshot.handle.pointer)
         self.handle = Handle(
-            leveldb_create_iterator(db.handle.pointer, readOptions.pointer),
+            leveldb_create_iterator(db.handle.pointer, snapshot.readOptions.pointer),
             leveldb_iter_destroy)
         let start = snapshot.dataInterval.start
         if start.isInfinity {
@@ -319,10 +353,8 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
     internal init(reverse: Snapshot<K, V>) {
         self.reverse = reverse
         let db = reverse.database
-        let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
-        leveldb_readoptions_set_snapshot(readOptions.pointer, reverse.handle.pointer)
         self.handle = Handle(
-            leveldb_create_iterator(db.handle.pointer, readOptions.pointer),
+            leveldb_create_iterator(db.handle.pointer, reverse.readOptions.pointer),
             leveldb_iter_destroy)
         let end = reverse.dataInterval.end
         if end.isInfinity {
