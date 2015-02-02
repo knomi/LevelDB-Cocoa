@@ -183,6 +183,7 @@
 		E0B052561A7FF50A00DCE453 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E0B052581A7FF50A00DCE453 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		E0B0525B1A7FF50A00DCE453 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		E0B0527B1A80209E00DCE453 /* version.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = version.sh; sourceTree = "<group>"; };
 		E0BF378A1A7674E400FC96E0 /* LevelDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LevelDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF378E1A7674E400FC96E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0BF378F1A7674E400FC96E0 /* LevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelDB.h; sourceTree = "<group>"; };
@@ -445,6 +446,7 @@
 				E0B052161A7F84CB00DCE453 /* Ordering.swift */,
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
 				E0BF396F1A776AC800FC96E0 /* ThreeWayComparable.swift */,
+				E0B0527B1A80209E00DCE453 /* version.sh */,
 				E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */,
 			);
 			path = LevelDB;
@@ -769,6 +771,7 @@
 				E0BF37861A7674E400FC96E0 /* Frameworks */,
 				E0BF37871A7674E400FC96E0 /* Headers */,
 				E0BF37881A7674E400FC96E0 /* Resources */,
+				E0B0527C1A8020C500DCE453 /* Set Version Number */,
 			);
 			buildRules = (
 			);
@@ -806,6 +809,7 @@
 				E0BF38F81A76D49D00FC96E0 /* Frameworks */,
 				E0BF38F91A76D49D00FC96E0 /* Headers */,
 				E0BF38FA1A76D49D00FC96E0 /* Resources */,
+				E0B0527D1A80212E00DCE453 /* Set Version Number */,
 			);
 			buildRules = (
 			);
@@ -923,6 +927,37 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E0B0527C1A8020C500DCE453 /* Set Version Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Version Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nsource LevelDB/version.sh\n";
+		};
+		E0B0527D1A80212E00DCE453 /* Set Version Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Version Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nsource LevelDB/version.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E0B052491A7FF50A00DCE453 /* Sources */ = {
