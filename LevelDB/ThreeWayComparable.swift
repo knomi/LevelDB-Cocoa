@@ -13,24 +13,6 @@ public protocol ThreeWayComparable : Comparable {
 }
 
 /// TODO
-public enum Ordering : Int {
-    case LT = -1
-    case EQ = 0
-    case GT = 1
-    public init(rawValue: Int) {
-        self = rawValue < 0 ? .LT : rawValue == 0 ? .EQ : .GT
-    }
-}
-
-/// TODO
-public func compare<T : Comparable>(left: T, right: T) -> Ordering {
-    if left < right { return .LT }
-    if right < left { return .GT }
-    assert(left == right)
-    return .EQ
-}
-
-/// TODO
 public func compare<T : ThreeWayComparable>(left: T, right: T) -> Ordering {
     return left.threeWayCompare(right)
 }
@@ -60,13 +42,6 @@ public func >= <T : ThreeWayComparable>(left: T, right: T) -> Bool {
 }
 
 // MARK: Swift & Foundation extensions
-
-public extension Ordering {
-    /// TODO
-    public init(_ value: NSComparisonResult) {
-        self.init(rawValue: value.rawValue)
-    }
-}
 
 extension String : ThreeWayComparable {
     /// TODO

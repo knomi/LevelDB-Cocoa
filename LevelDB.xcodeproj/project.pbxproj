@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E02DBB951A796F5D008BA85E /* NSData+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */; };
 		E02DBB961A796F5D008BA85E /* NSData+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */; };
+		E0B052171A7F84CB00DCE453 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052161A7F84CB00DCE453 /* Ordering.swift */; };
+		E0B052181A7F84CB00DCE453 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052161A7F84CB00DCE453 /* Ordering.swift */; };
 		E0BF37901A7674E400FC96E0 /* LevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BF378F1A7674E400FC96E0 /* LevelDB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0BF37961A7674E400FC96E0 /* LevelDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0BF378A1A7674E400FC96E0 /* LevelDB.framework */; };
 		E0BF379D1A7674E400FC96E0 /* LevelDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF379C1A7674E400FC96E0 /* LevelDBTests.swift */; };
@@ -138,6 +140,7 @@
 
 /* Begin PBXFileReference section */
 		E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+LevelDB.swift"; sourceTree = "<group>"; };
+		E0B052161A7F84CB00DCE453 /* Ordering.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ordering.swift; sourceTree = "<group>"; };
 		E0BF378A1A7674E400FC96E0 /* LevelDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LevelDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF378E1A7674E400FC96E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0BF378F1A7674E400FC96E0 /* LevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelDB.h; sourceTree = "<group>"; };
@@ -372,6 +375,7 @@
 				E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 				E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */,
+				E0B052161A7F84CB00DCE453 /* Ordering.swift */,
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
 				E0BF396F1A776AC800FC96E0 /* ThreeWayComparable.swift */,
 				E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */,
@@ -903,6 +907,7 @@
 				E0BF38EE1A76D10800FC96E0 /* env_posix.cc in Sources */,
 				E0BF39611A76EC9E00FC96E0 /* Database.swift in Sources */,
 				E0BF38ED1A76D10800FC96E0 /* env.cc in Sources */,
+				E0B052181A7F84CB00DCE453 /* Ordering.swift in Sources */,
 				E0BF38EC1A76D10800FC96E0 /* crc32c.cc in Sources */,
 				E0BF38F61A76D42400FC96E0 /* memenv.cc in Sources */,
 				E0BF38D81A76D0AD00FC96E0 /* memtable.cc in Sources */,
@@ -969,6 +974,7 @@
 				E0BF39241A76D55300FC96E0 /* table_cache.cc in Sources */,
 				E0BF39621A76EC9E00FC96E0 /* Database.swift in Sources */,
 				E0BF39361A76D55300FC96E0 /* coding.cc in Sources */,
+				E0B052171A7F84CB00DCE453 /* Ordering.swift in Sources */,
 				E0BF392C1A76D55300FC96E0 /* log_reader.cc in Sources */,
 				E0BF392E1A76D55300FC96E0 /* merger.cc in Sources */,
 				E0BF391E1A76D55300FC96E0 /* dumpfile.cc in Sources */,
