@@ -25,20 +25,17 @@ public protocol SnapshotType : SequenceType {
     var dataInterval: HalfOpenInterval<NSData> { get }
 
     /// TODO
-    func prefix(#data: NSData) -> Self
+    func clamp(#from: Key?, to: Key?) -> Self
 
     /// TODO
-    func prefix(#key: Key) -> Self
+    func clamp(#from: Key?, through: Key?) -> Self
 
     /// TODO
-    func delimit(dataInterval: HalfOpenInterval<NSData>) -> Self
-
-    /// TODO
-    func delimit(dataInterval: ClosedInterval<NSData>) -> Self
+    func prefix(key: Key) -> Self
 
     /// TODO
     subscript(key: Key) -> Value? { get }
-
+    
     /// TODO
     subscript(interval: HalfOpenInterval<Key>) -> Self { get }
     
@@ -102,17 +99,7 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
-    public func prefix(#data: NSData) -> Snapshot {
-        return delimit(data ..< data.lexicographicNextSibling())
-    }
-
-    /// TODO
-    public func prefix(#key: Key) -> Snapshot {
-        return prefix(data: key.serializedBytes)
-    }
-
-    /// TODO
-    public func delimit(dataInterval: HalfOpenInterval<NSData>) -> Snapshot {
+    private func clamp(dataInterval: HalfOpenInterval<NSData>) -> Snapshot {
         let clamped = self.dataInterval.clamp(dataInterval)
         return Snapshot(database: database,
                         handle: handle,
@@ -120,18 +107,33 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     }
 
     /// TODO
-    public func delimit(dataInterval: ClosedInterval<NSData>) -> Snapshot {
-        return delimit(dataInterval.start ..< dataInterval.end.lexicographicFirstChild())
+    public func clamp(#from: Key?, to: Key?) -> Snapshot {
+        let start = from?.serializedBytes ?? dataInterval.start
+        let end = to?.serializedBytes ?? dataInterval.end
+        return clamp(start ..< end)
+    }
+
+    /// TODO
+    public func clamp(#from: Key?, through: Key?) -> Snapshot {
+        let start = from?.serializedBytes ?? dataInterval.start
+        let end = through?.serializedBytes.lexicographicFirstChild() ?? dataInterval.end
+        return clamp(start ..< end)
+    }
+
+    /// TODO
+    public func prefix(key: Key) -> Snapshot {
+        let data = key.serializedBytes
+        return clamp(data ..< data.lexicographicNextSibling())
     }
 
     /// TODO
     public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
-        return delimit(interval.start.serializedBytes ..< interval.end.serializedBytes)
+        return clamp(from: interval.start, to: interval.end)
     }
     
     /// TODO
     public subscript(interval: ClosedInterval<Key>) -> Snapshot {
-        return delimit(interval.start.serializedBytes ... interval.end.serializedBytes)
+        return clamp(from: interval.start, through: interval.end)
     }
     
     /// TODO
@@ -186,24 +188,20 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     public var dataInterval: HalfOpenInterval<NSData> {
         return reverse.dataInterval
     }
+
+    /// TODO
+    public func clamp(#from: Key?, to: Key?) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.clamp(from: from, to: to))
+    }
+
+    /// TODO
+    public func clamp(#from: Key?, through: Key?) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.clamp(from: from, through: through))
+    }
     
     /// TODO
-    public func prefix(#data: NSData) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse.prefix(data: data))
-    }
-
-    /// TODO
-    public func prefix(#key: Key) -> ReverseSnapshot {
-        return prefix(data: key.serializedBytes)
-    }
-
-    /// TODO
-    public func delimit(dataInterval: HalfOpenInterval<NSData>) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse.delimit(dataInterval))
-    }
-
-    public func delimit(dataInterval: ClosedInterval<NSData>) -> ReverseSnapshot {
-        return ReverseSnapshot(reverse: reverse.delimit(dataInterval))
+    public func prefix(key: Key) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.prefix(key))
     }
 
     /// TODO

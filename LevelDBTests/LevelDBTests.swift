@@ -267,13 +267,13 @@ class LevelDBTests: XCTestCase {
         
         XCTAssertEqual(snapshot.values.array, ["other", "bar", "foo", "meow", "barf", "end"])
         
-        let people = snapshot.prefix(key: "/people/")
-        let pets   = snapshot.prefix(key: "/pets/")
-        let peh    = snapshot.prefix(key: "/pe")
-        let dehcat0 = snapshot.delimit("/people/deh".UTF8 ..< "/pets/cat".UTF8)
-        let dehcat1 = snapshot.delimit("/people/deh".UTF8 ..< "/pets/cat ".UTF8)
-        let dehcat2 = snapshot.delimit("/people/deh".UTF8 ... "/pets/cat".UTF8)
-        let dehdog = snapshot.delimit("/people/deh".UTF8 ... "/pets/dog".UTF8)
+        let people = snapshot.prefix("/people/")
+        let pets   = snapshot.prefix("/pets/")
+        let peh    = snapshot.prefix("/pe")
+        let dehcat0 = snapshot["/people/deh" ..< "/pets/cat"]
+        let dehcat1 = snapshot["/people/deh" ..< "/pets/cat "]
+        let dehcat2 = snapshot["/people/deh" ... "/pets/cat"]
+        let dehdog  = snapshot["/people/deh" ... "/pets/dog"]
         
         XCTAssertEqual(people.values.array, ["bar", "foo"])
         XCTAssertEqual(pets.values.array, ["meow", "barf"])
