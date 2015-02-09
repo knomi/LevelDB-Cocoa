@@ -35,3 +35,15 @@ public func repairDatabase(directoryPath: String) -> Either<String, ()> {
     fatalError("\(file):\(line): undefined \(function)")
 }
 #endif
+
+internal func tryC<T>(block: UnsafeMutablePointer<UnsafeMutablePointer<Int8>> -> T) -> Either<String, T> {
+    var error = UnsafeMutablePointer<Int8>.null()
+    let result = block(&error)
+    if error != nil {
+        let string = String.fromCString(error)!
+        leveldb_free(error)
+        return .error(string)
+    } else {
+        return .value(result)
+    }
+}
