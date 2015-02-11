@@ -12,9 +12,6 @@ private var inMemoryCounter: Int32 = 0
 /// TODO
 public final class Database<K : KeyType, V : ValueType> {
 
-// -----------------------------------------------------------------------------
-// MARK: Types
-
     /// TODO
     public typealias Key = K
 
@@ -24,12 +21,6 @@ public final class Database<K : KeyType, V : ValueType> {
     /// TODO
     public typealias Element = (key: Key, value: Value)
     
-    /// TODO
-    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
-    
-    /// TODO
-    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
-
 // -----------------------------------------------------------------------------
 // MARK: Data
 
@@ -150,22 +141,6 @@ public final class Database<K : KeyType, V : ValueType> {
     }
 
     /// TODO
-    public func snapshot() -> Snapshot {
-        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
-    }
-    
-    /// TODO
-    public func write(batch: WriteBatch, sync: Bool = true) -> Either<String, ()> {
-        let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
-        return tryC {error in
-            leveldb_write(self.handle.pointer,
-                          opts.pointer,
-                          batch.handle.pointer,
-                          error)
-        }
-    }
-    
-    /// TODO
     public subscript(key: Key) -> Value? {
         get {
             return get(key).either({error in
@@ -238,3 +213,22 @@ public final class Database<K : KeyType, V : ValueType> {
         }
     }
 }
+
+public extension Database {
+
+    /// TODO
+    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
+
+    /// TODO
+    public func write(batch: WriteBatch, sync: Bool = true) -> Either<String, ()> {
+        let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
+        return tryC {error in
+            leveldb_write(self.handle.pointer,
+                          opts.pointer,
+                          batch.handle.pointer,
+                          error)
+        }
+    }
+
+}
+
