@@ -232,3 +232,14 @@ public extension Database {
 
 }
 
+public extension Database {
+
+    /// TODO
+    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
+    
+    /// TODO
+    public func snapshot() -> LevelDB.Snapshot<Key, Value> {
+        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
+    }
+    
+}

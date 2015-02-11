@@ -7,7 +7,7 @@
 
 
 /// TODO
-public protocol SnapshotType /*: SequenceType*/ {
+public protocol SnapshotType : SequenceType {
     
     /// TODO
     typealias Key : KeyType
@@ -18,8 +18,8 @@ public protocol SnapshotType /*: SequenceType*/ {
     /// TODO
     typealias Element = (key: Key, value: Value)
     
-    /// TODO
-    var dataInterval: HalfOpenInterval<NSData> { get }
+//    /// TODO
+//    var dataInterval: HalfOpenInterval<NSData> { get }
 
     /// TODO
     func clamp(#from: Key?, to: Key?) -> Self

@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E02379E31A8A5AEF0088DF41 /* SnapshotGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379E11A8A5AEF0088DF41 /* SnapshotGenerator.swift */; };
-		E02379E61A8A5B3D0088DF41 /* ReverseSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379E41A8A5B3D0088DF41 /* ReverseSnapshot.swift */; };
-		E02379E91A8B404E0088DF41 /* ReverseSnapshotGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379E71A8B404E0088DF41 /* ReverseSnapshotGenerator.swift */; };
 		E02379EB1A8B460B0088DF41 /* SnapshotType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EA1A8B460B0088DF41 /* SnapshotType.swift */; };
 		E02379EC1A8B460B0088DF41 /* SnapshotType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EA1A8B460B0088DF41 /* SnapshotType.swift */; };
 		E02379ED1A8B468E0088DF41 /* WriteBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */; };
@@ -18,6 +15,8 @@
 		E02379F31A8B47480088DF41 /* NSDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F11A8B47470088DF41 /* NSDataTests.swift */; };
 		E02379F51A8B476D0088DF41 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F41A8B476D0088DF41 /* TestUtils.swift */; };
 		E02379F61A8B476D0088DF41 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F41A8B476D0088DF41 /* TestUtils.swift */; };
+		E02379F81A8B49C40088DF41 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */; };
+		E02379FC1A8B4A810088DF41 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */; };
 		E02DBB951A796F5D008BA85E /* NSData+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */; };
 		E02DBB961A796F5D008BA85E /* NSData+LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */; };
 		E0B052171A7F84CB00DCE453 /* Ordering.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052161A7F84CB00DCE453 /* Ordering.swift */; };
@@ -183,9 +182,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		E02379E11A8A5AEF0088DF41 /* SnapshotGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotGenerator.swift; sourceTree = "<group>"; };
-		E02379E41A8A5B3D0088DF41 /* ReverseSnapshot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReverseSnapshot.swift; sourceTree = "<group>"; };
-		E02379E71A8B404E0088DF41 /* ReverseSnapshotGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReverseSnapshotGenerator.swift; sourceTree = "<group>"; };
 		E02379EA1A8B460B0088DF41 /* SnapshotType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotType.swift; sourceTree = "<group>"; };
 		E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		E02379F11A8B47470088DF41 /* NSDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataTests.swift; sourceTree = "<group>"; };
@@ -462,10 +458,7 @@
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 				E02DBB941A796F5D008BA85E /* NSData+LevelDB.swift */,
 				E0B052161A7F84CB00DCE453 /* Ordering.swift */,
-				E02379E41A8A5B3D0088DF41 /* ReverseSnapshot.swift */,
-				E02379E71A8B404E0088DF41 /* ReverseSnapshotGenerator.swift */,
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
-				E02379E11A8A5AEF0088DF41 /* SnapshotGenerator.swift */,
 				E02379EA1A8B460B0088DF41 /* SnapshotType.swift */,
 				E0BF396F1A776AC800FC96E0 /* ThreeWayComparable.swift */,
 				E0B0527B1A80209E00DCE453 /* version.sh */,
@@ -995,7 +988,6 @@
 				E0BF38E21A76D0D200FC96E0 /* iterator.cc in Sources */,
 				E0BF393E1A76DD8400FC96E0 /* LevelDB.swift in Sources */,
 				E0BF38F11A76D10800FC96E0 /* histogram.cc in Sources */,
-				E02379E91A8B404E0088DF41 /* ReverseSnapshotGenerator.swift in Sources */,
 				E0BF38E71A76D10800FC96E0 /* arena.cc in Sources */,
 				E0BF38E11A76D0D200FC96E0 /* format.cc in Sources */,
 				E0BF38E61A76D0D200FC96E0 /* two_level_iterator.cc in Sources */,
@@ -1027,7 +1019,6 @@
 				E02DBB961A796F5D008BA85E /* NSData+LevelDB.swift in Sources */,
 				E0BF396A1A76EE4900FC96E0 /* WriteBatch.swift in Sources */,
 				E0BF39701A776AC800FC96E0 /* ThreeWayComparable.swift in Sources */,
-				E02379E61A8A5B3D0088DF41 /* ReverseSnapshot.swift in Sources */,
 				E0BF38DC1A76D0AD00FC96E0 /* version_set.cc in Sources */,
 				E0BF38DF1A76D0D200FC96E0 /* block_builder.cc in Sources */,
 				E0BF38E01A76D0D200FC96E0 /* filter_block.cc in Sources */,
@@ -1045,7 +1036,6 @@
 				E0BF38F61A76D42400FC96E0 /* memenv.cc in Sources */,
 				E0BF38D81A76D0AD00FC96E0 /* memtable.cc in Sources */,
 				E0BF38D21A76D0AD00FC96E0 /* db_iter.cc in Sources */,
-				E02379E31A8A5AEF0088DF41 /* SnapshotGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1087,6 +1077,7 @@
 				E0BF39351A76D55300FC96E0 /* c.cc in Sources */,
 				E0BF39341A76D55300FC96E0 /* version_edit.cc in Sources */,
 				E0BF39371A76D55300FC96E0 /* env_posix.cc in Sources */,
+				E02379F81A8B49C40088DF41 /* Snapshot.swift in Sources */,
 				E0BF392A1A76D55300FC96E0 /* table_builder.cc in Sources */,
 				E0BF39231A76D55300FC96E0 /* logging.cc in Sources */,
 				E0BF39191A76D55300FC96E0 /* arena.cc in Sources */,
@@ -1124,6 +1115,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0B0521A1A7FF3BD00DCE453 /* LevelDBTests.swift in Sources */,
+				E02379FC1A8B4A810088DF41 /* SnapshotTests.swift in Sources */,
 				E02379F21A8B47480088DF41 /* NSDataTests.swift in Sources */,
 				E02379F51A8B476D0088DF41 /* TestUtils.swift in Sources */,
 			);

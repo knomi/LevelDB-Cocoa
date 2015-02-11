@@ -8,25 +8,10 @@
 import Foundation
 
 // -----------------------------------------------------------------------------
-// MARK: - Database snapshot
-
-extension Database {
-
-    /// TODO
-    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
-    
-    /// TODO
-    public func snapshot() -> Snapshot {
-        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
-    }
-    
-}
-
-// -----------------------------------------------------------------------------
 // MARK: - Snapshot
 
 /// TODO
-public struct Snapshot<K : KeyType, V : ValueType>  {
+public struct Snapshot<K : KeyType, V : ValueType> {
 
     internal typealias Database = LevelDB.Database<K, V>
     public typealias Key = K
@@ -161,6 +146,66 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
         return clamp(from: interval.start, through: interval.end)
     }
     
+}
+
+//extension Snapshot : SnapshotType {}
+
+public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
+
+    private let snapshot: Snapshot<K, V>
+    private let handle: Handle
+    
+    internal init(snapshot: Snapshot<K, V>) {
+        self.snapshot = snapshot
+        let db = snapshot.database
+        self.handle = Handle(
+            leveldb_create_iterator(db.handle.pointer, snapshot.readOptions.pointer),
+            leveldb_iter_destroy)
+        let start = snapshot.dataInterval.start
+        if start.isInfinity {
+            leveldb_iter_seek_to_last(handle.pointer)
+        } else {
+            leveldb_iter_seek_to_first(handle.pointer)
+            leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(start.bytes), UInt(start.length))
+        }
+    }
+    
+    /// TODO
+    public typealias Element = (key: K, value: V)
+    
+    /// TODO
+    public mutating func next() -> Element? {
+        while leveldb_iter_valid(handle.pointer) != 0 {
+            let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
+            if keyData.threeWayCompare(snapshot.dataInterval.end) != .LT {
+                return nil
+            }
+            let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)
+            var element: Element?
+            if let key = K.fromSerializedBytes(keyData) {
+                if let value = V.fromSerializedBytes(valueData) {
+                    element = (key: key, value: value)
+                }
+            }
+            leveldb_iter_next(handle.pointer)
+            if element != nil {
+                return element
+            }
+        }
+        return nil
+    }
+}
+
+extension Snapshot : SequenceType {
+
+    /// TODO
+    public typealias Generator = SnapshotGenerator<Key, Value>
+
+    /// TODO
+    public func generate() -> Generator {
+        return Generator(snapshot: self)
+    }
+
     /// TODO
     public var keys: LazySequence<MapSequenceView<Snapshot, K>> {
         return lazy(self).map {(k, _) in k}
@@ -168,6 +213,138 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
     
     /// TODO
     public var values: LazySequence<MapSequenceView<Snapshot, V>> {
+        return lazy(self).map {(_, v) in v}
+    }
+}
+
+public struct ReverseSnapshot<K : KeyType, V : ValueType> {
+    
+    internal typealias Database = LevelDB.Database<K, V>
+    public typealias Key = K
+    public typealias Value = V
+    public typealias Element = (key: Key, value: Value)
+    
+    /// TODO
+    public let reverse: Snapshot<Key, Value>
+    
+    /// TODO
+    public var dataInterval: HalfOpenInterval<NSData> {
+        return reverse.dataInterval
+    }
+
+    /// TODO
+    public func clamp(#from: Key?, to: Key?) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.clamp(from: from, to: to))
+    }
+
+    /// TODO
+    public func clamp(#from: Key?, through: Key?) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.clamp(from: from, through: through))
+    }
+    
+    /// TODO
+    public func after(key: Key) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.after(key))
+    }
+    
+    /// TODO
+    public func prefix(key: Key) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse.prefix(key))
+    }
+
+    /// TODO
+    public subscript(key: Key) -> Value? {
+        return reverse[key]
+    }
+
+    /// TODO
+    public subscript(interval: HalfOpenInterval<Key>) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse[interval])
+    }
+    
+    /// TODO
+    public subscript(interval: ClosedInterval<Key>) -> ReverseSnapshot {
+        return ReverseSnapshot(reverse: reverse[interval])
+    }
+    
+}
+
+//extension ReverseSnapshot : SnapshotType {}
+
+public extension Snapshot {
+
+    /// TODO
+    public var reverse: ReverseSnapshot<Key, Value> {
+        return ReverseSnapshot(reverse: self)
+    }
+
+}
+
+/// TODO
+public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
+
+    private let reverse: Snapshot<K, V>
+    private let handle: Handle
+    
+    internal init(reverse: Snapshot<K, V>) {
+        self.reverse = reverse
+        let db = reverse.database
+        self.handle = Handle(
+            leveldb_create_iterator(db.handle.pointer, reverse.readOptions.pointer),
+            leveldb_iter_destroy)
+        let end = reverse.dataInterval.end
+        if end.isInfinity {
+            leveldb_iter_seek_to_last(handle.pointer)
+        } else {
+            leveldb_iter_seek_to_first(handle.pointer)
+            leveldb_iter_seek(handle.pointer, UnsafePointer<Int8>(end.bytes), UInt(end.length))
+            leveldb_iter_prev(handle.pointer)
+        }
+    }
+    
+    /// TODO
+    public typealias Element = (key: K, value: V)
+    
+    /// TODO
+    public mutating func next() -> Element? {
+        while leveldb_iter_valid(handle.pointer) != 0 {
+            let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
+            if keyData.threeWayCompare(reverse.dataInterval.start) == .LT {
+                return nil
+            }
+            let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)
+            var element: Element?
+            if let key = K.fromSerializedBytes(keyData) {
+                if let value = V.fromSerializedBytes(valueData) {
+                    element = (key: key, value: value)
+                }
+            }
+            leveldb_iter_prev(handle.pointer)
+            if element != nil {
+                return element
+            }
+        }
+        return nil
+    }
+}
+
+extension ReverseSnapshot : SequenceType {
+    
+    /// TODO
+    public typealias Generator = ReverseSnapshotGenerator<Key, Value>
+    
+    /// TODO
+    public func generate() -> Generator {
+        return ReverseSnapshotGenerator(reverse: reverse)
+    }
+    
+    /// TODO
+    public var keys: LazySequence<MapSequenceView<ReverseSnapshot, K>> {
+        return lazy(self).map {(k, _) in k}
+    }
+    
+    /// TODO
+    public var values: LazySequence<MapSequenceView<ReverseSnapshot, V>> {
         return lazy(self).map {(_, v) in v}
     }
     
