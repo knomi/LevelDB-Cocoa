@@ -27,7 +27,7 @@ public extension NSData {
         if isInfinity {
             return self
         }
-        let copy = mutableCopy() as! NSMutableData
+        let copy = mutableCopy() as NSMutableData
         let bytes = UnsafeMutableBufferPointer<UInt8>(
             start: UnsafeMutablePointer<UInt8>(copy.mutableBytes),
             count: copy.length
@@ -49,7 +49,7 @@ public extension NSData {
         if isInfinity {
             return self
         }
-        let copy = mutableCopy() as! NSMutableData
+        let copy = mutableCopy() as NSMutableData
         [UInt8(0)].withUnsafeBufferPointer {bytes -> () in
             copy.appendBytes(bytes.baseAddress, length: bytes.count)
             return ()

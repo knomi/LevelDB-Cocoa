@@ -11,7 +11,7 @@ import Foundation
 public protocol ByteSerializable {
     
     /// TODO
-    static func fromSerializedBytes(data: NSData) -> Self?
+    class func fromSerializedBytes(data: NSData) -> Self?
 
     /// TODO
     var serializedBytes: NSData { get }
