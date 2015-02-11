@@ -11,7 +11,7 @@ import Foundation
 public protocol ByteSerializable {
     
     /// TODO
-    class func fromSerializedBytes(data: NSData) -> Self?
+    static func fromSerializedBytes(data: NSData) -> Self?
 
     /// TODO
     var serializedBytes: NSData { get }
@@ -35,7 +35,7 @@ extension NSData : ByteSerializable {
 extension String : ByteSerializable {
     
     public static func fromSerializedBytes(data: NSData) -> String? {
-        return NSString(data: data, encoding: NSUTF8StringEncoding)
+        return NSString(data: data, encoding: NSUTF8StringEncoding).map {s in s as String}
     }
     
     public var serializedBytes: NSData {

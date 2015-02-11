@@ -46,7 +46,8 @@ public func >= <T : ThreeWayComparable>(left: T, right: T) -> Bool {
 extension String : ThreeWayComparable {
     /// TODO
     public func threeWayCompare(to: String) -> Ordering {
-        return Ordering(compare(to))
+        let c = compare(to)
+        return c.rawValue < 0 ? .LT : c.rawValue == 0 ? .EQ : .GT
     }
 }
 

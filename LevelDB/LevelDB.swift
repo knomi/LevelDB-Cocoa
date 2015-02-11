@@ -37,7 +37,7 @@ public func repairDatabase(directoryPath: String) -> Either<String, ()> {
 #endif
 
 internal func tryC<T>(block: UnsafeMutablePointer<UnsafeMutablePointer<Int8>> -> T) -> Either<String, T> {
-    var error = UnsafeMutablePointer<Int8>.null()
+    var error: UnsafeMutablePointer<Int8> = nil
     let result = block(&error)
     if error != nil {
         let string = String.fromCString(error)!

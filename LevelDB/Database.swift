@@ -203,7 +203,11 @@ public final class Database<K : KeyType, V : ValueType> {
                             UInt(keyData.length),
                             error) as NSData?
         }.map {value in
-            value.map {data in return Value.fromSerializedBytes(data) }?
+            if let data = value {
+                return Value.fromSerializedBytes(data)
+            } else {
+                return nil
+            }
         }
     }
     

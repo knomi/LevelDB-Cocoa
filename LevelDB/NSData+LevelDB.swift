@@ -27,7 +27,7 @@ public extension NSData {
         if isInfinity {
             return self
         }
-        let copy = mutableCopy() as NSMutableData
+        let copy = mutableCopy() as! NSMutableData
         let bytes = UnsafeMutableBufferPointer<UInt8>(
             start: UnsafeMutablePointer<UInt8>(copy.mutableBytes),
             count: copy.length
@@ -49,7 +49,7 @@ public extension NSData {
         if isInfinity {
             return self
         }
-        let copy = mutableCopy() as NSMutableData
+        let copy = mutableCopy() as! NSMutableData
         [UInt8(0)].withUnsafeBufferPointer {bytes -> () in
             copy.appendBytes(bytes.baseAddress, length: bytes.count)
             return ()
@@ -66,7 +66,7 @@ private class Infinity: NSData {
     }
     
     @objc override var bytes: UnsafePointer<Void> {
-        assertionFailure("\(__FUNCTION__): \(infinityError)")
+        assert(false, "\(__FUNCTION__): \(infinityError)")
         return nil
     }
     
@@ -107,12 +107,12 @@ private class Infinity: NSData {
 //    override func rangeOfData(dataToFind: NSData, options mask: NSDataSearchOptions, range searchRange: NSRange) -> NSRange
     
     override func base64EncodedDataWithOptions(options: NSDataBase64EncodingOptions) -> NSData {
-        assertionFailure("\(__FUNCTION__): \(infinityError)")
+        assert(false, "\(__FUNCTION__): \(infinityError)")
         return NSData()
     }
     
     override func base64EncodedStringWithOptions(options: NSDataBase64EncodingOptions) -> String {
-        assertionFailure("\(__FUNCTION__): \(infinityError)")
+        assert(false, "\(__FUNCTION__): \(infinityError)")
         return ""
     }
     

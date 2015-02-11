@@ -57,7 +57,7 @@ extension WriteBatch {
 
 extension NSData {
     var UTF8String: String {
-        return NSString(data: self, encoding: NSUTF8StringEncoding)!
+        return NSString(data: self, encoding: NSUTF8StringEncoding)! as String
     }
 }
 

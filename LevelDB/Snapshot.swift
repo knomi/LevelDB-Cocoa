@@ -132,7 +132,11 @@ public struct Snapshot<K : KeyType, V : ValueType>  {
             NSLog("[WARN] %@ -- LevelDB.Database.get", error)
             return nil
         }, {value in
-            value.map {data in return Value.fromSerializedBytes(data) }?
+            if let data = value {
+                return Value.fromSerializedBytes(data)
+            } else {
+                return nil
+            }
         })
     }
 
@@ -227,8 +231,9 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
     public typealias Element = (key: Key, value: Value)
 
     /// TODO
-    public let reverse: Snapshot<Key, Value>
+    public let reverse: Any// Snapshot<Key, Value>
     
+/*
     /// TODO
     public var dataInterval: HalfOpenInterval<NSData> {
         return reverse.dataInterval
@@ -279,8 +284,10 @@ public struct ReverseSnapshot<K : KeyType, V : ValueType> {
         return lazy(self).map {(_, v) in v}
     }
     
+*/
 }
 
+/*
 extension ReverseSnapshot : SequenceType {
     
     /// TODO
@@ -298,6 +305,7 @@ extension ReverseSnapshot : SnapshotType {}
 // -----------------------------------------------------------------------------
 // MARK: - Generators
 
+*/
 /// TODO
 public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
 
@@ -344,7 +352,7 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
         return nil
     }
 }
-
+/*
 public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
 
     private let reverse: Snapshot<K, V>
@@ -391,3 +399,4 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
         return nil
     }
 }
+*/
