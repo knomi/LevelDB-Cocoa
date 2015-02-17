@@ -100,7 +100,7 @@ class LevelDBTests: XCTestCase {
         XCTAssertEqual(db1["bar"], "ghi")
         XCTAssertEqual(db1["baz"], "jkl")
         
-        XCTAssertNil(db1.write(batch).justError)
+        XCTAssertNil(db1.write(batch).error)
         
         XCTAssertEqual(db1["bar"], nil)
         XCTAssertEqual(db1["baz"], "jkl")
@@ -116,7 +116,7 @@ class LevelDBTests: XCTestCase {
         XCTAssertEqual(db2["def"], "ghi")
         XCTAssertEqual(db2["baz"], "jkl")
         
-        XCTAssertNil(db2.write(batch).justError)
+        XCTAssertNil(db2.write(batch).error)
         
         XCTAssertEqual(db2["bar"], nil)
         XCTAssertEqual(db2["baz"], "jkl")
@@ -127,20 +127,20 @@ class LevelDBTests: XCTestCase {
     }
     
     func testOpenFailures() {
-        XCTAssertNotNil(Database<String, String>.open(path).justError, "should fail with `createIfMissing: false`")
-        XCTAssertNotNil(Database<String, String>.open(path, createIfMissing: true).justValue, "should succeed with `createIfMissing: true`")
-        XCTAssertNotNil(Database<String, String>.open(path, errorIfExists: true).justError, "should fail with `errorIfExists: true`")
+        XCTAssertNotNil(Database<String, String>.open(path).error, "should fail with `createIfMissing: false`")
+        XCTAssertNotNil(Database<String, String>.open(path, createIfMissing: true).value, "should succeed with `createIfMissing: true`")
+        XCTAssertNotNil(Database<String, String>.open(path, errorIfExists: true).error, "should fail with `errorIfExists: true`")
     }
     
     func testFilterPolicyOption() {
         let either = Database<String, String>.open(path,
             createIfMissing: true,
             bloomFilterBits: 10)
-        if let error = either.justError {
+        if let error = either.error {
             XCTFail("Database.open failed with error: \(error)")
             return
         }
-        let db = either.justValue!
+        let db = either.value!
         
         db["foo"] = "bar"
         
@@ -151,11 +151,11 @@ class LevelDBTests: XCTestCase {
         let either = Database<String, String>.open(path,
             createIfMissing: true,
             cacheCapacity: 2 << 20)
-        if let error = either.justError {
+        if let error = either.error {
             XCTFail("Database.open failed with error: \(error)")
             return
         }
-        let db = either.justValue!
+        let db = either.value!
         
         db["foo"] = "bar"
         

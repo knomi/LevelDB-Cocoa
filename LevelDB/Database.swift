@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LlamaKit
 
 private var inMemoryCounter: Int32 = 0
 
@@ -49,9 +50,9 @@ public final class Database<K : KeyType, V : ValueType> {
         leveldb_options_set_env(options.pointer, memoryEnv.pointer)
         let name = "in-memory-\(OSAtomicIncrement32(&inMemoryCounter))"
         switch tryC({error in leveldb_open(options.pointer, name, error)}) {
-        case let .Error(e):
+        case let .Failure(e):
             fatalError(e.unbox)
-        case let .Value(x):
+        case let .Success(x):
             let ptr = x.unbox
             self.init(handle: Handle(ptr) {db in
                 leveldb_close(db)
@@ -69,7 +70,7 @@ public final class Database<K : KeyType, V : ValueType> {
                            maxOpenFiles:    Int  = 1000,
                            bloomFilterBits: Int  = 0,
                            cacheCapacity:   Int  = 0)
-        -> Either<String, Database>
+        -> Result<Database, String>
     {
         return openHandle(directoryPath,
                           createIfMissing: createIfMissing,
@@ -86,11 +87,11 @@ public final class Database<K : KeyType, V : ValueType> {
     /// TODO
     public convenience init?(_ directoryPath: String) {
         switch Database.open(directoryPath, createIfMissing: true, bloomFilterBits: 10) {
-        case let .Error(e):
+        case let .Failure(e):
             NSLog("[WARN] %@ -- LevelDB.Database.init", e.unbox)
             self.init(handle: Handle())
             return nil
-        case let .Value(db):
+        case let .Success(db):
             self.init(handle: db.unbox.handle)
         }
     }
@@ -103,7 +104,7 @@ public final class Database<K : KeyType, V : ValueType> {
                                   maxOpenFiles:    Int,
                                   bloomFilterBits: Int,
                                   cacheCapacity:   Int)
-        -> Either<String, Handle>
+        -> Result<Handle, String>
     {
         let options = Handle(leveldb_options_create(), leveldb_options_destroy)
         leveldb_options_set_create_if_missing(options.pointer, createIfMissing ? 1 : 0)
@@ -168,7 +169,7 @@ public final class Database<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func get(key: Key) -> Either<String, Value?> {
+    public func get(key: Key) -> Result<Value?, String> {
         let keyData = key.serializedBytes
         var length: UInt = 0
         return tryC {error in
@@ -187,7 +188,7 @@ public final class Database<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func put(key: Key, _ value: Value) -> Either<String, ()> {
+    public func put(key: Key, _ value: Value) -> Result<(), String> {
         let keyData = key.serializedBytes
         let valueData = value.serializedBytes
         return tryC {error in
@@ -202,7 +203,7 @@ public final class Database<K : KeyType, V : ValueType> {
     }
     
     /// TODO
-    public func delete(key: Key) -> Either<String, ()> {
+    public func delete(key: Key) -> Result<(), String> {
         let keyData = key.serializedBytes
         return tryC {error in
             leveldb_delete(self.handle.pointer,
@@ -220,7 +221,7 @@ public extension Database {
     public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
 
     /// TODO
-    public func write(batch: WriteBatch, sync: Bool = true) -> Either<String, ()> {
+    public func write(batch: WriteBatch, sync: Bool = true) -> Result<(), String> {
         let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
         return tryC {error in
             leveldb_write(self.handle.pointer,
