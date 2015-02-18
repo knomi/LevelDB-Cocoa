@@ -18,26 +18,47 @@
 #include "leveldb/env.h"
 #include "leveldb/filter_policy.h"
 
-using namespace leveldb_objc;
+// -----------------------------------------------------------------------------
+#pragma mark - Constants
 
-NSString * const LDBOptionCreateIfMissing = @"LDBOptionCreateIfMissing";
-NSString * const LDBOptionErrorIfExists   = @"LDBOptionErrorIfExists";
-NSString * const LDBOptionParanoidChecks  = @"LDBOptionParanoidChecks";
-NSString * const LDBOptionWriteBufferSize = @"LDBOptionWriteBufferSize";
-NSString * const LDBOptionMaxOpenFiles    = @"LDBOptionMaxOpenFiles";
-NSString * const LDBOptionBloomFilterBits = @"LDBOptionBloomFilterBits";
-NSString * const LDBOptionCacheCapacity   = @"LDBOptionCacheCapacity";
+NSString * const LDBOptionCreateIfMissing      = @"LDBOptionCreateIfMissing";
+NSString * const LDBOptionErrorIfExists        = @"LDBOptionErrorIfExists";
+NSString * const LDBOptionParanoidChecks       = @"LDBOptionParanoidChecks";
+// - no `env` option yet
+NSString * const LDBOptionInfoLog              = @"LDBOptionInfoLog";
+NSString * const LDBOptionWriteBufferSize      = @"LDBOptionWriteBufferSize";
+NSString * const LDBOptionMaxOpenFiles         = @"LDBOptionMaxOpenFiles";
+NSString * const LDBOptionCacheCapacity        = @"LDBOptionCacheCapacity";
+NSString * const LDBOptionBlockSize            = @"LDBOptionBlockSize";
+NSString * const LDBOptionBlockRestartInterval = @"LDBOptionBlockRestartInterval";
+NSString * const LDBOptionCompression          = @"LDBOptionCompression";
+NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
+
+// -----------------------------------------------------------------------------
+#pragma mark - leveldb_objc::block_logger_t
 
 namespace leveldb_objc {
-    static void read_database_options(
-        leveldb::Options & opts,
-        std::unique_ptr<leveldb::FilterPolicy const> & filter_policy,
-        std::unique_ptr<leveldb::Cache> & cache,
-        NSDictionary *dict);
-}
+
+struct block_logger_t : leveldb::Logger {
+
+    void (^block)(NSString *message);
+    
+    virtual void Logv(const char* f, va_list a) override {
+        if (!block) return;
+        auto m = [[NSString alloc] initWithFormat:@(f) locale:nil arguments:a];
+        if (m) block(m);
+    }
+    
+};
+
+} // namespace leveldb_objc
+
+// -----------------------------------------------------------------------------
+#pragma mark - LDBDatabase
 
 @interface LDBDatabase () {
     std::unique_ptr<leveldb::Env>                 _env;
+    LDBLogger *                                   _logger;
     std::unique_ptr<leveldb::FilterPolicy const>  _filter_policy;
     std::unique_ptr<leveldb::Cache>               _cache;
     std::unique_ptr<leveldb::DB>                  _db;
@@ -53,7 +74,7 @@ namespace leveldb_objc {
 {
     auto options = leveldb::Options{};
     auto status = leveldb::DestroyDB(path.UTF8String, options);
-    return objc_result(status, error);
+    return leveldb_objc::objc_result(status, error);
 }
 
 + (BOOL)
@@ -62,7 +83,7 @@ namespace leveldb_objc {
 {
     auto options = leveldb::Options{};
     auto status = leveldb::RepairDB(path.UTF8String, options);
-    return objc_result(status, error);
+    return leveldb_objc::objc_result(status, error);
 }
 
 - (instancetype)init
@@ -111,7 +132,7 @@ namespace leveldb_objc {
     }
     
     auto options = leveldb::Options{};
-    read_database_options(options, _filter_policy, _cache, optionsDictionary);
+    [self _readOptions:options optionsDictionary:optionsDictionary];
     leveldb::DB * db = nullptr;
     auto status = leveldb::DB::Open(options, path.UTF8String, &db);
 
@@ -169,76 +190,92 @@ namespace leveldb_objc {
     // TODO
 }
 
-@end
 
+// -----------------------------------------------------------------------------
+#pragma mark - Private parts
 
-/// Parse database options and set `filter_policy` and `cache` if needed.
-static void leveldb_objc::read_database_options(
-    leveldb::Options & opts,
-    std::unique_ptr<leveldb::FilterPolicy const> & filter_policy,
-    std::unique_ptr<leveldb::Cache> & cache,
-    NSDictionary *dict)
+void readOption(int & option, NSDictionary *dict, NSString *key, BOOL (^valid)(int value))
 {
-#define READ_BOOL(option, key) /******************************************/ \
-    do {                                                                    \
-        if (id opt = dict[(key)]) {                                         \
-            if (auto val = [NSNumber ldb_cast:opt].ldb_bool) {              \
-                option = val.boolValue;                                     \
-            } else {                                                        \
-                NSLog(@"[WARN] LevelDB: Expected BOOL for %@, got %@",      \
-                    (key), opt);                                            \
-            }                                                               \
-        }                                                                   \
-    } while (0)                                                             \
-    /**/
-#define READ_INT(option, key) /*******************************************/ \
-    do {                                                                    \
-        if (id opt = dict[(key)]) {                                         \
-            if (auto val = [NSNumber ldb_cast:opt]) {                       \
-                option = val.intValue;                                      \
-            } else {                                                        \
-                NSLog(@"[WARN] LevelDB: Expected int for %@, got %@",       \
-                    (key), opt);                                            \
-            }                                                               \
-        }                                                                   \
-    } while (0)                                                             \
-    /**/
-#define READ_SIZE_T(option, key) /****************************************/ \
-    do {                                                                    \
-        if (id opt = dict[(key)]) {                                         \
-            if (auto val = [NSNumber ldb_cast:opt]) {                       \
-                option = val.unsignedLongValue;                             \
-            } else {                                                        \
-                NSLog(@"[WARN] LevelDB: Expected size_t for %@, got %@",    \
-                    (key), opt);                                            \
-            }                                                               \
-        }                                                                   \
-    } while (0)                                                             \
-    /**/
+    if (id input = dict[key]) {
+        auto number = [NSNumber ldb_cast:input];
+        if (number && valid(number.intValue)) {
+            option = number.intValue;
+        } else {
+            NSLog(@"[WARN] LevelDB: invalid value %@ for option %@", input, key);
+        }
+    }
+}
 
-    READ_BOOL(opts.create_if_missing, LDBOptionCreateIfMissing);
+/// Parse database options and set `_logger`, `_filter_policy` and `_cache` if
+/// needed.
+- (void)
+    _readOptions:(leveldb::Options &)opts
+    optionsDictionary:(NSDictionary *)dict
+{
+    // create if missing
+    
+    // error if exists
+    
+    
+    // paranoid checks
+    
+    // logger
+    
+    // write buffer size
+
+    readOption(opts.create_if_missing, dict, LDBOptionCreateIfMissing, ^{});
     READ_BOOL(opts.error_if_exists,   LDBOptionErrorIfExists);
     READ_BOOL(opts.paranoid_checks,   LDBOptionParanoidChecks);
     READ_INT(opts.max_open_files, LDBOptionMaxOpenFiles);
     READ_SIZE_T(opts.write_buffer_size, LDBOptionWriteBufferSize);
 
-#undef READ_SIZE_T
-#undef READ_INT
-#undef READ_BOOL
-
     if (auto x = [NSNumber ldb_cast:dict[LDBOptionBloomFilterBits]]) {
         int bits_per_key = x.intValue;
         if (bits_per_key > 0) {
             using ptr_t = std::unique_ptr<leveldb::FilterPolicy const>;
-            filter_policy = ptr_t(leveldb::NewBloomFilterPolicy(bits_per_key));
-            opts.filter_policy = filter_policy.get();
+            _filter_policy = ptr_t(leveldb::NewBloomFilterPolicy(bits_per_key));
+            opts.filter_policy = _filter_policy.get();
         }
     }
     if (auto x = [NSNumber ldb_cast:dict[LDBOptionCacheCapacity]]) {
         if (size_t capacity = x.unsignedLongValue) {
             using ptr_t = std::unique_ptr<leveldb::Cache>;
-            cache = ptr_t(leveldb::NewLRUCache(capacity));
-            opts.block_cache = cache.get();
+            _cache = ptr_t(leveldb::NewLRUCache(capacity));
+            opts.block_cache = _cache.get();
         }
     }
 }
+
+@end // LDBDatabase
+
+// -----------------------------------------------------------------------------
+#pragma mark - LDBLogger
+
+@interface LDBLogger () {
+    leveldb_objc::block_logger_t _impl;
+}
+
+@end
+
+@implementation LDBLogger : NSObject
+
++ (instancetype)loggerWithBlock:(void (^)(NSString *message))block
+{
+    return [[self alloc] initWithBlock:block];
+}
+
+- (instancetype)initWithBlock:(void (^)(NSString *message))block
+{
+    if (!(self = [super init])) {
+        return nil;
+    }
+    _impl.block = block;
+    return self;
+}
+
+- (void (^)(NSString *))block
+{
+    return _impl.block;
+}
+
+@end // LDBLogger

@@ -23,7 +23,7 @@ extern NSString * const LDBOptionCreateIfMissing; // NSNumber with BOOL
 extern NSString * const LDBOptionErrorIfExists;   // NSNumber with BOOL
 extern NSString * const LDBOptionParanoidChecks;  // NSNumber with BOOL
 // - no `env` option yet
-// - no `info_log` option yet
+extern NSString * const LDBOptionInfoLog;         // LDBLogger or nil
 extern NSString * const LDBOptionWriteBufferSize; // NSNumber with size_t 64K…1G
 extern NSString * const LDBOptionMaxOpenFiles;    // NSNumber with integer 74…50000
 extern NSString * const LDBOptionCacheCapacity;   // NSNumber with integer
@@ -82,6 +82,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// - `LDBOptionCreateIfMissing`: `BOOL`-valued `NSNumber`, default `NO`
 /// - `LDBOptionErrorIfExists`:   `BOOL`-valued `NSNumber`, default `NO`
 /// - `LDBOptionParanoidChecks`:  `BOOL`-valued `NSNumber`, default `NO`
+/// - `LDBOptionInfoLog`:         `LDBLogger` or `nil`, default `nil`
 /// - `LDBOptionWriteBufferSize`: `size_t`-valued `NSNumber`, default 4 MB
 /// - `LDBOptionMaxOpenFiles`:    `int`-valued `NSNumber` > 0, default 1000
 /// - `LDBOptionCacheCapacity`:   `int`-valued `NSNumber` >= 0, default 8 MB
@@ -177,6 +178,12 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
     sync:(BOOL)sync
     error:(NSError * __autoreleasing *)error;
 
+@end
+
+@interface LDBLogger : NSObject
++ (instancetype)loggerWithBlock:(void (^)(NSString *message))block;
+- (instancetype)initWithBlock:(void (^)(NSString *message))block;
+@property (nonatomic, readonly) void (^block)(NSString *message);
 @end
 
 #ifdef __cplusplus
