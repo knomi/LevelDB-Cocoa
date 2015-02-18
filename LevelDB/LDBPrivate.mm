@@ -7,6 +7,42 @@
 
 #import "LDBPrivate.hpp"
 #import "LDBError.h"
+#include <type_traits>
+
+#define LDB_UNIMPLEMENTED() /************************************************/ \
+    do {                                                                       \
+        NSLog(@"%s:%ull: unimplemented %s", __FILE__, __LINE__, __FUNCTION__); \
+        abort();                                                               \
+    } while(0)                                                                 \
+    /**/
+
+@implementation NSObject (LevelDB)
+
++ (instancetype)ldb_cast:(id)object
+{
+    return [object isKindOfClass:self] ? object : nil;
+}
+
+@end
+
+
+@implementation NSNumber (LevelDB)
+
+- (NSNumber *)ldb_bool
+{
+    if ((![self compare:@YES] && !strcmp(self.objCType, @YES.objCType)) ||
+        (![self compare:@NO] && !strcmp(self.objCType, @NO.objCType)))
+    {
+        return self;
+    } else {
+        return nil;
+    }
+}
+
+@end
+
+
+namespace leveldb_objc {
 
 BOOL objc_result(leveldb::Status const & status,
                  NSError * __autoreleasing * error)
@@ -39,3 +75,6 @@ NSError * to_NSError(leveldb::Status const & status)
 
     return [NSError errorWithDomain:LDBErrorDomain code:code userInfo:userInfo];
 }
+
+} // namespace leveldb_objc
+

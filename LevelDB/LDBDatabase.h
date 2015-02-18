@@ -14,12 +14,23 @@ extern "C" {
 @class LDBSnapshot;
 @class LDBWriteBatch;
 
-extern NSString * const LDBOptionCreateIfMissing; // BOOL
-extern NSString * const LDBOptionErrorIfExists;   // BOOL
-extern NSString * const LDBOptionParanoidChecks;  // BOOL
-extern NSString * const LDBOptionMaxOpenFiles;    // positive integer
-extern NSString * const LDBOptionBloomFilterBits; // integer in range 0...32
-extern NSString * const LDBOptionCacheCapacity;   // non-negative integer
+typedef NS_ENUM(NSInteger, LDBCompression) {
+    LDBCompressionNoCompression     = 0,
+    LDBCompressionSnappyCompression = 1
+};
+
+extern NSString * const LDBOptionCreateIfMissing; // NSNumber with BOOL
+extern NSString * const LDBOptionErrorIfExists;   // NSNumber with BOOL
+extern NSString * const LDBOptionParanoidChecks;  // NSNumber with BOOL
+// - no `env` option yet
+// - no `info_log` option yet
+extern NSString * const LDBOptionWriteBufferSize; // NSNumber with size_t 64K…1G
+extern NSString * const LDBOptionMaxOpenFiles;    // NSNumber with integer 74…50000
+extern NSString * const LDBOptionCacheCapacity;   // NSNumber with integer
+extern NSString * const LDBOptionBlockSize;       // NSNumber with size_t 1K…4M
+extern NSString * const LDBOptionBlockRestartInterval; // NSNumber with int > 0
+extern NSString * const LDBOptionCompression;     // NSNumber with LDBCompression
+extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…32
 
 @interface LDBDatabase : NSObject
 
@@ -56,6 +67,8 @@ extern NSString * const LDBOptionCacheCapacity;   // non-negative integer
 /// exist a blank database is created. Iff there is an error, returns `nil` and
 /// sets the `error` pointer with `LDBErrorMessageKey` set in the `userInfo`.
 ///
+/// Also sets up the database using the 10-bit Bloom filter.
+///
 /// **See also:** `-[LDBDatabase initWithPath:options:error:]`
 - (instancetype)initWithPath:(NSString *)path;
 
@@ -66,12 +79,16 @@ extern NSString * const LDBOptionCacheCapacity;   // non-negative integer
 ///
 /// **Options:**
 ///
-/// - `LDBOptionCreateIfMissing`: `BOOL`-valued `NSNumber`
-/// - `LDBOptionErrorIfExists`: `BOOL`-valued `NSNumber`
-/// - `LDBOptionParanoidChecks`: `BOOL`-valued `NSNumber`
-/// - `LDBOptionMaxOpenFiles`: positive, integer-valued `NSNumber`
-/// - `LDBOptionBloomFilterBits`: integer-valued `NSNumber` in the range 0...32
-/// - `LDBOptionCacheCapacity`: non-negative integer-valued `NSNumber`
+/// - `LDBOptionCreateIfMissing`: `BOOL`-valued `NSNumber`, default `NO`
+/// - `LDBOptionErrorIfExists`:   `BOOL`-valued `NSNumber`, default `NO`
+/// - `LDBOptionParanoidChecks`:  `BOOL`-valued `NSNumber`, default `NO`
+/// - `LDBOptionWriteBufferSize`: `size_t`-valued `NSNumber`, default 4 MB
+/// - `LDBOptionMaxOpenFiles`:    `int`-valued `NSNumber` > 0, default 1000
+/// - `LDBOptionCacheCapacity`:   `int`-valued `NSNumber` >= 0, default 8 MB
+/// - `LDBOptionBlockSize`:       `size_t`-valued `NSNumber`, default 4 K
+/// - `LDBOptionBlockRestartInterval`: `int`-valued `NSNumber`, default 16
+/// - `LDBOptionCompression`:     `LDBCompression`-valued `NSNumber`, default 1
+/// - `LDBOptionBloomFilterBits`: `int`-valued `NSNumber` 0...32, default 0
 ///
 /// Iff there is an error, returns `NO` and sets the `error` pointer with
 /// `LDBErrorMessageKey` set in the `userInfo`.

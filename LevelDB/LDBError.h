@@ -18,10 +18,10 @@ extern NSString * const LDBErrorMessageKey; // NSString
 
 /// NSError codes in LDBErrorDomain.
 typedef NS_ENUM(NSInteger, LDBError) {
-    LDBErrorOk              = 0,
-    LDBErrorNotFound        = 1,
-    LDBErrorCorruption      = 2,
-    LDBErrorIOError         = 5,
+    LDBErrorOk              =  0,
+    LDBErrorNotFound        =  1,
+    LDBErrorCorruption      =  2,
+    LDBErrorIOError         =  5,
     LDBErrorOther           = -1
 };
 
