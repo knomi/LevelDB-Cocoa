@@ -7,6 +7,10 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //! Project version number for LevelDB.
 FOUNDATION_EXPORT double LevelDBVersionNumber;
 
@@ -29,3 +33,7 @@ NSData *ext_leveldb_iter_key_unsafe(const leveldb_iterator_t *iter);
 NSData *ext_leveldb_iter_value_unsafe(const leveldb_iterator_t *iter);
 
 void ext_leveldb_writebatch_iterate(leveldb_writebatch_t *batch, void (^block)(NSData *key, NSData *optionalValue));
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

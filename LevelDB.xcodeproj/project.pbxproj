@@ -122,6 +122,26 @@
 		E0E829E01A936484004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
 		E0E829E21A936515004A08F4 /* LlamaKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D81A936113004A08F4 /* LlamaKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E0E829E41A936515004A08F4 /* Allsorts.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; };
+		E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; };
+		E0E829FF1A947D79004A08F4 /* LDBDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */; };
+		E0E82A001A947D79004A08F4 /* LDBDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */; };
+		E0E82A031A947DAF004A08F4 /* LDBSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */; };
+		E0E82A041A947DAF004A08F4 /* LDBSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */; };
+		E0E82A051A947DAF004A08F4 /* LDBSnapshot.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A021A947DAF004A08F4 /* LDBSnapshot.mm */; };
+		E0E82A061A947DAF004A08F4 /* LDBSnapshot.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A021A947DAF004A08F4 /* LDBSnapshot.mm */; };
+		E0E82A091A947DEE004A08F4 /* LDBWriteBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */; };
+		E0E82A0A1A947DEE004A08F4 /* LDBWriteBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */; };
+		E0E82A0B1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */; };
+		E0E82A0C1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */; };
+		E0E82A0F1A949404004A08F4 /* LDBError.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A0D1A949404004A08F4 /* LDBError.h */; };
+		E0E82A101A949404004A08F4 /* LDBError.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A0D1A949404004A08F4 /* LDBError.h */; };
+		E0E82A111A949404004A08F4 /* LDBError.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A0E1A949404004A08F4 /* LDBError.mm */; };
+		E0E82A121A949404004A08F4 /* LDBError.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A0E1A949404004A08F4 /* LDBError.mm */; };
+		E0E82A151A9496DC004A08F4 /* LDBPrivate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */; };
+		E0E82A161A9496DC004A08F4 /* LDBPrivate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */; };
+		E0E82A171A9496DC004A08F4 /* LDBPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */; };
+		E0E82A181A9496DC004A08F4 /* LDBPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -344,6 +364,16 @@
 		E0E829D11A935C86004A08F4 /* Allsorts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Allsorts.framework; path = Carthage/Build/Mac/Allsorts.framework; sourceTree = SOURCE_ROOT; };
 		E0E829D81A936113004A08F4 /* LlamaKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LlamaKit.framework; path = Carthage/Build/iOS/LlamaKit.framework; sourceTree = SOURCE_ROOT; };
 		E0E829DB1A936130004A08F4 /* LlamaKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LlamaKit.framework; path = Carthage/Build/Mac/LlamaKit.framework; sourceTree = SOURCE_ROOT; };
+		E0E829FB1A947D79004A08F4 /* LDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBDatabase.h; sourceTree = "<group>"; };
+		E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBDatabase.mm; sourceTree = "<group>"; };
+		E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBSnapshot.h; sourceTree = "<group>"; };
+		E0E82A021A947DAF004A08F4 /* LDBSnapshot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBSnapshot.mm; sourceTree = "<group>"; };
+		E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBWriteBatch.h; sourceTree = "<group>"; };
+		E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBWriteBatch.mm; sourceTree = "<group>"; };
+		E0E82A0D1A949404004A08F4 /* LDBError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBError.h; sourceTree = "<group>"; };
+		E0E82A0E1A949404004A08F4 /* LDBError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBError.mm; sourceTree = "<group>"; };
+		E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LDBPrivate.hpp; sourceTree = "<group>"; };
+		E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBPrivate.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -446,7 +476,17 @@
 		E0BF378C1A7674E400FC96E0 /* LevelDB */ = {
 			isa = PBXGroup;
 			children = (
+				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
+				E0E82A0D1A949404004A08F4 /* LDBError.h */,
+				E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */,
+				E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */,
+				E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
+				E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */,
+				E0E82A0E1A949404004A08F4 /* LDBError.mm */,
+				E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */,
+				E0E82A021A947DAF004A08F4 /* LDBSnapshot.mm */,
+				E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */,
 				E0BF397B1A779A6E00FC96E0 /* LevelDB.mm */,
 				E0BF378E1A7674E400FC96E0 /* Info.plist */,
 				E0B0527B1A80209E00DCE453 /* version.sh */,
@@ -735,7 +775,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0E82A0A1A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
+				E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */,
+				E0E82A041A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
 				E0BF39411A76DEF900FC96E0 /* c.h in Headers */,
+				E0E82A161A9496DC004A08F4 /* LDBPrivate.hpp in Headers */,
+				E0E82A101A949404004A08F4 /* LDBError.h in Headers */,
 				E0BF37901A7674E400FC96E0 /* LevelDB.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -744,7 +789,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0E82A091A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
+				E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */,
+				E0E82A031A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
 				E0BF394F1A76DEFA00FC96E0 /* c.h in Headers */,
+				E0E82A151A9496DC004A08F4 /* LDBPrivate.hpp in Headers */,
+				E0E82A0F1A949404004A08F4 /* LDBError.h in Headers */,
 				E0B052191A7FF38D00DCE453 /* LevelDB.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -986,22 +1036,27 @@
 				E0BF38E21A76D0D200FC96E0 /* iterator.cc in Sources */,
 				E0BF38F11A76D10800FC96E0 /* histogram.cc in Sources */,
 				E0BF38E71A76D10800FC96E0 /* arena.cc in Sources */,
+				E0E82A0C1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */,
 				E0BF38E11A76D0D200FC96E0 /* format.cc in Sources */,
 				E0BF38E61A76D0D200FC96E0 /* two_level_iterator.cc in Sources */,
 				E0BF38EF1A76D10800FC96E0 /* filter_policy.cc in Sources */,
 				E0BF38F51A76D11100FC96E0 /* port_posix.cc in Sources */,
+				E0E82A181A9496DC004A08F4 /* LDBPrivate.mm in Sources */,
 				E0BF38D41A76D0AD00FC96E0 /* dumpfile.cc in Sources */,
 				E0BF38E41A76D0D200FC96E0 /* table.cc in Sources */,
 				E0BF38D51A76D0AD00FC96E0 /* filename.cc in Sources */,
+				E0E82A061A947DAF004A08F4 /* LDBSnapshot.mm in Sources */,
 				E0BF38D11A76D0AD00FC96E0 /* db_impl.cc in Sources */,
 				E0BF38CF1A76D0AD00FC96E0 /* builder.cc in Sources */,
 				E0BF38F21A76D10800FC96E0 /* logging.cc in Sources */,
+				E0E82A121A949404004A08F4 /* LDBError.mm in Sources */,
 				E0BF38DA1A76D0AD00FC96E0 /* table_cache.cc in Sources */,
 				E0BF397D1A779A6E00FC96E0 /* LevelDB.mm in Sources */,
 				E0BF38E91A76D10800FC96E0 /* cache.cc in Sources */,
 				E0BF38D71A76D0AD00FC96E0 /* log_writer.cc in Sources */,
 				E0BF38DE1A76D0D200FC96E0 /* block.cc in Sources */,
 				E0BF38DD1A76D0AD00FC96E0 /* write_batch.cc in Sources */,
+				E0E82A001A947D79004A08F4 /* LDBDatabase.mm in Sources */,
 				E0BF38F01A76D10800FC96E0 /* hash.cc in Sources */,
 				E0BF38E51A76D0D200FC96E0 /* table_builder.cc in Sources */,
 				E0BF38E81A76D10800FC96E0 /* bloom.cc in Sources */,
@@ -1045,22 +1100,27 @@
 				E0BF392B1A76D55300FC96E0 /* bloom.cc in Sources */,
 				E0BF391C1A76D55300FC96E0 /* filter_policy.cc in Sources */,
 				E0BF39281A76D55300FC96E0 /* write_batch.cc in Sources */,
+				E0E82A0B1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */,
 				E0BF392D1A76D55300FC96E0 /* options.cc in Sources */,
 				E0BF391B1A76D55300FC96E0 /* two_level_iterator.cc in Sources */,
 				E0BF39161A76D55300FC96E0 /* dbformat.cc in Sources */,
 				E0BF39271A76D55300FC96E0 /* block.cc in Sources */,
+				E0E82A171A9496DC004A08F4 /* LDBPrivate.mm in Sources */,
 				E0BF393B1A76D55300FC96E0 /* memtable.cc in Sources */,
 				E0BF391F1A76D55300FC96E0 /* table.cc in Sources */,
 				E0BF39321A76D55300FC96E0 /* block_builder.cc in Sources */,
+				E0E82A051A947DAF004A08F4 /* LDBSnapshot.mm in Sources */,
 				E0BF39261A76D55300FC96E0 /* log_writer.cc in Sources */,
 				E0BF39151A76D55300FC96E0 /* comparator.cc in Sources */,
 				E0BF39331A76D55300FC96E0 /* filter_block.cc in Sources */,
+				E0E82A111A949404004A08F4 /* LDBError.mm in Sources */,
 				E0BF391D1A76D55300FC96E0 /* port_posix.cc in Sources */,
 				E0BF397C1A779A6E00FC96E0 /* LevelDB.mm in Sources */,
 				E0BF39351A76D55300FC96E0 /* c.cc in Sources */,
 				E0BF39341A76D55300FC96E0 /* version_edit.cc in Sources */,
 				E0BF39371A76D55300FC96E0 /* env_posix.cc in Sources */,
 				E0BF392A1A76D55300FC96E0 /* table_builder.cc in Sources */,
+				E0E829FF1A947D79004A08F4 /* LDBDatabase.mm in Sources */,
 				E0BF39231A76D55300FC96E0 /* logging.cc in Sources */,
 				E0BF39191A76D55300FC96E0 /* arena.cc in Sources */,
 				E0BF39291A76D55300FC96E0 /* hash.cc in Sources */,
