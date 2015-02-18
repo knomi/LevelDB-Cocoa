@@ -47,4 +47,7 @@ BOOL objc_result(leveldb::Status const & status,
 /// `LDBErrorMessageKey` as reported by `status.ToString()`.
 NSError * to_NSError(leveldb::Status const & status);
 
+/// Convert `NSData` into (a temporary, non-data-owning) `leveldb::Slice`.
+leveldb::Slice to_Slice(NSData * data);
+
 } // namespace leveldb_objc

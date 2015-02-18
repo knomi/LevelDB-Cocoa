@@ -121,9 +121,9 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 - (LDBSnapshot *)snapshot;
 
 
-/// Set the `NSData` stored at `key` to `object` if `object` is not `nil`.
-/// Otherwise, calls `[self removeObjectForKey:key]`. The key subscript operator
-/// can be used synonymously:
+/// Set the `NSData` stored at `key` to `object`. If `object` is `nil`, the
+/// key-value pair is removed exactly like `[self removeObjectForKey:key]` does.
+/// The key subscript operator can be used synonymously:
 ///
 /// ```objc
 /// database[key] = value;
@@ -136,7 +136,8 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Note that multiple updates are better performed using
 /// `-[LDBDatabase write:error:]`.
 ///
-/// Returns `NO` iff the writing failed.
+/// Returns `NO` iff there was an error. For better error reporting, consider
+/// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
 - (BOOL)setObject:(NSData *)object forKey:(NSData *)key;
@@ -151,6 +152,9 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Note that multiple updates are better performed using
 /// `-[LDBDatabase write:sync:error:]`.
 ///
+/// Returns `NO` iff there was an error. For better error reporting, consider
+/// using a write batch.
+///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
 - (BOOL)setObject:(NSData *)object forKeyedSubscript:(NSData *)key;
 
@@ -163,8 +167,11 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Note that this function flushes the files on disk, so multiple updates are
 /// better performed using `-[LDBDatabase write:sync:error:]`.
 ///
+/// Returns `NO` iff there was an error. For better error reporting, consider
+/// using a write batch.
+///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (void)removeObjectForKey:(NSData *)key;
+- (BOOL)removeObjectForKey:(NSData *)key;
 
 
 /// Perform a `batch` of put and delete writes to the database. If `sync` is

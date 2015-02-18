@@ -80,5 +80,10 @@ NSError * to_NSError(leveldb::Status const & status)
     return [NSError errorWithDomain:LDBErrorDomain code:code userInfo:userInfo];
 }
 
+leveldb::Slice to_Slice(NSData * data)
+{
+    return leveldb::Slice{static_cast<char const *>(data.bytes), data.length};
+}
+
 } // namespace leveldb_objc
 

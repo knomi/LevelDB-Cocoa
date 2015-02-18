@@ -179,14 +179,24 @@ struct block_logger_t : leveldb::Logger {
 
 - (NSData *)objectForKey:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
-    // TODO
+    if (!key) {
+        return nil;
+    }
+    
+    std::string value;
+    auto status = _db->Get(leveldb::ReadOptions{},
+                           leveldb_objc::to_Slice(key),
+                           &value);
+    if (status.ok()) {
+        return [NSData dataWithBytes:value.data() length:value.size()];
+    } else {
+        return nil;
+    }
 }
 
 - (NSData *)objectForKeyedSubscript:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
-    // TODO
+    return [self objectForKey:key];
 }
 
 - (LDBSnapshot *)snapshot
@@ -197,20 +207,30 @@ struct block_logger_t : leveldb::Logger {
 
 - (BOOL)setObject:(NSData *)object forKey:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
-    // TODO
+    if (!key) {
+        return NO;
+    }
+
+    if (object) {
+        auto status = _db->Put(leveldb::WriteOptions{},
+                               leveldb_objc::to_Slice(key),
+                               leveldb_objc::to_Slice(object));
+        return status.ok();
+    } else {
+        auto status = _db->Delete(leveldb::WriteOptions{},
+                                  leveldb_objc::to_Slice(key));
+        return status.ok();
+    }
 }
 
 - (BOOL)setObject:(NSData *)object forKeyedSubscript:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
-    // TODO
+    return [self setObject:object forKey:key];
 }
 
-- (void)removeObjectForKey:(NSData *)key
+- (BOOL)removeObjectForKey:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
-    // TODO
+    return [self setObject:nil forKey:key];
 }
 
 - (BOOL)
