@@ -7,7 +7,13 @@
 
 import Foundation
 
-/// TODO
+/// Value type that can be serialised into bytes. If `Self` also conforms to
+/// `Allsorts.Orderable`, then the binary serialisation **must** preserve the
+/// relative sort order, i.e. for all `a` and `b` of type `Self`,
+///
+/// ```swift
+/// a <=> b == a.serializedBytes <=> b.serializedBytes
+/// ```
 public protocol ByteSerializable {
     
     /// TODO

@@ -42,7 +42,7 @@ extension WriteBatch {
         var diffs: [(Key, Value?)] = []
         enumerate {key, value in
             let (lower, upper) = forkEqualRange(indices(diffs)) {i in
-                return diffs[i].0.threeWayCompare(key)
+                return diffs[i].0 <=> key
             }
             if lower.startIndex != upper.endIndex {
                 diffs[lower.endIndex] = (key, value)

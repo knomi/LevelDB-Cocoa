@@ -177,7 +177,7 @@ public struct SnapshotGenerator<K : KeyType, V : ValueType> : GeneratorType {
     public mutating func next() -> Element? {
         while leveldb_iter_valid(handle.pointer) != 0 {
             let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
-            if keyData.threeWayCompare(snapshot.dataInterval.end) != .LT {
+            if keyData >= snapshot.dataInterval.end {
                 return nil
             }
             let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)
@@ -309,7 +309,7 @@ public struct ReverseSnapshotGenerator<K : KeyType, V : ValueType> : GeneratorTy
     public mutating func next() -> Element? {
         while leveldb_iter_valid(handle.pointer) != 0 {
             let keyData = ext_leveldb_iter_key_unsafe(handle.pointer)
-            if keyData.threeWayCompare(reverse.dataInterval.start) == .LT {
+            if keyData < reverse.dataInterval.start {
                 return nil
             }
             let valueData = ext_leveldb_iter_value_unsafe(handle.pointer)

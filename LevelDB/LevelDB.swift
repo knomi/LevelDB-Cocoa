@@ -6,17 +6,12 @@
 //
 
 import Foundation
+
 import enum LlamaKit.Result
 import func LlamaKit.failure
 import func LlamaKit.success
 import let LlamaKit.ErrorFileKey
 import let LlamaKit.ErrorLineKey
-
-public typealias KeyType = protocol<ByteSerializable, ThreeWayComparable>
-
-public typealias ValueType = ByteSerializable
-
-public typealias ByteDatabase = Database<NSData, NSData>
 
 public func destroyDatabase(directoryPath: String) -> Result<(), String> {
     let options = Handle(leveldb_options_create(), leveldb_options_destroy)

@@ -5,6 +5,11 @@
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
+/// TODO
+public typealias KeyType = protocol<ByteSerializable, Comparable>
+
+/// TODO
+public typealias ValueType = ByteSerializable
 
 /// TODO
 public protocol SnapshotType : SequenceType {

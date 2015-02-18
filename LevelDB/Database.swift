@@ -11,6 +11,9 @@ import LlamaKit
 private var inMemoryCounter: Int32 = 0
 
 /// TODO
+public typealias ByteDatabase = Database<Ended<NSData>, NSData>
+
+/// TODO
 public final class Database<K : KeyType, V : ValueType> {
 
     /// TODO
@@ -215,32 +218,32 @@ public final class Database<K : KeyType, V : ValueType> {
     }
 }
 
-public extension Database {
+//public extension Database {
+//
+//    /// TODO
+//    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
+//
+//    /// TODO
+//    public func write(batch: WriteBatch, sync: Bool = true) -> Result<(), String> {
+//        let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
+//        return tryC {error in
+//            leveldb_write(self.handle.pointer,
+//                          opts.pointer,
+//                          batch.handle.pointer,
+//                          error)
+//        }
+//    }
+//
+//}
 
-    /// TODO
-    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
-
-    /// TODO
-    public func write(batch: WriteBatch, sync: Bool = true) -> Result<(), String> {
-        let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
-        return tryC {error in
-            leveldb_write(self.handle.pointer,
-                          opts.pointer,
-                          batch.handle.pointer,
-                          error)
-        }
-    }
-
-}
-
-public extension Database {
-
-    /// TODO
-    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
-    
-    /// TODO
-    public func snapshot() -> LevelDB.Snapshot<Key, Value> {
-        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
-    }
-    
-}
+//public extension Database {
+//
+//    /// TODO
+//    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
+//    
+//    /// TODO
+//    public func snapshot() -> LevelDB.Snapshot<Key, Value> {
+//        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
+//    }
+//    
+//}

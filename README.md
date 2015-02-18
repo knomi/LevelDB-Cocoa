@@ -10,7 +10,8 @@ Quick example:
 ```swift
 import LevelDB
 if let db = Database<String, String>("strings.ldb") {
-    db.write
+    db.write...
 }
+```
 
 [LevelDB]: https://github.com/google/leveldb
