@@ -6,7 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "leveldb/status.h"
+
+#import "LDBDatabase.h"
+#import "LDBSnapshot.h"
+#import "LDBWriteBatch.h"
+
+#import "leveldb/slice.h"
 
 #define LDB_UNIMPLEMENTED() /************************************************/ \
     do {                                                                       \
@@ -17,20 +22,42 @@
 
 
 
-@interface NSObject (LevelDB)
+namespace leveldb {
+    class DB;
+    class Status;
+    class Snapshot;
+    class WriteBatch;
+}
 
+
+@interface LDBDatabase (Private)
+- (leveldb::DB *)impl;
+@end
+
+
+
+@interface LDBSnapshot (Private)
+- (leveldb::Snapshot const *)impl;
+@end
+
+
+
+@interface LDBWriteBatch (Private)
+- (leveldb::WriteBatch *)impl;
+@end
+
+
+
+@interface NSObject (LevelDB)
 /// Return `object` if it is a kind of `self`, otherwise `nil`.
 + (instancetype)ldb_cast:(id)object;
-
 @end
 
 
 
 @interface NSNumber (LevelDB)
-
 /// Return `self` only if it contains a `BOOL`.
 @property (nonatomic, readonly) NSNumber * ldb_bool;
-
 @end
 
 

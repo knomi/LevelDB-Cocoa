@@ -201,8 +201,7 @@ struct block_logger_t : leveldb::Logger {
 
 - (LDBSnapshot *)snapshot
 {
-    LDB_UNIMPLEMENTED();
-    // TODO
+    return [[LDBSnapshot alloc] initWithDatabase:self];
 }
 
 - (BOOL)setObject:(NSData *)object forKey:(NSData *)key
@@ -238,15 +237,15 @@ struct block_logger_t : leveldb::Logger {
     sync:(BOOL)sync
     error:(NSError * __autoreleasing *)error
 {
+    
+
+
     LDB_UNIMPLEMENTED();
     // TODO
 }
 
-
 // -----------------------------------------------------------------------------
 #pragma mark - Private parts
-
-
 
 /// Parse database options and set `_logger`, `_filter_policy` and `_cache` if
 /// needed.
@@ -358,3 +357,12 @@ struct block_logger_t : leveldb::Logger {
 }
 
 @end // LDBDatabase
+
+@implementation LDBDatabase (Private)
+
+- (leveldb::DB *)impl
+{
+    return _db.get();
+}
+
+@end // LDBDatabase (Private)

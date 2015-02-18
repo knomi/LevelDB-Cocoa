@@ -11,7 +11,11 @@
 extern "C" {
 #endif
 
+@class LDBDatabase;
+
 @interface LDBSnapshot : NSObject
+
+- (instancetype)initWithDatabase:(LDBDatabase *)database;
 
 @end
 

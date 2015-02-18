@@ -7,13 +7,40 @@
 
 #import "LDBSnapshot.h"
 
-#define LDB_UNIMPLEMENTED() /************************************************/ \
-    do {                                                                       \
-        NSLog(@"%s:%ull: unimplemented %s", __FILE__, __LINE__, __FUNCTION__); \
-        abort();                                                               \
-    } while(0)                                                                 \
-    /**/
+#import "LDBDatabase.h"
+#import "LDBPrivate.hpp"
 
-@implementation LDBSnapshot
+#include "leveldb/db.h"
+
+#include <memory>
+#include <functional>
+
+@implementation LDBSnapshot {
+    std::shared_ptr<leveldb::Snapshot const> _impl;
+}
+
+- (instancetype)initWithDatabase:(LDBDatabase *)database
+{
+    if (!(self = [super init])) {
+        return nil;
+    }
+    
+    _impl.reset(database.impl->GetSnapshot(),
+                [database](leveldb::Snapshot const * snapshot)
+    {
+        database.impl->ReleaseSnapshot(snapshot);
+    });
+    
+    return self;
+}
+
+@end
+
+@implementation LDBSnapshot (Private)
+
+- (leveldb::Snapshot const *)impl
+{
+    return _impl.get();
+}
 
 @end

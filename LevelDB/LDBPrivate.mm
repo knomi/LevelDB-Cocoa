@@ -7,6 +7,7 @@
 
 #import "LDBPrivate.hpp"
 #import "LDBError.h"
+#import "leveldb/status.h"
 #include <type_traits>
 
 #define LDB_UNIMPLEMENTED() /************************************************/ \
