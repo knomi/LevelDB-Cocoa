@@ -16,6 +16,8 @@
     } while(0)                                                                 \
     /**/
 
+
+
 @implementation NSObject (LevelDB)
 
 + (instancetype)ldb_cast:(id)object
@@ -24,6 +26,7 @@
 }
 
 @end
+
 
 
 @implementation NSNumber (LevelDB)
@@ -40,6 +43,7 @@
 }
 
 @end
+
 
 
 namespace leveldb_objc {

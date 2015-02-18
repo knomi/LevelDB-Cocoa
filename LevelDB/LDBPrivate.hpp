@@ -15,6 +15,8 @@
     } while(0)                                                                 \
     /**/
 
+
+
 @interface NSObject (LevelDB)
 
 /// Return `object` if it is a kind of `self`, otherwise `nil`.
@@ -22,12 +24,15 @@
 
 @end
 
+
+
 @interface NSNumber (LevelDB)
 
 /// Return `self` only if it contains a `BOOL`.
 @property (nonatomic, readonly) NSNumber * ldb_bool;
 
 @end
+
 
 
 namespace leveldb_objc {
