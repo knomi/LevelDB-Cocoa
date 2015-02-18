@@ -7,14 +7,12 @@
 
 #import <Foundation/Foundation.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+@interface LDBWriteBatch : NSObject <NSFastEnumeration>
 
-@interface LDBWriteBatch : NSObject
+- (void)setObject:(NSData *)object forKeyedSubscript:(NSData *)key;
+- (void)setData:(NSData *)data forKey:(NSData *)key;
+- (void)removeDataForKey:(NSData *)key;
+
+- (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block;
 
 @end
-
-#ifdef __cplusplus
-} // extern "C"
-#endif

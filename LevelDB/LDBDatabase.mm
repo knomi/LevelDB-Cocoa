@@ -10,6 +10,7 @@
 #import "LDBSnapshot.h"
 #import "LDBWriteBatch.h"
 #import "LDBPrivate.hpp"
+#import "LDBLogger.h"
 
 #include <memory>
 #include "helpers/memenv/memenv.h"
@@ -36,61 +37,11 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
 
 
 // -----------------------------------------------------------------------------
-#pragma mark - LDBLogger
-
-namespace leveldb_objc {
-struct block_logger_t : leveldb::Logger {
-
-    void (^block)(NSString *message);
-    
-    virtual void Logv(const char* f, va_list a) override {
-        if (!block) return;
-        auto m = [[NSString alloc] initWithFormat:@(f) locale:nil arguments:a];
-        if (m) block(m);
-    }
-    
-};
-} // namespace leveldb_objc
-
-@interface LDBLogger () {
-    leveldb_objc::block_logger_t _impl;
-}
-@end
-
-@implementation LDBLogger : NSObject
-
-+ (instancetype)loggerWithBlock:(void (^)(NSString *message))block
-{
-    return [[self alloc] initWithBlock:block];
-}
-
-- (instancetype)initWithBlock:(void (^)(NSString *message))block
-{
-    if (!(self = [super init])) {
-        return nil;
-    }
-    _impl.block = block;
-    return self;
-}
-
-- (void (^)(NSString *))block
-{
-    return _impl.block;
-}
-
-- (leveldb_objc::block_logger_t *)impl
-{
-    return &_impl;
-}
-
-@end // LDBLogger
-
-// -----------------------------------------------------------------------------
 #pragma mark - LDBDatabase
 
 @interface LDBDatabase () {
     std::unique_ptr<leveldb::Env>                 _env;
-    LDBLogger *                                   _logger;
+    LDBLogger                                    *_logger;
     std::unique_ptr<leveldb::FilterPolicy const>  _filter_policy;
     std::unique_ptr<leveldb::Cache>               _cache;
     std::unique_ptr<leveldb::DB>                  _db;
@@ -133,7 +84,7 @@ struct block_logger_t : leveldb::Logger {
     static std::int64_t counter = 0;
     auto name = "leveldb-" + std::to_string(OSAtomicIncrement64(&counter));
     
-    leveldb::DB * db = nullptr;
+    leveldb::DB *db = nullptr;
     auto status = leveldb::DB::Open(options, name, &db);
 
     if (!status.ok()) {
@@ -165,7 +116,7 @@ struct block_logger_t : leveldb::Logger {
     
     auto options = leveldb::Options{};
     [self _readOptions:options optionsDictionary:optionsDictionary];
-    leveldb::DB * db = nullptr;
+    leveldb::DB *db = nullptr;
     auto status = leveldb::DB::Open(options, path.UTF8String, &db);
 
     if (!status.ok()) {
@@ -177,7 +128,7 @@ struct block_logger_t : leveldb::Logger {
     return self;
 }
 
-- (NSData *)objectForKey:(NSData *)key
+- (NSData *)dataForKey:(NSData *)key
 {
     if (!key) {
         return nil;
@@ -196,7 +147,7 @@ struct block_logger_t : leveldb::Logger {
 
 - (NSData *)objectForKeyedSubscript:(NSData *)key
 {
-    return [self objectForKey:key];
+    return [self dataForKey:key];
 }
 
 - (LDBSnapshot *)snapshot
@@ -204,7 +155,7 @@ struct block_logger_t : leveldb::Logger {
     return [[LDBSnapshot alloc] initWithDatabase:self];
 }
 
-- (BOOL)setObject:(NSData *)object forKey:(NSData *)key
+- (BOOL)setData:(NSData *)object forKey:(NSData *)key
 {
     if (!key) {
         return NO;
@@ -224,12 +175,12 @@ struct block_logger_t : leveldb::Logger {
 
 - (BOOL)setObject:(NSData *)object forKeyedSubscript:(NSData *)key
 {
-    return [self setObject:object forKey:key];
+    return [self setData:object forKey:key];
 }
 
-- (BOOL)removeObjectForKey:(NSData *)key
+- (BOOL)removeDataForKey:(NSData *)key
 {
-    return [self setObject:nil forKey:key];
+    return [self setData:nil forKey:key];
 }
 
 - (BOOL)
@@ -253,8 +204,8 @@ struct block_logger_t : leveldb::Logger {
     _readOptions:(leveldb::Options &)opts
     optionsDictionary:(NSDictionary *)dict
 {
-    void (^parse)(NSString *key, void (^block)(id value, NSString ** error)) =
-        ^(NSString *key, void (^block)(id value, NSString ** error))
+    void (^parse)(NSString *key, void (^block)(id value, NSString **error)) =
+        ^(NSString *key, void (^block)(id value, NSString **error))
     {
         if (id value = dict[key]) {
             NSString *error;
@@ -267,8 +218,8 @@ struct block_logger_t : leveldb::Logger {
         }
     };
     
-    void (^parse_bool)(NSString *key, bool & option) = ^(NSString *key, bool & option) {
-        parse(key, ^(id value, NSString ** error) {
+    void (^parse_bool)(NSString *key, bool &option) = ^(NSString *key, bool &option) {
+        parse(key, ^(id value, NSString **error) {
             if (auto number = [NSNumber ldb_cast:value].ldb_bool) {
                 option = number.boolValue;
             } else {
@@ -277,8 +228,8 @@ struct block_logger_t : leveldb::Logger {
         });
     };
 
-    void (^parse_int)(NSString *key, int & option) = ^(NSString *key, int & option) {
-        parse(key, ^(id value, NSString ** error) {
+    void (^parse_int)(NSString *key, int &option) = ^(NSString *key, int &option) {
+        parse(key, ^(id value, NSString **error) {
             if (auto number = [NSNumber ldb_cast:value]) {
                 option = number.intValue;
             } else {
@@ -287,8 +238,8 @@ struct block_logger_t : leveldb::Logger {
         });
     };
 
-    void (^parse_size_t)(NSString *key, size_t & option) = ^(NSString *key, size_t & option) {
-        parse(key, ^(id value, NSString ** error) {
+    void (^parse_size_t)(NSString *key, size_t &option) = ^(NSString *key, size_t &option) {
+        parse(key, ^(id value, NSString **error) {
             if (auto number = [NSNumber ldb_cast:value]) {
                 option = number.unsignedLongValue;
             } else {
@@ -306,7 +257,7 @@ struct block_logger_t : leveldb::Logger {
     parse_size_t(LDBOptionBlockSize, opts.block_size);
     
     // info log
-    parse(LDBOptionInfoLog, ^(id value, NSString ** error) {
+    parse(LDBOptionInfoLog, ^(id value, NSString **error) {
         if (auto logger = [LDBLogger ldb_cast:value]) {
             _logger = logger;
             opts.info_log = logger.impl;
@@ -314,7 +265,7 @@ struct block_logger_t : leveldb::Logger {
     });
     
     // block cache (cache capacity)
-    parse(LDBOptionCacheCapacity, ^(id value, NSString ** error) {
+    parse(LDBOptionCacheCapacity, ^(id value, NSString **error) {
         if (auto number = [NSNumber ldb_cast:value]) {
             if (size_t capacity = number.unsignedLongValue) {
                 using ptr_t = std::unique_ptr<leveldb::Cache>;
@@ -327,7 +278,7 @@ struct block_logger_t : leveldb::Logger {
     });
     
     // compression
-    parse(LDBOptionCompression, ^(id value, NSString ** error) {
+    parse(LDBOptionCompression, ^(id value, NSString **error) {
         if (auto number = [NSNumber ldb_cast:value]) {
             if ([number compare:@(LDBCompressionNoCompression)] == NSOrderedSame) {
                 opts.compression = leveldb::kNoCompression;
@@ -342,7 +293,7 @@ struct block_logger_t : leveldb::Logger {
     });
     
     // filter policy (bloom filter bits)
-    parse(LDBOptionBloomFilterBits, ^(id value, NSString ** error) {
+    parse(LDBOptionBloomFilterBits, ^(id value, NSString **error) {
         if (auto number = [NSNumber ldb_cast:value]) {
             int bits_per_key = number.intValue;
             if (bits_per_key > 0) {

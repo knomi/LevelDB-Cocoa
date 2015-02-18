@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 
 #import "LDBDatabase.h"
+#import "LDBLogger.h"
 #import "LDBSnapshot.h"
 #import "LDBWriteBatch.h"
 
@@ -24,6 +25,7 @@
 
 namespace leveldb {
     class DB;
+    class Logger;
     class Status;
     class Snapshot;
     class WriteBatch;
@@ -48,6 +50,12 @@ namespace leveldb {
 
 
 
+@interface LDBLogger (Private)
+- (leveldb::Logger *)impl;
+@end
+
+
+
 @interface NSObject (LevelDB)
 /// Return `object` if it is a kind of `self`, otherwise `nil`.
 + (instancetype)ldb_cast:(id)object;
@@ -66,15 +74,22 @@ namespace leveldb_objc {
 
 /// Check whether the `status` is successful. If not, and `error` is not `NULL`,
 /// set the `*error` to `to_NSError(status)`.
-BOOL objc_result(leveldb::Status const & status,
-                 NSError * __autoreleasing * error);
+BOOL objc_result(leveldb::Status const &status,
+                 NSError * __autoreleasing *error);
 
 /// Convert the `status` into an `NSError` with `domain` equal to
 /// `LDBErrorDomain`, `code` one of `LDBError`, and `userInfo` filled with
 /// `LDBErrorMessageKey` as reported by `status.ToString()`.
-NSError * to_NSError(leveldb::Status const & status);
+NSError * to_NSError(leveldb::Status const &status);
 
 /// Convert `NSData` into (a temporary, non-data-owning) `leveldb::Slice`.
-leveldb::Slice to_Slice(NSData * data);
+leveldb::Slice to_Slice(NSData *data);
+
+NSComparisonResult compare(NSData *left, NSData *right);
+NSData *min(NSData *left, NSData *right);
+NSData *max(NSData *left, NSData *right);
+
+NSData *lexicographicalSuccessor(NSData *data);
+NSData *lexicographicalChild(NSData *data);
 
 } // namespace leveldb_objc

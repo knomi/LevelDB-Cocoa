@@ -142,6 +142,10 @@
 		E0E82A161A9496DC004A08F4 /* LDBPrivate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */; };
 		E0E82A171A9496DC004A08F4 /* LDBPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */; };
 		E0E82A181A9496DC004A08F4 /* LDBPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */; };
+		E0E82A211A952388004A08F4 /* LDBLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A1F1A952388004A08F4 /* LDBLogger.h */; };
+		E0E82A221A952389004A08F4 /* LDBLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A1F1A952388004A08F4 /* LDBLogger.h */; };
+		E0E82A231A952389004A08F4 /* LDBLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A201A952388004A08F4 /* LDBLogger.mm */; };
+		E0E82A241A952389004A08F4 /* LDBLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A201A952388004A08F4 /* LDBLogger.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -374,6 +378,8 @@
 		E0E82A0E1A949404004A08F4 /* LDBError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBError.mm; sourceTree = "<group>"; };
 		E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LDBPrivate.hpp; sourceTree = "<group>"; };
 		E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBPrivate.mm; sourceTree = "<group>"; };
+		E0E82A1F1A952388004A08F4 /* LDBLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBLogger.h; sourceTree = "<group>"; };
+		E0E82A201A952388004A08F4 /* LDBLogger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBLogger.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -478,12 +484,14 @@
 			children = (
 				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
 				E0E82A0D1A949404004A08F4 /* LDBError.h */,
-				E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */,
+				E0E82A1F1A952388004A08F4 /* LDBLogger.h */,
 				E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */,
 				E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
+				E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */,
 				E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */,
 				E0E82A0E1A949404004A08F4 /* LDBError.mm */,
+				E0E82A201A952388004A08F4 /* LDBLogger.mm */,
 				E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */,
 				E0E82A021A947DAF004A08F4 /* LDBSnapshot.mm */,
 				E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */,
@@ -778,6 +786,7 @@
 				E0E82A0A1A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
 				E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A041A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
+				E0E82A221A952389004A08F4 /* LDBLogger.h in Headers */,
 				E0BF39411A76DEF900FC96E0 /* c.h in Headers */,
 				E0E82A161A9496DC004A08F4 /* LDBPrivate.hpp in Headers */,
 				E0E82A101A949404004A08F4 /* LDBError.h in Headers */,
@@ -792,6 +801,7 @@
 				E0E82A091A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
 				E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A031A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
+				E0E82A211A952388004A08F4 /* LDBLogger.h in Headers */,
 				E0BF394F1A76DEFA00FC96E0 /* c.h in Headers */,
 				E0E82A151A9496DC004A08F4 /* LDBPrivate.hpp in Headers */,
 				E0E82A0F1A949404004A08F4 /* LDBError.h in Headers */,
@@ -1038,6 +1048,7 @@
 				E0BF38E71A76D10800FC96E0 /* arena.cc in Sources */,
 				E0E82A0C1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */,
 				E0BF38E11A76D0D200FC96E0 /* format.cc in Sources */,
+				E0E82A241A952389004A08F4 /* LDBLogger.mm in Sources */,
 				E0BF38E61A76D0D200FC96E0 /* two_level_iterator.cc in Sources */,
 				E0BF38EF1A76D10800FC96E0 /* filter_policy.cc in Sources */,
 				E0BF38F51A76D11100FC96E0 /* port_posix.cc in Sources */,
@@ -1102,6 +1113,7 @@
 				E0BF39281A76D55300FC96E0 /* write_batch.cc in Sources */,
 				E0E82A0B1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */,
 				E0BF392D1A76D55300FC96E0 /* options.cc in Sources */,
+				E0E82A231A952389004A08F4 /* LDBLogger.mm in Sources */,
 				E0BF391B1A76D55300FC96E0 /* two_level_iterator.cc in Sources */,
 				E0BF39161A76D55300FC96E0 /* dbformat.cc in Sources */,
 				E0BF39271A76D55300FC96E0 /* block.cc in Sources */,
@@ -1266,6 +1278,7 @@
 					"DEBUG=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1321,6 +1334,7 @@
 					LEVELDB_ATOMIC_PRESENT,
 					"DEBUG=1",
 				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

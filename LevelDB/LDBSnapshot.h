@@ -7,18 +7,26 @@
 
 #import <Foundation/Foundation.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 @class LDBDatabase;
 
-@interface LDBSnapshot : NSObject
+@interface LDBSnapshot : NSObject <NSFastEnumeration>
 
 - (instancetype)initWithDatabase:(LDBDatabase *)database;
 
-@end
+@property (nonatomic, readonly) LDBSnapshot *noncaching;
+@property (nonatomic, readonly) LDBSnapshot *checking;
+@property (nonatomic, readonly) LDBSnapshot *reversed;
+@property (nonatomic, readonly) NSData *startKey;
+@property (nonatomic, readonly) NSData *endKey;
+@property (nonatomic, readonly) BOOL isReversed;
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+- (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey;
+- (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
+- (LDBSnapshot *)prefix:(NSData *)keyPrefix;
+
+- (NSData *)dataForKey:(NSData *)key;
+- (NSData *)objectForKeyedSubscript:(NSData *)key;
+
+- (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block;
+
+@end

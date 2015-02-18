@@ -7,12 +7,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class LDBSnapshot;
+@class LDBWriteBatch;
+
+// -----------------------------------------------------------------------------
+#pragma mark - Constants
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-@class LDBSnapshot;
-@class LDBWriteBatch;
 
 typedef NS_ENUM(NSInteger, LDBCompression) {
     LDBCompressionNoCompression     = 0,
@@ -32,8 +35,14 @@ extern NSString * const LDBOptionBlockRestartInterval; // NSNumber with int > 0
 extern NSString * const LDBOptionCompression;     // NSNumber with LDBCompression
 extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…32
 
-@interface LDBDatabase : NSObject
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
+// -----------------------------------------------------------------------------
+#pragma mark - LDBDatabase
+
+@interface LDBDatabase : NSObject
 
 /// Destroy the contents of the database in the given `path` on disk. Be very
 /// careful using this method.
@@ -107,7 +116,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// ```
 ///
 /// **See also:** `snapshot`
-- (NSData *)objectForKey:(NSData *)key;
+- (NSData *)dataForKey:(NSData *)key;
 
 
 /// Return the `NSData` stored at `key` or `nil` if not found.
@@ -122,7 +131,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 
 
 /// Set the `NSData` stored at `key` to `object`. If `object` is `nil`, the
-/// key-value pair is removed exactly like `[self removeObjectForKey:key]` does.
+/// key-value pair is removed exactly like `[self removeDataForKey:key]` does.
 /// The key subscript operator can be used synonymously:
 ///
 /// ```objc
@@ -140,11 +149,11 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setObject:(NSData *)object forKey:(NSData *)key;
+- (BOOL)setData:(NSData *)object forKey:(NSData *)key;
 
 
 /// Set the `NSData` at `key` to `object` if `object` is not `nil`. Otherwise,
-/// calls `[self removeObjectForKey:key]`.
+/// calls `[self removeDataForKey:key]`.
 ///
 /// Does not flush the write on disk, which means that if the machine crashes,
 /// the write may be lost.
@@ -171,7 +180,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)removeObjectForKey:(NSData *)key;
+- (BOOL)removeDataForKey:(NSData *)key;
 
 
 /// Perform a `batch` of put and delete writes to the database. If `sync` is
@@ -186,13 +195,3 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
     error:(NSError * __autoreleasing *)error;
 
 @end
-
-@interface LDBLogger : NSObject
-+ (instancetype)loggerWithBlock:(void (^)(NSString *message))block;
-- (instancetype)initWithBlock:(void (^)(NSString *message))block;
-@property (nonatomic, readonly) void (^block)(NSString *message);
-@end
-
-#ifdef __cplusplus
-} // extern "C"
-#endif

@@ -16,6 +16,10 @@ extern NSString * const LDBErrorDomain;
 
 extern NSString * const LDBErrorMessageKey; // NSString
 
+@interface NSError (LevelDB)
+@property (readonly, copy) NSString *ldb_errorMessage;
+@end
+
 /// NSError codes in LDBErrorDomain.
 typedef NS_ENUM(NSInteger, LDBError) {
     LDBErrorOk              =  0,

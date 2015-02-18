@@ -11,3 +11,11 @@ NSString * const LDBErrorDomain = @"pyrtsa.leveldb";
 
 NSString * const LDBErrorMessageKey = @"LDBErrorMessageKey";
 
+@implementation NSError (LevelDB)
+
+- (NSString *)ldb_errorMessage
+{
+    return [self.userInfo[LDBErrorMessageKey] copy];
+}
+
+@end
