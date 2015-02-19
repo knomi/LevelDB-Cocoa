@@ -76,15 +76,6 @@ private:
     return self;
 }
 
-- (leveldb::ReadOptions)options
-{
-    auto options = leveldb::ReadOptions{};
-    options.snapshot         = self->_impl->snapshot;
-    options.verify_checksums = self.checking;
-    options.fill_cache       = !self.noncaching;
-    return options;
-}
-
 - (LDBSnapshot *)noncaching
 {
     return [[LDBSnapshot alloc]
@@ -159,14 +150,40 @@ private:
     return [self clampStart:startKey end:endKey];
 }
 
+- (leveldb::DB &)_db
+{
+    return *_impl->database.impl;
+}
+
+- (leveldb::ReadOptions)_readOptions
+{
+    auto options = leveldb::ReadOptions{};
+    options.snapshot         = self->_impl->snapshot;
+    options.verify_checksums = self.checking;
+    options.fill_cache       = !self.noncaching;
+    return options;
+}
+
 - (NSData *)dataForKey:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
+    if (!key) {
+        return nil;
+    }
+    
+    std::string value;
+    auto status = self._db.Get(self._readOptions,
+                               leveldb_objc::to_Slice(key),
+                                &value);
+    if (status.ok()) {
+        return [NSData dataWithBytes:value.data() length:value.size()];
+    } else {
+        return nil;
+    }
 }
 
 - (NSData *)objectForKeyedSubscript:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
+    return [self dataForKey:key];
 }
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block
