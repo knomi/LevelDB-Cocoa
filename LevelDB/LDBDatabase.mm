@@ -155,16 +155,16 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     return [[LDBSnapshot alloc] initWithDatabase:self];
 }
 
-- (BOOL)setData:(NSData *)object forKey:(NSData *)key
+- (BOOL)setData:(NSData *)data forKey:(NSData *)key
 {
     if (!key) {
         return NO;
     }
 
-    if (object) {
+    if (data) {
         auto status = _db->Put(leveldb::WriteOptions{},
                                leveldb_objc::to_Slice(key),
-                               leveldb_objc::to_Slice(object));
+                               leveldb_objc::to_Slice(data));
         return status.ok();
     } else {
         auto status = _db->Delete(leveldb::WriteOptions{},
@@ -173,9 +173,9 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     }
 }
 
-- (BOOL)setObject:(NSData *)object forKeyedSubscript:(NSData *)key
+- (BOOL)setObject:(NSData *)data forKeyedSubscript:(NSData *)key
 {
-    return [self setData:object forKey:key];
+    return [self setData:data forKey:key];
 }
 
 - (BOOL)removeDataForKey:(NSData *)key

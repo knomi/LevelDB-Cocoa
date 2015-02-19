@@ -130,7 +130,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 - (LDBSnapshot *)snapshot;
 
 
-/// Set the `NSData` stored at `key` to `object`. If `object` is `nil`, the
+/// Set the `NSData` stored at `key` to `data`. If `data` is `nil`, the
 /// key-value pair is removed exactly like `[self removeDataForKey:key]` does.
 /// The key subscript operator can be used synonymously:
 ///
@@ -149,10 +149,10 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setData:(NSData *)object forKey:(NSData *)key;
+- (BOOL)setData:(NSData *)data forKey:(NSData *)key;
 
 
-/// Set the `NSData` at `key` to `object` if `object` is not `nil`. Otherwise,
+/// Set the `NSData` at `key` to `data` if `data` is not `nil`. Otherwise,
 /// calls `[self removeDataForKey:key]`.
 ///
 /// Does not flush the write on disk, which means that if the machine crashes,
@@ -165,7 +165,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setObject:(NSData *)object forKeyedSubscript:(NSData *)key;
+- (BOOL)setObject:(NSData *)data forKeyedSubscript:(NSData *)key;
 
 
 /// Remove the `NSData` stored at `key`.

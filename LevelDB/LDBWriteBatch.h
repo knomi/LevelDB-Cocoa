@@ -9,7 +9,7 @@
 
 @interface LDBWriteBatch : NSObject <NSFastEnumeration>
 
-- (void)setObject:(NSData *)object forKeyedSubscript:(NSData *)key;
+- (void)setObject:(NSData *)data forKeyedSubscript:(NSData *)key;
 - (void)setData:(NSData *)data forKey:(NSData *)key;
 - (void)removeDataForKey:(NSData *)key;
 - (void)removeAllData;

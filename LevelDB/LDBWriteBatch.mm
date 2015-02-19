@@ -16,9 +16,9 @@
 
 @implementation LDBWriteBatch
 
-- (void)setObject:(NSData *)object forKeyedSubscript:(NSData *)key
+- (void)setObject:(NSData *)data forKeyedSubscript:(NSData *)key
 {
-    LDB_UNIMPLEMENTED();
+    [self setData:data forKey:key];
 }
 
 - (void)setData:(NSData *)data forKey:(NSData *)key
