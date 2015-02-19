@@ -7,13 +7,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface LDBWriteBatch : NSObject <NSFastEnumeration>
+@interface LDBWriteBatch : NSObject
 
 - (void)setObject:(NSData *)data forKeyedSubscript:(NSData *)key;
 - (void)setData:(NSData *)data forKey:(NSData *)key;
 - (void)removeDataForKey:(NSData *)key;
 - (void)removeAllData;
 
-- (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block;
+- (void)enumerate:(void (^)(NSData *key, NSData *data))block;
 
 @end

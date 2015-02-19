@@ -210,9 +210,9 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
             NSString *error;
             block(value, &error);
             if (error.length) {
-                NSLog(@"[WARN] LevelDB: invalid option %@ for key %@, %@", dict[key], key, error);
+                NSLog(@"[WARN] invalid LDBDatabase option %@ for key %@, %@", dict[key], key, error);
             } else {
-                NSLog(@"[WARN] LevelDB: invalid option %@ for key %@", dict[key], key);
+                NSLog(@"[WARN] invalid LDBDatabase option %@ for key %@", dict[key], key);
             }
         }
     };
