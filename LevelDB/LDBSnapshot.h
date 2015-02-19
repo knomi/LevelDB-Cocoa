@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 
 @class LDBDatabase;
+@class LDBIterator;
 
 @interface LDBSnapshot : NSObject
 
@@ -31,5 +32,7 @@
 - (NSData *)objectForKeyedSubscript:(NSData *)key;
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block;
+
+- (LDBIterator *)iterate;
 
 @end

@@ -56,7 +56,7 @@ private:
     }
     
     _impl = std::make_shared<leveldb_objc::snapshot_t const>(database);
-    
+    _startKey = [NSData data];
     
     return self;
 }
@@ -182,21 +182,17 @@ private:
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block
 {
-    auto iterator = [[LDBIterator alloc] initWithSnapshot:self];
-    if (!self.isReversed) {
-        [iterator seekToFirst];
-    } else {
-        [iterator seekToLast];
-    }
+    auto iterator = [self iterate];
     BOOL stop = NO;
     while (!stop && iterator.isValid) {
         block(iterator.key, iterator.value, &stop);
-        if (!self.isReversed) {
-            [iterator next];
-        } else {
-            [iterator prev];
-        }
+        [iterator step];
     }
+}
+
+- (LDBIterator *)iterate
+{
+    return [[LDBIterator alloc] initWithSnapshot:self];
 }
 
 @end

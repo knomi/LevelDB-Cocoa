@@ -9,6 +9,7 @@
 
 @interface LDBWriteBatch : NSObject
 
+- (NSData *)objectForKeyedSubscript:(NSData *)key;
 - (void)setObject:(NSData *)data forKeyedSubscript:(NSData *)key;
 - (void)setData:(NSData *)data forKey:(NSData *)key;
 - (void)removeDataForKey:(NSData *)key;

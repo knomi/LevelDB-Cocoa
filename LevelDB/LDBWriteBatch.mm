@@ -17,6 +17,11 @@
 
 @implementation LDBWriteBatch
 
+- (NSData *)objectForKeyedSubscript:(NSData *)key
+{
+    return nil;
+}
+
 - (void)setObject:(NSData *)data forKeyedSubscript:(NSData *)key
 {
     [self setData:data forKey:key];

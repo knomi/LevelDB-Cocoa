@@ -20,14 +20,6 @@
 @property (nonatomic, readonly, copy) NSData *key;
 @property (nonatomic, readonly, copy) NSData *value;
 
-@property (nonatomic, readonly) NSData *unsafeKey;
-@property (nonatomic, readonly) NSData *unsafeValue;
-
-- (void)seekToFirst;
-- (void)seekToLast;
-- (void)seek:(NSData *)key;
-
-- (void)next;
-- (void)prev;
+- (void)step;
 
 @end

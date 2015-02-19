@@ -38,6 +38,28 @@
     
     _snapshot = snapshot;
     _impl = std::unique_ptr<leveldb::Iterator>(snapshot.private_db.private_database->NewIterator(snapshot.private_readOptions));
+
+    if (!snapshot.isReversed) {
+        NSData *startKey = self.snapshot.startKey;
+        if (startKey.length) {
+            _impl->Seek(leveldb_objc::to_Slice(startKey));
+        } else if (startKey) {
+            _impl->SeekToFirst();
+        }
+    } else {
+        NSData *endKey = self.snapshot.endKey;
+        if (!endKey) {
+            _impl->SeekToLast();
+        } else if (endKey.length) {
+            _impl->Seek(leveldb_objc::to_Slice(endKey));
+            if (_impl->Valid()) {
+                _impl->Prev();
+            } else {
+                _impl->SeekToLast();
+            }
+        }
+    }
+    [self private_update];
     
     return self;
 }
@@ -55,40 +77,18 @@
     return _value;
 }
 
-- (void)seekToFirst
+- (void)step
 {
-    NSData *startKey = self.snapshot.startKey;
-    if (startKey.length) {
-        _impl->Seek(leveldb_objc::to_Slice(startKey));
-    } else if (startKey) {
-        _impl->SeekToFirst();
+    if (!self.snapshot.isReversed) {
+        [self private_stepForward];
+    } else {
+        [self private_stepBackward];
     }
-    [self update];
 }
 
-- (void)seekToLast
+- (void)private_stepForward
 {
-    NSData *endKey = self.snapshot.endKey;
-    if (!endKey) {
-        _impl->SeekToLast();
-    } else if (endKey.length) {
-        _impl->Seek(leveldb_objc::to_Slice(endKey));
-        if (_impl->Valid()) {
-            _impl->Prev();
-        }
-    }
-    [self update];
-}
-
-- (void)seek:(NSData *)key
-{
-    _impl->Seek(leveldb_objc::to_Slice(key));
-    [self update];
-}
-
-- (void)next
-{
-    if (self.key) return;
+    if (!self.isValid) return;
     _impl->Next();
     _key = nil;
     _value = nil;
@@ -99,9 +99,9 @@
     }
 }
 
-- (void)prev
+- (void)private_stepBackward
 {
-    if (self.key) return;
+    if (!self.isValid) return;
     _impl->Prev();
     _key = nil;
     _value = nil;
@@ -112,7 +112,7 @@
     }
 }
 
-- (void)update
+- (void)private_update
 {
     _key = nil;
     _value = nil;
