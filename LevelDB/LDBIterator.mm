@@ -22,6 +22,14 @@
 
 @implementation LDBIterator
 
+- (instancetype)init
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:@"-init is not a valid initializer for the class LDBIterator"
+                                 userInfo:nil];
+    return nil;
+}
+
 - (instancetype)initWithSnapshot:(LDBSnapshot *)snapshot
 {
     if (!(self = [super init]) || !snapshot) {
@@ -65,7 +73,9 @@
         _impl->SeekToLast();
     } else if (endKey.length) {
         _impl->Seek(leveldb_objc::to_Slice(endKey));
-        _impl->Prev();
+        if (_impl->Valid()) {
+            _impl->Prev();
+        }
     }
     [self update];
 }
@@ -78,16 +88,28 @@
 
 - (void)next
 {
-    if (!_impl->Valid()) return;
+    if (self.key) return;
     _impl->Next();
-    [self update];
+    _key = nil;
+    _value = nil;
+    if (!_impl->Valid()) return;
+    NSData *key = leveldb_objc::to_NSData(_impl->key());
+    if (leveldb_objc::compare(key, self.snapshot.endKey) < 0) {
+        _key = key;
+    }
 }
 
 - (void)prev
 {
-    if (!_impl->Valid()) return;
+    if (self.key) return;
     _impl->Prev();
-    [self update];
+    _key = nil;
+    _value = nil;
+    if (!_impl->Valid()) return;
+    NSData *key = leveldb_objc::to_NSData(_impl->key());
+    if (leveldb_objc::compare(self.snapshot.startKey, key) <= 0) {
+        _key = key;
+    }
 }
 
 - (void)update
@@ -101,7 +123,6 @@
         leveldb_objc::compare(key, self.snapshot.endKey) < 0)
     {
         _key = key;
-        return;
     }
 }
 

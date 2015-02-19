@@ -12,6 +12,7 @@
 
 @interface LDBIterator : NSObject
 
+- (instancetype)init __attribute__((unavailable("init not available")));
 - (instancetype)initWithSnapshot:(LDBSnapshot *)snapshot;
 
 @property (nonatomic, readonly) LDBSnapshot *snapshot;

@@ -11,6 +11,7 @@
 
 @interface LDBSnapshot : NSObject
 
+- (instancetype)init __attribute__((unavailable("init not available")));
 - (instancetype)initWithDatabase:(LDBDatabase *)database;
 
 @property (nonatomic, readonly) LDBSnapshot *noncaching;

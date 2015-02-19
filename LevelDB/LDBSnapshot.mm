@@ -8,6 +8,7 @@
 #import "LDBSnapshot.h"
 
 #import "LDBDatabase.h"
+#import "LDBIterator.h"
 #import "LDBPrivate.hpp"
 
 #include "leveldb/db.h"
@@ -38,6 +39,14 @@ private:
 
 @implementation LDBSnapshot {
     std::shared_ptr<leveldb_objc::snapshot_t const> _impl;
+}
+
+- (instancetype)init
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:@"-init is not a valid initializer for the class LDBSnapshot"
+                                 userInfo:nil];
+    return nil;
 }
 
 - (instancetype)initWithDatabase:(LDBDatabase *)database
@@ -173,7 +182,21 @@ private:
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block
 {
-    LDB_UNIMPLEMENTED();
+    auto iterator = [[LDBIterator alloc] initWithSnapshot:self];
+    if (!self.isReversed) {
+        [iterator seekToFirst];
+    } else {
+        [iterator seekToLast];
+    }
+    BOOL stop = NO;
+    while (!stop && iterator.isValid) {
+        block(iterator.key, iterator.value, &stop);
+        if (!self.isReversed) {
+            [iterator next];
+        } else {
+            [iterator prev];
+        }
+    }
 }
 
 @end

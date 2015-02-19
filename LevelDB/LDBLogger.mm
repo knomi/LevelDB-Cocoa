@@ -35,6 +35,14 @@ struct block_logger_t : leveldb::Logger {
     return [[self alloc] initWithBlock:block];
 }
 
+- (instancetype)init
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:@"-init is not a valid initializer for the class LDBLogger"
+                                 userInfo:nil];
+    return nil;
+}
+
 - (instancetype)initWithBlock:(void (^)(NSString *message))block
 {
     if (!(self = [super init])) {

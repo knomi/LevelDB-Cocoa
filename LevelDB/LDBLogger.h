@@ -11,6 +11,7 @@
 
 + (instancetype)loggerWithBlock:(void (^)(NSString *message))block;
 
+- (instancetype)init __attribute__((unavailable("init not available")));
 - (instancetype)initWithBlock:(void (^)(NSString *message))block;
 
 @property (nonatomic, readonly) void (^block)(NSString *message);
