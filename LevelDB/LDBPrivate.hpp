@@ -13,6 +13,7 @@
 #import "LDBWriteBatch.h"
 
 #import "leveldb/slice.h"
+#import "leveldb/options.h"
 
 #define LDB_UNIMPLEMENTED() /************************************************/ \
     do {                                                                       \
@@ -33,25 +34,27 @@ namespace leveldb {
 
 
 @interface LDBDatabase (Private)
-- (leveldb::DB *)impl;
+- (leveldb::DB *)private_database;
 @end
 
 
 
 @interface LDBSnapshot (Private)
-- (leveldb::Snapshot const *)impl;
+- (leveldb::Snapshot const *)private_snapshot;
+- (LDBDatabase *)private_db;
+- (leveldb::ReadOptions)private_readOptions;
 @end
 
 
 
 @interface LDBWriteBatch (Private)
-- (leveldb::WriteBatch *)impl;
+- (leveldb::WriteBatch *)private_batch;
 @end
 
 
 
 @interface LDBLogger (Private)
-- (leveldb::Logger *)impl;
+- (leveldb::Logger *)private_logger;
 @end
 
 
@@ -81,6 +84,9 @@ BOOL objc_result(leveldb::Status const &status,
 /// `LDBErrorDomain`, `code` one of `LDBError`, and `userInfo` filled with
 /// `LDBErrorMessageKey` as reported by `status.ToString()`.
 NSError * to_NSError(leveldb::Status const &status);
+
+/// Copy the bytes of `slice` into an immutable `NSData`.
+NSData *to_NSData(leveldb::Slice const &slice);
 
 /// Convert `NSData` into (a temporary, non-data-owning) `leveldb::Slice`.
 leveldb::Slice to_Slice(NSData *data);

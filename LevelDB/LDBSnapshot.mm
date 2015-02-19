@@ -23,11 +23,11 @@ struct snapshot_t final {
     
     explicit snapshot_t(LDBDatabase *database)
         : database(database)
-        , snapshot(database.impl->GetSnapshot())
+        , snapshot(database.private_database->GetSnapshot())
     {}
     
     ~snapshot_t() {
-        database.impl->ReleaseSnapshot(snapshot);
+        database.private_database->ReleaseSnapshot(snapshot);
     }
 private:
     snapshot_t(snapshot_t &) = delete;
@@ -148,20 +148,6 @@ private:
     return [self clampStart:startKey end:endKey];
 }
 
-- (leveldb::DB &)_db
-{
-    return *_impl->database.impl;
-}
-
-- (leveldb::ReadOptions)_readOptions
-{
-    auto options = leveldb::ReadOptions{};
-    options.snapshot         = self.impl;
-    options.verify_checksums = self.isChecksummed;
-    options.fill_cache       = !self.isNoncaching;
-    return options;
-}
-
 - (NSData *)dataForKey:(NSData *)key
 {
     if (!key) {
@@ -169,9 +155,10 @@ private:
     }
     
     std::string value;
-    auto status = self._db.Get(self._readOptions,
-                               leveldb_objc::to_Slice(key),
-                                &value);
+    auto db = self.private_db.private_database;
+    auto status = db->Get(self.private_readOptions,
+                          leveldb_objc::to_Slice(key),
+                          &value);
     if (status.ok()) {
         return [NSData dataWithBytes:value.data() length:value.size()];
     } else {
@@ -210,6 +197,7 @@ private:
     enumerationState->mutationsPtr = enumerationState->extra;
     
     
+    
     LDB_UNIMPLEMENTED();
 }
 
@@ -217,9 +205,23 @@ private:
 
 @implementation LDBSnapshot (Private)
 
-- (leveldb::Snapshot const *)impl
+- (leveldb::Snapshot const *)private_snapshot
 {
     return _impl->snapshot;
+}
+
+- (LDBDatabase *)private_db
+{
+    return _impl->database;
+}
+
+- (leveldb::ReadOptions)private_readOptions
+{
+    auto options = leveldb::ReadOptions{};
+    options.snapshot         = self.private_snapshot;
+    options.verify_checksums = self.isChecksummed;
+    options.fill_cache       = !self.isNoncaching;
+    return options;
 }
 
 @end

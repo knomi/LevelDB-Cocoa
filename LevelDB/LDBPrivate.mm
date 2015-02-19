@@ -73,6 +73,12 @@ leveldb::Slice leveldb_objc::to_Slice(NSData *data)
 }
 
 
+NSData *leveldb_objc::to_NSData(leveldb::Slice const &slice)
+{
+    return [NSData dataWithBytes:slice.data() length:slice.size()];
+}
+
+
 NSComparisonResult leveldb_objc::compare(NSData *left, NSData *right)
 {
     if (!left && !right) return NSOrderedSame;

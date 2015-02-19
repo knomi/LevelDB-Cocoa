@@ -99,7 +99,7 @@
 @end
 
 @implementation LDBWriteBatch (Private)
-- (leveldb::WriteBatch *)impl
+- (leveldb::WriteBatch *)private_batch
 {
     return &_impl;
 }

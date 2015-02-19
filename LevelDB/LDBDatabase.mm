@@ -190,7 +190,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
 {
     auto writeOptions = leveldb::WriteOptions{};
     writeOptions.sync = sync;
-    auto status = _db->Write(writeOptions, batch.impl);
+    auto status = _db->Write(writeOptions, batch.private_batch);
     return leveldb_objc::objc_result(status, error);
 }
 
@@ -259,7 +259,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     parse(LDBOptionInfoLog, ^(id value, NSString **error) {
         if (auto logger = [LDBLogger ldb_cast:value]) {
             _logger = logger;
-            opts.info_log = logger.impl;
+            opts.info_log = logger.private_logger;
         }
     });
     
@@ -310,7 +310,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
 
 @implementation LDBDatabase (Private)
 
-- (leveldb::DB *)impl
+- (leveldb::DB *)private_database
 {
     return _db.get();
 }
