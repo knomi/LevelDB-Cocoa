@@ -22,15 +22,29 @@
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "NO"
+            buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
+            buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E0BF37941A7674E400FC96E0"
                BuildableName = "LevelDBTests.xctest"
                BlueprintName = "LevelDBTests-iOS"
+               ReferencedContainer = "container:LevelDB.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E0B0524C1A7FF50A00DCE453"
+               BuildableName = "LevelDBDemo.app"
+               BlueprintName = "LevelDBDemo"
                ReferencedContainer = "container:LevelDB.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

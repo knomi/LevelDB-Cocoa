@@ -12,6 +12,8 @@
 #import "LDBPrivate.hpp"
 #import "LDBLogger.h"
 
+#include <libkern/OSAtomic.h>
+
 #include <memory>
 #include "helpers/memenv/memenv.h"
 #include "leveldb/cache.h"
