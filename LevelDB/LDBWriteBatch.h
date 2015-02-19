@@ -12,6 +12,7 @@
 - (void)setObject:(NSData *)object forKeyedSubscript:(NSData *)key;
 - (void)setData:(NSData *)data forKey:(NSData *)key;
 - (void)removeDataForKey:(NSData *)key;
+- (void)removeAllData;
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block;
 

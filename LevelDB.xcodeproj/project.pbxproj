@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E021E8291A95DB5800A865E7 /* LDBIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E021E8271A95DB5800A865E7 /* LDBIterator.h */; };
+		E021E82A1A95DB5800A865E7 /* LDBIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E021E8271A95DB5800A865E7 /* LDBIterator.h */; };
+		E021E82B1A95DB5800A865E7 /* LDBIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = E021E8281A95DB5800A865E7 /* LDBIterator.mm */; };
+		E021E82C1A95DB5800A865E7 /* LDBIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = E021E8281A95DB5800A865E7 /* LDBIterator.mm */; };
 		E02379F01A8B46E70088DF41 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */; };
 		E02379F21A8B47480088DF41 /* NSDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F11A8B47470088DF41 /* NSDataTests.swift */; };
 		E02379F31A8B47480088DF41 /* NSDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F11A8B47470088DF41 /* NSDataTests.swift */; };
@@ -196,6 +200,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E021E8271A95DB5800A865E7 /* LDBIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBIterator.h; sourceTree = "<group>"; };
+		E021E8281A95DB5800A865E7 /* LDBIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBIterator.mm; sourceTree = "<group>"; };
 		E02379EA1A8B460B0088DF41 /* SnapshotType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotType.swift; sourceTree = "<group>"; };
 		E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		E02379F11A8B47470088DF41 /* NSDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataTests.swift; sourceTree = "<group>"; };
@@ -484,11 +490,13 @@
 			children = (
 				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
 				E0E82A0D1A949404004A08F4 /* LDBError.h */,
+				E021E8271A95DB5800A865E7 /* LDBIterator.h */,
 				E0E82A1F1A952388004A08F4 /* LDBLogger.h */,
 				E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */,
 				E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
 				E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */,
+				E021E8281A95DB5800A865E7 /* LDBIterator.mm */,
 				E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */,
 				E0E82A0E1A949404004A08F4 /* LDBError.mm */,
 				E0E82A201A952388004A08F4 /* LDBLogger.mm */,
@@ -784,6 +792,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0E82A0A1A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
+				E021E82A1A95DB5800A865E7 /* LDBIterator.h in Headers */,
 				E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A041A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
 				E0E82A221A952389004A08F4 /* LDBLogger.h in Headers */,
@@ -799,6 +808,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0E82A091A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
+				E021E8291A95DB5800A865E7 /* LDBIterator.h in Headers */,
 				E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A031A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
 				E0E82A211A952388004A08F4 /* LDBLogger.h in Headers */,
@@ -1045,6 +1055,7 @@
 				E0BF38D31A76D0AD00FC96E0 /* dbformat.cc in Sources */,
 				E0BF38E21A76D0D200FC96E0 /* iterator.cc in Sources */,
 				E0BF38F11A76D10800FC96E0 /* histogram.cc in Sources */,
+				E021E82C1A95DB5800A865E7 /* LDBIterator.mm in Sources */,
 				E0BF38E71A76D10800FC96E0 /* arena.cc in Sources */,
 				E0E82A0C1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */,
 				E0BF38E11A76D0D200FC96E0 /* format.cc in Sources */,
@@ -1110,6 +1121,7 @@
 				E0BF393A1A76D55300FC96E0 /* memenv.cc in Sources */,
 				E0BF392B1A76D55300FC96E0 /* bloom.cc in Sources */,
 				E0BF391C1A76D55300FC96E0 /* filter_policy.cc in Sources */,
+				E021E82B1A95DB5800A865E7 /* LDBIterator.mm in Sources */,
 				E0BF39281A76D55300FC96E0 /* write_batch.cc in Sources */,
 				E0E82A0B1A947DEE004A08F4 /* LDBWriteBatch.mm in Sources */,
 				E0BF392D1A76D55300FC96E0 /* options.cc in Sources */,

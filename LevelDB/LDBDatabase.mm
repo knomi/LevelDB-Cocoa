@@ -188,11 +188,10 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     sync:(BOOL)sync
     error:(NSError * __autoreleasing *)error
 {
-    
-
-
-    LDB_UNIMPLEMENTED();
-    // TODO
+    auto writeOptions = leveldb::WriteOptions{};
+    writeOptions.sync = sync;
+    auto status = _db->Write(writeOptions, batch.impl);
+    return leveldb_objc::objc_result(status, error);
 }
 
 // -----------------------------------------------------------------------------
