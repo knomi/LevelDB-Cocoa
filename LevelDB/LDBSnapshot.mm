@@ -38,8 +38,8 @@ private:
 
 @implementation LDBSnapshot {
     std::shared_ptr<leveldb_objc::snapshot_t const> _impl;
-    BOOL _noncaching;
-    BOOL _checking;
+    BOOL _isNoncaching;
+    BOOL _isChecking;
 }
 
 - (instancetype)initWithDatabase:(LDBDatabase *)database
@@ -59,19 +59,19 @@ private:
     startKey:(NSData *)startKey
     endKey:(NSData *)endKey
     reversed:(BOOL)isReversed
-    noncaching:(BOOL)noncaching
-    checking:(BOOL)checking
+    noncaching:(BOOL)isNoncaching
+    checking:(BOOL)isChecking
 {
     if (!(self = [super init])) {
         return nil;
     }
     
-    _impl       = impl;
-    _startKey   = [startKey copy];
-    _endKey     = [endKey copy];
-    _isReversed = isReversed;
-    _noncaching = noncaching;
-    _checking   = checking;
+    _impl         = impl;
+    _startKey     = [startKey copy];
+    _endKey       = [endKey copy];
+    _isReversed   = isReversed;
+    _isNoncaching = isNoncaching;
+    _isChecking   = isChecking;
     
     return self;
 }
@@ -84,7 +84,7 @@ private:
         endKey:       self.endKey
         reversed:     self.isReversed
         noncaching:   YES
-        checking:     self->_checking];
+        checking:     self->_isChecking];
 }
 
 - (LDBSnapshot *)checking
@@ -94,7 +94,7 @@ private:
         startKey:     self.startKey
         endKey:       self.endKey
         reversed:     self.isReversed
-        noncaching:   self->_noncaching
+        noncaching:   self->_isNoncaching
         checking:     YES];
 }
 
@@ -105,8 +105,8 @@ private:
         startKey:     self.startKey
         endKey:       self.endKey
         reversed:     !self.isReversed
-        noncaching:   self->_noncaching
-        checking:     self->_checking];
+        noncaching:   self->_isNoncaching
+        checking:     self->_isChecking];
 }
 
 - (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey
@@ -117,8 +117,8 @@ private:
             startKey:     nil
             endKey:       nil
             reversed:     self.isReversed
-            noncaching:   self->_noncaching
-            checking:     self->_checking];
+            noncaching:   self->_isNoncaching
+            checking:     self->_isChecking];
     }
     
     BOOL clampsStart = leveldb_objc::compare(self.startKey, startKey) < 0;
@@ -133,8 +133,8 @@ private:
         startKey:     clampsStart ? startKey : self.startKey
         endKey:       clampsEnd ? endKey : self.endKey
         reversed:     self.isReversed
-        noncaching:   self->_noncaching
-        checking:     self->_checking];
+        noncaching:   self->_isNoncaching
+        checking:     self->_isChecking];
 }
 
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey

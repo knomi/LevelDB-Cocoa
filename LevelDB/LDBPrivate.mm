@@ -10,14 +10,6 @@
 #import "leveldb/status.h"
 #include <type_traits>
 
-#define LDB_UNIMPLEMENTED() /************************************************/ \
-    do {                                                                       \
-        NSLog(@"%s:%ull: unimplemented %s", __FILE__, __LINE__, __FUNCTION__); \
-        abort();                                                               \
-    } while(0)                                                                 \
-    /**/
-
-
 @implementation NSObject (LevelDB)
 + (instancetype)ldb_cast:(id)object
 {
