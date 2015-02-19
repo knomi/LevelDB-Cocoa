@@ -14,10 +14,12 @@
 - (instancetype)initWithDatabase:(LDBDatabase *)database;
 
 @property (nonatomic, readonly) LDBSnapshot *noncaching;
-@property (nonatomic, readonly) LDBSnapshot *checking;
+@property (nonatomic, readonly) LDBSnapshot *checksummed;
 @property (nonatomic, readonly) LDBSnapshot *reversed;
 @property (nonatomic, readonly) NSData *startKey;
 @property (nonatomic, readonly) NSData *endKey;
+@property (nonatomic, readonly) BOOL isNoncaching;
+@property (nonatomic, readonly) BOOL isChecksummed;
 @property (nonatomic, readonly) BOOL isReversed;
 
 - (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey;

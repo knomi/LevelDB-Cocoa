@@ -38,8 +38,6 @@ private:
 
 @implementation LDBSnapshot {
     std::shared_ptr<leveldb_objc::snapshot_t const> _impl;
-    BOOL _isNoncaching;
-    BOOL _isChecking;
 }
 
 - (instancetype)initWithDatabase:(LDBDatabase *)database
@@ -60,18 +58,18 @@ private:
     endKey:(NSData *)endKey
     reversed:(BOOL)isReversed
     noncaching:(BOOL)isNoncaching
-    checking:(BOOL)isChecking
+    checksummed:(BOOL)isChecksummed
 {
     if (!(self = [super init])) {
         return nil;
     }
     
-    _impl         = impl;
-    _startKey     = [startKey copy];
-    _endKey       = [endKey copy];
-    _isReversed   = isReversed;
-    _isNoncaching = isNoncaching;
-    _isChecking   = isChecking;
+    _impl          = impl;
+    _startKey      = [startKey copy];
+    _endKey        = [endKey copy];
+    _isReversed    = isReversed;
+    _isNoncaching  = isNoncaching;
+    _isChecksummed = isChecksummed;
     
     return self;
 }
@@ -79,46 +77,46 @@ private:
 - (LDBSnapshot *)noncaching
 {
     return [[LDBSnapshot alloc]
-        initWithImpl: self->_impl
+        initWithImpl: _impl
         startKey:     self.startKey
         endKey:       self.endKey
         reversed:     self.isReversed
         noncaching:   YES
-        checking:     self->_isChecking];
+        checksummed:  self.isChecksummed];
 }
 
-- (LDBSnapshot *)checking
+- (LDBSnapshot *)checksummed
 {
     return [[LDBSnapshot alloc]
-        initWithImpl: self->_impl
+        initWithImpl: _impl
         startKey:     self.startKey
         endKey:       self.endKey
         reversed:     self.isReversed
-        noncaching:   self->_isNoncaching
-        checking:     YES];
+        noncaching:   self.isNoncaching
+        checksummed:  YES];
 }
 
 - (LDBSnapshot *)reversed
 {
     return [[LDBSnapshot alloc]
-        initWithImpl: self->_impl
+        initWithImpl: _impl
         startKey:     self.startKey
         endKey:       self.endKey
         reversed:     !self.isReversed
-        noncaching:   self->_isNoncaching
-        checking:     self->_isChecking];
+        noncaching:   self.isNoncaching
+        checksummed:  self.isChecksummed];
 }
 
 - (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey
 {
     if (!startKey || leveldb_objc::compare(startKey, endKey) > 0) {
         return [[LDBSnapshot alloc]
-            initWithImpl: self->_impl
+            initWithImpl: _impl
             startKey:     nil
             endKey:       nil
             reversed:     self.isReversed
-            noncaching:   self->_isNoncaching
-            checking:     self->_isChecking];
+            noncaching:   self.isNoncaching
+            checksummed:  self.isChecksummed];
     }
     
     BOOL clampsStart = leveldb_objc::compare(self.startKey, startKey) < 0;
@@ -129,12 +127,12 @@ private:
     }
     
     return [[LDBSnapshot alloc]
-        initWithImpl: self->_impl
+        initWithImpl: _impl
         startKey:     clampsStart ? startKey : self.startKey
         endKey:       clampsEnd ? endKey : self.endKey
         reversed:     self.isReversed
-        noncaching:   self->_isNoncaching
-        checking:     self->_isChecking];
+        noncaching:   self.isNoncaching
+        checksummed:  self.isChecksummed];
 }
 
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey
@@ -158,9 +156,9 @@ private:
 - (leveldb::ReadOptions)_readOptions
 {
     auto options = leveldb::ReadOptions{};
-    options.snapshot         = self->_impl->snapshot;
-    options.verify_checksums = self.checking;
-    options.fill_cache       = !self.noncaching;
+    options.snapshot         = self.impl;
+    options.verify_checksums = self.isChecksummed;
+    options.fill_cache       = !self.isNoncaching;
     return options;
 }
 
