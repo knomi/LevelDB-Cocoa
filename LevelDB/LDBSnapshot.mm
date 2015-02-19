@@ -176,31 +176,6 @@ private:
     LDB_UNIMPLEMENTED();
 }
 
-- (NSUInteger)
-    countByEnumeratingWithState:(NSFastEnumerationState *)enumerationState
-    objects:(id __unsafe_unretained [])stackBuffer
-    count:(NSUInteger)bufferSize
-{
-    // NSFastEnumerationState:
-    // - state:        unsigned long            -- initially 0, change before
-    //                                             returning
-    // - itemsPtr:     id __unsafe_unretained * -- initially NULL, set to
-    //                                             stackBuffer or own buffer
-    // - mutationsPtr: unsigned long *          -- initially NULL, set to point
-    //                                             to a memory location that
-    //                                             changes along with self
-    // - extra:        unsigned long[5]         -- initially 0's, free to use
-    //                                             for local enumeration state
-    
-    enumerationState->state = 1;
-    enumerationState->itemsPtr = stackBuffer;
-    enumerationState->mutationsPtr = enumerationState->extra;
-    
-    
-    
-    LDB_UNIMPLEMENTED();
-}
-
 @end
 
 @implementation LDBSnapshot (Private)

@@ -9,7 +9,7 @@
 
 @class LDBDatabase;
 
-@interface LDBSnapshot : NSObject <NSFastEnumeration>
+@interface LDBSnapshot : NSObject
 
 - (instancetype)initWithDatabase:(LDBDatabase *)database;
 
