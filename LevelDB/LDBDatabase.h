@@ -50,7 +50,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Iff there is an error, returns `NO` and sets the `error` pointer with
 /// `LDBErrorMessageKey` set in the `userInfo`.
 + (BOOL)
-    destroyDatabaseWithPath:(NSString *)path
+    destroyDatabaseAtPath:(NSString *)path
     error:(NSError * __autoreleasing *)error;
 
 
@@ -64,7 +64,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Iff there is an error, returns `NO` and sets the `error` pointer with
 /// `LDBErrorMessageKey` set in the `userInfo`.
 + (BOOL)
-    repairDatabaseWithPath:(NSString *)path
+    repairDatabaseAtPath:(NSString *)path
     error:(NSError * __autoreleasing *)error;
 
 

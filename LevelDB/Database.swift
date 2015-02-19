@@ -6,15 +6,13 @@
 //
 
 import Foundation
-import LlamaKit
-
-private var inMemoryCounter: Int32 = 0
-
-/// TODO
-public typealias ByteDatabase = Database<Ended<NSData>, NSData>
+import LevelDB
+import protocol Allsorts.Orderable
 
 /// TODO
-public final class Database<K : KeyType, V : ValueType> {
+public struct Database<K : protocol<ByteSerializable, Orderable>,
+                       V : ByteSerializable>
+{
 
     /// TODO
     public typealias Key = K
@@ -28,111 +26,60 @@ public final class Database<K : KeyType, V : ValueType> {
 // -----------------------------------------------------------------------------
 // MARK: Data
 
-    internal let handle: Handle
-    internal let readOptions = Handle(leveldb_readoptions_create(), leveldb_readoptions_destroy)
-    internal let asyncWriteOptions = Handle(leveldb_writeoptions_create(), leveldb_writeoptions_destroy)
-    internal let syncWriteOptions: Handle = {() -> Handle in
-        let handle = Handle(leveldb_writeoptions_create(), leveldb_writeoptions_destroy)
-        leveldb_writeoptions_set_sync(handle.pointer, 1)
-        return handle
-    }()
+    public let database: LDBDatabase
     
 // -----------------------------------------------------------------------------
 // MARK: Initialization
     
-    private init(handle: Handle) {
-        self.handle = handle
+    public init(database: LDBDatabase) {
+        self.database = database
     }
     
     /// TODO (in-memory database)
-    public convenience init() {
-        var defaultEnv = Handle(leveldb_create_default_env(), leveldb_env_destroy)
-        var memoryEnv = Handle(ext_leveldb_create_in_memory_env(defaultEnv.pointer), leveldb_env_destroy)
-        let options = Handle(leveldb_options_create(), leveldb_options_destroy)
-        leveldb_options_set_create_if_missing(options.pointer, 1)
-        leveldb_options_set_env(options.pointer, memoryEnv.pointer)
-        let name = "in-memory-\(OSAtomicIncrement32(&inMemoryCounter))"
-        switch tryC({error in leveldb_open(options.pointer, name, error)}) {
-        case let .Failure(e):
-            fatalError(e.unbox)
-        case let .Success(x):
-            let ptr = x.unbox
-            self.init(handle: Handle(ptr) {db in
-                leveldb_close(db)
-                memoryEnv = Handle()
-                defaultEnv = Handle()
-            })
-        }
+    public init() {
+        self.init(database: LDBDatabase())
     }
     
     /// TODO
-    public class func open(directoryPath:   String,
-                           createIfMissing: Bool = false,
-                           errorIfExists:   Bool = false,
-                           paranoidChecks:  Bool = false,
-                           maxOpenFiles:    Int  = 1000,
-                           bloomFilterBits: Int  = 0,
-                           cacheCapacity:   Int  = 0)
-        -> Result<Database, String>
-    {
-        return openHandle(directoryPath,
-                          createIfMissing: createIfMissing,
-                          errorIfExists:   errorIfExists,
-                          paranoidChecks:  paranoidChecks,
-                          maxOpenFiles:    maxOpenFiles,
-                          bloomFilterBits: bloomFilterBits,
-                          cacheCapacity:   cacheCapacity)
-        .map {handle in
-            Database(handle: handle)
-        }
-    }
-    
-    /// TODO
-    public convenience init?(_ directoryPath: String) {
-        switch Database.open(directoryPath, createIfMissing: true, bloomFilterBits: 10) {
-        case let .Failure(e):
-            NSLog("[WARN] %@ -- LevelDB.Database.init", e.unbox)
-            self.init(handle: Handle())
+    public init?(_ path: String) {
+        if let database = LDBDatabase(path: path) {
+            self.init(database: database)
+        } else {
             return nil
-        case let .Success(db):
-            self.init(handle: db.unbox.handle)
         }
     }
     
     /// TODO
-    private class func openHandle(directoryPath:   String,
-                                  createIfMissing: Bool,
-                                  errorIfExists:   Bool,
-                                  paranoidChecks:  Bool,
-                                  maxOpenFiles:    Int,
-                                  bloomFilterBits: Int,
-                                  cacheCapacity:   Int)
-        -> Result<Handle, String>
+    public init?(path:   String,
+                 inout error: NSError?,
+                 createIfMissing: Bool? = nil,
+                 errorIfExists:   Bool? = nil,
+                 paranoidChecks:  Bool? = nil,
+                 infoLog: (String -> ())? = nil,
+                 writeBufferSize: Int? = nil,
+                 maxOpenFiles:    Int? = nil,
+                 cacheCapacity:   Int? = nil,
+                 blockSize:       Int? = nil,
+                 blockRestartInterval: Int? = nil,
+                 compression:     LDBCompression? = nil,
+                 bloomFilterBits: Int? = nil)
     {
-        let options = Handle(leveldb_options_create(), leveldb_options_destroy)
-        leveldb_options_set_create_if_missing(options.pointer, createIfMissing ? 1 : 0)
-        leveldb_options_set_error_if_exists  (options.pointer, errorIfExists ? 1 : 0)
-        leveldb_options_set_paranoid_checks  (options.pointer, paranoidChecks ? 1 : 0)
-        leveldb_options_set_max_open_files   (options.pointer, Int32(maxOpenFiles))
-        var bloomFilter = Handle()
-        if bloomFilterBits > 0 {
-            bloomFilter = Handle(leveldb_filterpolicy_create_bloom(Int32(bloomFilterBits)), leveldb_filterpolicy_destroy)
-            leveldb_options_set_filter_policy(options.pointer, bloomFilter.pointer)
-        }
-        var cache = Handle()
-        if cacheCapacity > 0 {
-            cache = Handle(leveldb_cache_create_lru(UInt(cacheCapacity)), leveldb_cache_destroy)
-            leveldb_options_set_cache(options.pointer, cache.pointer)
-        }
-        let name = (directoryPath as NSString).UTF8String
-        return tryC({error in
-            leveldb_open(options.pointer, name, error)
-        }).map {pointer in
-            Handle(pointer) {pointer in
-                leveldb_close(pointer)
-                cache = Handle()
-                bloomFilter = Handle()
-            }
+        var opts = [String: AnyObject]()
+        if let x = createIfMissing { opts[LDBOptionCreateIfMissing] = x }
+        if let x = errorIfExists   { opts[LDBOptionErrorIfExists] = x }
+        if let x = paranoidChecks  { opts[LDBOptionParanoidChecks] = x }
+        if let f = infoLog         { opts[LDBOptionInfoLog] = LDBLogger {s in f(s)} }
+        if let x = writeBufferSize { opts[LDBOptionWriteBufferSize] = x }
+        if let x = maxOpenFiles    { opts[LDBOptionMaxOpenFiles] = x }
+        if let x = cacheCapacity   { opts[LDBOptionCacheCapacity] = x }
+        if let x = blockSize       { opts[LDBOptionBlockSize] = x }
+        if let x = blockRestartInterval { opts[LDBOptionBlockRestartInterval] = x }
+        if let x = compression     { opts[LDBOptionCompression] = x.rawValue }
+        if let x = bloomFilterBits { opts[LDBOptionBloomFilterBits] = x }
+        if let database = LDBDatabase(path: path, options: opts, error: &error) {
+            self.init(database: database)
+        } else {
+            return nil
         }
     }
     
@@ -141,100 +88,31 @@ public final class Database<K : KeyType, V : ValueType> {
 
     /// TODO
     public func cast<K1, V1>() -> Database<K1, V1> {
-        return Database<K1, V1>(handle: handle)
+        return Database<K1, V1>(database: database)
     }
 
     /// TODO
     public subscript(key: Key) -> Value? {
         get {
-            return get(key).either({error in
-                NSLog("[WARN] %@ -- LevelDB.Database.get", error)
-                return nil
-            }, {value in
-                value
-            })
+            return Value.fromSerializedBytes(database[key.serializedBytes])
         }
         set {
-            if let value = newValue {
-                return put(key, value).either({error in
-                    NSLog("[WARN] %@ -- LevelDB.Database.put", error)
-                }, {_ in
-                    ()
-                })
-            } else { // delete
-                return delete(key).either({error in
-                    NSLog("[WARN] %@ -- LevelDB.Database.delete", error)
-                }, {_ in
-                    ()
-                })
-            }
-        }
-    }
-    
-    /// TODO
-    public func get(key: Key) -> Result<Value?, String> {
-        let keyData = key.serializedBytes
-        var length: UInt = 0
-        return tryC {error in
-            ext_leveldb_get(self.handle.pointer,
-                            self.readOptions.pointer,
-                            UnsafePointer<Int8>(keyData.bytes),
-                            UInt(keyData.length),
-                            error) as NSData?
-        }.map {value in
-            if let data = value {
-                return Value.fromSerializedBytes(data)
-            } else {
-                return nil
-            }
-        }
-    }
-    
-    /// TODO
-    public func put(key: Key, _ value: Value) -> Result<(), String> {
-        let keyData = key.serializedBytes
-        let valueData = value.serializedBytes
-        return tryC {error in
-            leveldb_put(self.handle.pointer,
-                        self.syncWriteOptions.pointer,
-                        UnsafePointer<Int8>(keyData.bytes),
-                        UInt(keyData.length),
-                        UnsafePointer<Int8>(valueData.bytes),
-                        UInt(valueData.length),
-                        error)
-        }
-    }
-    
-    /// TODO
-    public func delete(key: Key) -> Result<(), String> {
-        let keyData = key.serializedBytes
-        return tryC {error in
-            leveldb_delete(self.handle.pointer,
-                           self.syncWriteOptions.pointer,
-                           UnsafePointer<Int8>(keyData.bytes),
-                           UInt(keyData.length),
-                           error)
+            database[key.serializedBytes] = newValue?.serializedBytes
         }
     }
 }
 
-//public extension Database {
-//
-//    /// TODO
-//    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
-//
-//    /// TODO
-//    public func write(batch: WriteBatch, sync: Bool = true) -> Result<(), String> {
-//        let opts = sync ? self.syncWriteOptions : self.asyncWriteOptions
-//        return tryC {error in
-//            leveldb_write(self.handle.pointer,
-//                          opts.pointer,
-//                          batch.handle.pointer,
-//                          error)
-//        }
-//    }
-//
-//}
+public extension Database {
+
+    /// TODO
+    public typealias WriteBatch = LevelDB.WriteBatch<Key, Value>
+
+    /// TODO
+    public func write(batch: WriteBatch, sync: Bool, inout error: NSError?) -> Bool {
+        return database.write(batch.batch, sync: sync, error: &error)
+    }
+
+}
 
 //public extension Database {
 //
@@ -242,8 +120,8 @@ public final class Database<K : KeyType, V : ValueType> {
 //    public typealias Snapshot = LevelDB.Snapshot<Key, Value>
 //    
 //    /// TODO
-//    public func snapshot() -> LevelDB.Snapshot<Key, Value> {
-//        return Snapshot(database: self, dataInterval: NSData() ..< NSData.infinity)
+//    public func snapshot() -> Snapshot {
+//        return
 //    }
 //    
 //}

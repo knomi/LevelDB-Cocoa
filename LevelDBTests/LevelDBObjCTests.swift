@@ -52,7 +52,7 @@ extension LDBSnapshot : SequenceType {
 
 class LevelDBObjCTests: XCTestCase {
 
-    func testExample() {
+    func testInMemory() {
         let db = LDBDatabase()
         
         if true {

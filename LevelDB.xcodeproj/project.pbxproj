@@ -13,6 +13,16 @@
 		E021E82C1A95DB5800A865E7 /* LDBIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = E021E8281A95DB5800A865E7 /* LDBIterator.mm */; };
 		E021E82E1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */; };
 		E021E82F1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */; };
+		E021E8301A962EE200A865E7 /* ByteSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */; };
+		E021E8311A962EE300A865E7 /* ByteSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */; };
+		E021E8341A9630BD00A865E7 /* LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */; };
+		E021E8351A9630BE00A865E7 /* LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */; };
+		E021E8361A96314600A865E7 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39601A76EC9E00FC96E0 /* Database.swift */; };
+		E021E8371A96314700A865E7 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39601A76EC9E00FC96E0 /* Database.swift */; };
+		E021E8381A9633D500A865E7 /* WriteBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */; };
+		E021E8391A9633D600A865E7 /* WriteBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */; };
+		E021E83A1A96366500A865E7 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */; };
+		E021E83B1A96366600A865E7 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */; };
 		E0B052191A7FF38D00DCE453 /* LevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BF378F1A7674E400FC96E0 /* LevelDB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0B052521A7FF50A00DCE453 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052511A7FF50A00DCE453 /* AppDelegate.swift */; };
 		E0B052541A7FF50A00DCE453 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052531A7FF50A00DCE453 /* ViewController.swift */; };
@@ -105,14 +115,8 @@
 		E0E829CD1A935C74004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
 		E0E829CE1A935C74004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
 		E0E829D31A935C86004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D11A935C86004A08F4 /* Allsorts.framework */; };
-		E0E829D91A936113004A08F4 /* LlamaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D81A936113004A08F4 /* LlamaKit.framework */; };
-		E0E829DA1A936113004A08F4 /* LlamaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D81A936113004A08F4 /* LlamaKit.framework */; };
-		E0E829DC1A936130004A08F4 /* LlamaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829DB1A936130004A08F4 /* LlamaKit.framework */; };
-		E0E829DD1A936473004A08F4 /* LlamaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829DB1A936130004A08F4 /* LlamaKit.framework */; };
-		E0E829DE1A93647C004A08F4 /* LlamaKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D81A936113004A08F4 /* LlamaKit.framework */; };
 		E0E829DF1A936481004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D11A935C86004A08F4 /* Allsorts.framework */; };
 		E0E829E01A936484004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
-		E0E829E21A936515004A08F4 /* LlamaKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D81A936113004A08F4 /* LlamaKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E0E829E41A936515004A08F4 /* Allsorts.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -178,7 +182,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E0E829E21A936515004A08F4 /* LlamaKit.framework in Copy Frameworks */,
 				E0E829E41A936515004A08F4 /* Allsorts.framework in Copy Frameworks */,
 				E0B052771A7FFD0F00DCE453 /* LevelDB.framework in Copy Frameworks */,
 			);
@@ -191,7 +194,6 @@
 		E021E8271A95DB5800A865E7 /* LDBIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBIterator.h; sourceTree = "<group>"; };
 		E021E8281A95DB5800A865E7 /* LDBIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBIterator.mm; sourceTree = "<group>"; };
 		E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelDBObjCTests.swift; sourceTree = "<group>"; };
-		E02379EA1A8B460B0088DF41 /* SnapshotType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotType.swift; sourceTree = "<group>"; };
 		E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		E02379F11A8B47470088DF41 /* NSDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataTests.swift; sourceTree = "<group>"; };
 		E02379F41A8B476D0088DF41 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
@@ -357,11 +359,8 @@
 		E0BF39601A76EC9E00FC96E0 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteBatch.swift; sourceTree = "<group>"; };
 		E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteSerializable.swift; sourceTree = "<group>"; };
-		E0BF397E1A779E1500FC96E0 /* Handle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Handle.swift; sourceTree = "<group>"; };
 		E0E829CB1A935C74004A08F4 /* Allsorts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Allsorts.framework; path = Carthage/Build/iOS/Allsorts.framework; sourceTree = SOURCE_ROOT; };
 		E0E829D11A935C86004A08F4 /* Allsorts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Allsorts.framework; path = Carthage/Build/Mac/Allsorts.framework; sourceTree = SOURCE_ROOT; };
-		E0E829D81A936113004A08F4 /* LlamaKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LlamaKit.framework; path = Carthage/Build/iOS/LlamaKit.framework; sourceTree = SOURCE_ROOT; };
-		E0E829DB1A936130004A08F4 /* LlamaKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LlamaKit.framework; path = Carthage/Build/Mac/LlamaKit.framework; sourceTree = SOURCE_ROOT; };
 		E0E829FB1A947D79004A08F4 /* LDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBDatabase.h; sourceTree = "<group>"; };
 		E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBDatabase.mm; sourceTree = "<group>"; };
 		E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBSnapshot.h; sourceTree = "<group>"; };
@@ -383,7 +382,6 @@
 			files = (
 				E0E829CE1A935C74004A08F4 /* Allsorts.framework in Frameworks */,
 				E0B052711A7FF55C00DCE453 /* LevelDB.framework in Frameworks */,
-				E0E829DA1A936113004A08F4 /* LlamaKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,7 +390,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0E829CD1A935C74004A08F4 /* Allsorts.framework in Frameworks */,
-				E0E829D91A936113004A08F4 /* LlamaKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +398,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0BF37961A7674E400FC96E0 /* LevelDB.framework in Frameworks */,
-				E0E829DE1A93647C004A08F4 /* LlamaKit.framework in Frameworks */,
 				E0E829E01A936484004A08F4 /* Allsorts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,7 +407,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0E829D31A935C86004A08F4 /* Allsorts.framework in Frameworks */,
-				E0E829DC1A936130004A08F4 /* LlamaKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,7 +415,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0BF39071A76D49D00FC96E0 /* LevelDB.framework in Frameworks */,
-				E0E829DD1A936473004A08F4 /* LlamaKit.framework in Frameworks */,
 				E0E829DF1A936481004A08F4 /* Allsorts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,10 +489,8 @@
 				E0B0527B1A80209E00DCE453 /* version.sh */,
 				E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */,
 				E0BF39601A76EC9E00FC96E0 /* Database.swift */,
-				E0BF397E1A779E1500FC96E0 /* Handle.swift */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 				E0BF395D1A76E43D00FC96E0 /* Snapshot.swift */,
-				E02379EA1A8B460B0088DF41 /* SnapshotType.swift */,
 				E0BF39691A76EE4900FC96E0 /* WriteBatch.swift */,
 			);
 			path = LevelDB;
@@ -520,8 +512,6 @@
 		E0BF37A71A76CD3B00FC96E0 /* External */ = {
 			isa = PBXGroup;
 			children = (
-				E0E829DB1A936130004A08F4 /* LlamaKit.framework */,
-				E0E829D81A936113004A08F4 /* LlamaKit.framework */,
 				E0E829D11A935C86004A08F4 /* Allsorts.framework */,
 				E0E829CB1A935C74004A08F4 /* Allsorts.framework */,
 				E0BF37A81A76CD3B00FC96E0 /* leveldb */,
@@ -1049,6 +1039,7 @@
 				E0BF38E61A76D0D200FC96E0 /* two_level_iterator.cc in Sources */,
 				E0BF38EF1A76D10800FC96E0 /* filter_policy.cc in Sources */,
 				E0BF38F51A76D11100FC96E0 /* port_posix.cc in Sources */,
+				E021E8371A96314700A865E7 /* Database.swift in Sources */,
 				E0E82A181A9496DC004A08F4 /* LDBPrivate.mm in Sources */,
 				E0BF38D41A76D0AD00FC96E0 /* dumpfile.cc in Sources */,
 				E0BF38E41A76D0D200FC96E0 /* table.cc in Sources */,
@@ -1060,7 +1051,9 @@
 				E0E82A121A949404004A08F4 /* LDBError.mm in Sources */,
 				E0BF38DA1A76D0AD00FC96E0 /* table_cache.cc in Sources */,
 				E0BF38E91A76D10800FC96E0 /* cache.cc in Sources */,
+				E021E8351A9630BE00A865E7 /* LevelDB.swift in Sources */,
 				E0BF38D71A76D0AD00FC96E0 /* log_writer.cc in Sources */,
+				E021E8391A9633D600A865E7 /* WriteBatch.swift in Sources */,
 				E0BF38DE1A76D0D200FC96E0 /* block.cc in Sources */,
 				E0BF38DD1A76D0AD00FC96E0 /* write_batch.cc in Sources */,
 				E0E82A001A947D79004A08F4 /* LDBDatabase.mm in Sources */,
@@ -1076,6 +1069,8 @@
 				E0BF38DF1A76D0D200FC96E0 /* block_builder.cc in Sources */,
 				E0BF38E01A76D0D200FC96E0 /* filter_block.cc in Sources */,
 				E0BF38DB1A76D0AD00FC96E0 /* version_edit.cc in Sources */,
+				E021E83B1A96366600A865E7 /* Snapshot.swift in Sources */,
+				E021E8311A962EE300A865E7 /* ByteSerializable.swift in Sources */,
 				E0BF38EA1A76D10800FC96E0 /* coding.cc in Sources */,
 				E0BF38EE1A76D10800FC96E0 /* env_posix.cc in Sources */,
 				E0BF38ED1A76D10800FC96E0 /* env.cc in Sources */,
@@ -1110,6 +1105,7 @@
 				E0BF391B1A76D55300FC96E0 /* two_level_iterator.cc in Sources */,
 				E0BF39161A76D55300FC96E0 /* dbformat.cc in Sources */,
 				E0BF39271A76D55300FC96E0 /* block.cc in Sources */,
+				E021E8361A96314600A865E7 /* Database.swift in Sources */,
 				E0E82A171A9496DC004A08F4 /* LDBPrivate.mm in Sources */,
 				E0BF393B1A76D55300FC96E0 /* memtable.cc in Sources */,
 				E0BF391F1A76D55300FC96E0 /* table.cc in Sources */,
@@ -1121,7 +1117,9 @@
 				E0E82A111A949404004A08F4 /* LDBError.mm in Sources */,
 				E0BF391D1A76D55300FC96E0 /* port_posix.cc in Sources */,
 				E0BF39341A76D55300FC96E0 /* version_edit.cc in Sources */,
+				E021E8341A9630BD00A865E7 /* LevelDB.swift in Sources */,
 				E0BF39371A76D55300FC96E0 /* env_posix.cc in Sources */,
+				E021E8381A9633D500A865E7 /* WriteBatch.swift in Sources */,
 				E0BF392A1A76D55300FC96E0 /* table_builder.cc in Sources */,
 				E0E829FF1A947D79004A08F4 /* LDBDatabase.mm in Sources */,
 				E0BF39231A76D55300FC96E0 /* logging.cc in Sources */,
@@ -1137,6 +1135,8 @@
 				E0BF392F1A76D55300FC96E0 /* status.cc in Sources */,
 				E0BF39381A76D55300FC96E0 /* env.cc in Sources */,
 				E0BF39181A76D55300FC96E0 /* histogram.cc in Sources */,
+				E021E83A1A96366500A865E7 /* Snapshot.swift in Sources */,
+				E021E8301A962EE200A865E7 /* ByteSerializable.swift in Sources */,
 				E0BF39171A76D55300FC96E0 /* iterator.cc in Sources */,
 				E0BF39241A76D55300FC96E0 /* table_cache.cc in Sources */,
 				E0BF39361A76D55300FC96E0 /* coding.cc in Sources */,

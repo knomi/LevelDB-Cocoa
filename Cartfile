@@ -1,2 +1,1 @@
 git "git@bitbucket.org:pyrtsa/allsorts.git" ~> 0.0.3
-github "LlamaKit/LlamaKit" ~> 0.5

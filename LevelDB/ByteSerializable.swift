@@ -12,7 +12,7 @@ import Foundation
 /// relative sort order, i.e. for all `a` and `b` of type `Self`,
 ///
 /// ```swift
-/// a <=> b == a.serializedBytes <=> b.serializedBytes
+/// (a <=> b) == (a.serializedBytes <=> b.serializedBytes)
 /// ```
 public protocol ByteSerializable {
     
@@ -22,20 +22,6 @@ public protocol ByteSerializable {
     /// TODO
     var serializedBytes: NSData { get }
     
-}
-
-extension NSData : ByteSerializable {
-
-    /// TODO
-    public class func fromSerializedBytes(data: NSData) -> Self? {
-        return self(bytes: data.bytes, length: data.length)
-    }
-
-    /// TODO
-    public var serializedBytes: NSData {
-        return self
-    }
-
 }
 
 extension String : ByteSerializable {

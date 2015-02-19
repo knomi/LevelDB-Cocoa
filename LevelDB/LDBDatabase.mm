@@ -54,7 +54,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
 @implementation LDBDatabase
 
 + (BOOL)
-    destroyDatabaseWithPath:(NSString *)path
+    destroyDatabaseAtPath:(NSString *)path
     error:(NSError * __autoreleasing *)error
 {
     auto options = leveldb::Options{};
@@ -63,7 +63,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
 }
 
 + (BOOL)
-    repairDatabaseWithPath:(NSString *)path
+    repairDatabaseAtPath:(NSString *)path
     error:(NSError * __autoreleasing *)error;
 {
     auto options = leveldb::Options{};
