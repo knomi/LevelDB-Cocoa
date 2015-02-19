@@ -77,10 +77,10 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
         return nil;
     }
     
-    auto env = std::shared_ptr<leveldb::Env>(
+    _env = std::unique_ptr<leveldb::Env>(
         leveldb::NewMemEnv(leveldb::Env::Default()));
     auto options = leveldb::Options{};
-    options.env = env.get();
+    options.env = _env.get();
     options.create_if_missing = true;
 
     static std::int64_t counter = 0;
