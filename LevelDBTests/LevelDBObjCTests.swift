@@ -2,7 +2,6 @@
 //  LevelDBObjCTests.swift
 //  LevelDB
 //
-//  Created by Pyry Jahkola on 19.02.2015.
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
@@ -24,6 +23,18 @@ extension String {
 
 class LevelDBObjCTests: XCTestCase {
 
+    var path = ""
+    
+    override func setUp() {
+        super.setUp()
+        path = tempDbPath()
+    }
+    
+    override func tearDown() {
+        destroyTempDb(path)
+        super.tearDown()
+    }
+    
     func testInMemory() {
         let db = LDBDatabase()
         

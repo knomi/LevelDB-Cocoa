@@ -2,7 +2,6 @@
 //  TestUtils.swift
 //  LevelDB
 //
-//  Created by Pyry Jahkola on 11.02.2015.
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
@@ -39,6 +38,16 @@ extension NSData {
     var UTF8String: String {
         return NSString(data: self, encoding: NSUTF8StringEncoding)! as String
     }
+}
+
+func tempDbPath() -> String {
+    let unique = NSProcessInfo.processInfo().globallyUniqueString
+    return NSTemporaryDirectory().stringByAppendingPathComponent(unique)
+}
+
+func destroyTempDb(path: String) {
+    LDBDatabase.destroyDatabaseAtPath(path, error: nil)
+    assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
 }
 
 func XCTAssertEqual<A : Equatable>(x: A?, y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {

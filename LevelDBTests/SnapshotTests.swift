@@ -2,15 +2,26 @@
 //  SnapshotTests.swift
 //  LevelDB
 //
-//  Created by Pyry Jahkola on 11.02.2015.
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
 import XCTest
 import LevelDB
 
-extension LevelDBTests {
+class SnapshotTests : XCTestCase {
 
+    var path = ""
+    
+    override func setUp() {
+        super.setUp()
+        path = tempDbPath()
+    }
+    
+    override func tearDown() {
+        destroyTempDb(path)
+        super.tearDown()
+    }
+    
 //    func testSnapshot() {
 //        let db = ByteDatabase(path)!
 //        for (k, v) in db.snapshot() {

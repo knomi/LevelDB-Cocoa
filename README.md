@@ -1,16 +1,58 @@
-LevelDB.swift
-=============
+LevelDB
+=======
 
-Simple but versatile Swift wrapper around the [LevelDB][] key-value storage library written at Google.
+Simple but versatile Objective-C & Swift wrapper around the [LevelDB][] key-value storage library written at Google.
 
-The base building block is a `Database<Key, Value>` of serialisable key-value pairs ordered by the serialised representation of `Key`. The database can be either in-memory or persisted on disk, and snapshots are used to make reads consistent.
+The base building block is a `LDBDatabase` of key-value pairs `(NSData, NSData)` ordered by key. The database can be either in-memory or persisted on disk, and snapshots are used to make reads consistent.
 
-Quick example:
+Quick example (Objective-C):
 
-```swift
-import LevelDB
-if let db = Database<String, String>("strings.ldb") {
-    db.write...
+```objc
+#import <LevelDB/LevelDB.h>
+
+LDBDatabase *database = [[LDBDatabase alloc] initWithPath:@"demo.ldb"];
+
+NSData *key1 = [@"foo" dataUsingEncoding:NSUTF8StringEncoding];
+NSData *val1 = [@"FOO" dataUsingEncoding:NSUTF8StringEncoding];
+database[key1] = val1;
+
+NSCAssert([database[key1] isEqual:val1], @"");
+
+LDBWriteBatch *batch = [LDBWriteBatch new];
+for (NSString *k in @[@"aha", @"bar", @"baz", @"boo", @"xyz"]) {
+    batch[[k dataUsingEncoding:NSUTF8StringEncoding]] =
+        [[k uppercaseString] dataUsingEncoding:NSUTF8StringEncoding];
+}
+NSError *error;
+if (![database write:batch sync:NO error:&error]) {
+    NSLog(@"batch write failed: %@", error);
+} else {
+    LDBSnapshot *snapshot = database.snapshot;
+
+    NSLog(@"snapshot contents:");
+    for (LDBIterator *it = snapshot.iterate; it.isValid; [it step]) {
+        NSLog(@"  - %@: %@",
+            [[NSString alloc] initWithData:it.key encoding:NSUTF8StringEncoding],
+            [[NSString alloc] initWithData:it.value encoding:NSUTF8StringEncoding]);
+    }
+    // snapshot contents:
+    //   - aha: AHA
+    //   - bar: BAR
+    //   - baz: BAZ
+    //   - boo: BOO
+    //   - foo: FOO
+    //   - xyz: XYZ
+
+    LDBSnapshot *clamped = [snapshot prefix:[@"ba" dataUsingEncoding:NSUTF8StringEncoding]];
+    NSLog(@"clamped snapshot contents:");
+    for (LDBIterator *it = clamped.iterate; it.isValid; [it step]) {
+        NSLog(@"  - %@: %@",
+            [[NSString alloc] initWithData:it.key encoding:NSUTF8StringEncoding],
+            [[NSString alloc] initWithData:it.value encoding:NSUTF8StringEncoding]);
+    }
+    // clamped snapshot contents:
+    //   - bar: BAR
+    //   - baz: BAZ
 }
 ```
 

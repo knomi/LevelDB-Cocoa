@@ -48,12 +48,6 @@
     [self setData:nil forKey:key];
 }
 
-- (void)removeAllData
-{
-    _impl.Clear();
-    _mutations++;
-}
-
 - (void)enumerate:(void (^)(NSData *key, NSData *data))block
 {
     struct enumerator_t : leveldb::WriteBatch::Handler {

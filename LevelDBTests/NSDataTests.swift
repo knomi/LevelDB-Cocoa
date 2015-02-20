@@ -2,7 +2,6 @@
 //  NSDataTests.swift
 //  LevelDB
 //
-//  Created by Pyry Jahkola on 11.02.2015.
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
@@ -10,7 +9,7 @@ import Foundation
 import XCTest
 import LevelDB
 
-extension LevelDBTests {
+class NSDataTests : XCTestCase {
 
     func testLexicographicalNextSibling() {
         let bytes = {(var array: [UInt8]) -> NSData in

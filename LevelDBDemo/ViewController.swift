@@ -2,7 +2,6 @@
 //  ViewController.swift
 //  LevelDBDemo
 //
-//  Created by Pyry Jahkola on 02.02.2015.
 //  Copyright (c) 2015 Pyrtsa. All rights reserved.
 //
 

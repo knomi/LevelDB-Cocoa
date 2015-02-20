@@ -25,10 +25,12 @@
 		E021E8431A97282200A865E7 /* NSDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F11A8B47470088DF41 /* NSDataTests.swift */; };
 		E021E8441A97285100A865E7 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F41A8B476D0088DF41 /* TestUtils.swift */; };
 		E021E8451A97285200A865E7 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379F41A8B476D0088DF41 /* TestUtils.swift */; };
-		E021E8461A97288000A865E7 /* LevelDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF379C1A7674E400FC96E0 /* LevelDBTests.swift */; };
-		E021E8471A97288100A865E7 /* LevelDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF379C1A7674E400FC96E0 /* LevelDBTests.swift */; };
+		E021E8461A97288000A865E7 /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF379C1A7674E400FC96E0 /* DatabaseTests.swift */; };
+		E021E8471A97288100A865E7 /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF379C1A7674E400FC96E0 /* DatabaseTests.swift */; };
 		E021E8481A973C7600A865E7 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */; };
 		E021E8491A973C7700A865E7 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */; };
+		E021E84C1A976C9F00A865E7 /* LevelDBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E021E84B1A976C9F00A865E7 /* LevelDBTests.m */; };
+		E021E84D1A976C9F00A865E7 /* LevelDBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E021E84B1A976C9F00A865E7 /* LevelDBTests.m */; };
 		E0B052191A7FF38D00DCE453 /* LevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BF378F1A7674E400FC96E0 /* LevelDB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0B052521A7FF50A00DCE453 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052511A7FF50A00DCE453 /* AppDelegate.swift */; };
 		E0B052541A7FF50A00DCE453 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B052531A7FF50A00DCE453 /* ViewController.swift */; };
@@ -195,6 +197,7 @@
 		E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelDBObjCTests.swift; sourceTree = "<group>"; };
 		E021E83C1A97215400A865E7 /* NSData+LDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+LDB.h"; sourceTree = "<group>"; };
 		E021E83D1A97215400A865E7 /* NSData+LDB.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSData+LDB.mm"; sourceTree = "<group>"; };
+		E021E84B1A976C9F00A865E7 /* LevelDBTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelDBTests.m; sourceTree = "<group>"; };
 		E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		E02379F11A8B47470088DF41 /* NSDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataTests.swift; sourceTree = "<group>"; };
 		E02379F41A8B476D0088DF41 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
@@ -212,7 +215,7 @@
 		E0BF378F1A7674E400FC96E0 /* LevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelDB.h; sourceTree = "<group>"; };
 		E0BF37951A7674E400FC96E0 /* LevelDBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LevelDBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF379B1A7674E400FC96E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E0BF379C1A7674E400FC96E0 /* LevelDBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelDBTests.swift; sourceTree = "<group>"; };
+		E0BF379C1A7674E400FC96E0 /* DatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTests.swift; sourceTree = "<group>"; };
 		E0BF37A91A76CD3B00FC96E0 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		E0BF37AA1A76CD3B00FC96E0 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		E0BF37AB1A76CD3B00FC96E0 /* build_detect_platform */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build_detect_platform; sourceTree = "<group>"; };
@@ -489,9 +492,10 @@
 		E0BF37991A7674E400FC96E0 /* LevelDBTests */ = {
 			isa = PBXGroup;
 			children = (
+				E021E84B1A976C9F00A865E7 /* LevelDBTests.m */,
 				E0BF379B1A7674E400FC96E0 /* Info.plist */,
+				E0BF379C1A7674E400FC96E0 /* DatabaseTests.swift */,
 				E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */,
-				E0BF379C1A7674E400FC96E0 /* LevelDBTests.swift */,
 				E02379F11A8B47470088DF41 /* NSDataTests.swift */,
 				E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */,
 				E02379F41A8B476D0088DF41 /* TestUtils.swift */,
@@ -1077,7 +1081,8 @@
 				E021E8421A97282100A865E7 /* NSDataTests.swift in Sources */,
 				E021E8441A97285100A865E7 /* TestUtils.swift in Sources */,
 				E021E8491A973C7700A865E7 /* SnapshotTests.swift in Sources */,
-				E021E8471A97288100A865E7 /* LevelDBTests.swift in Sources */,
+				E021E8471A97288100A865E7 /* DatabaseTests.swift in Sources */,
+				E021E84D1A976C9F00A865E7 /* LevelDBTests.m in Sources */,
 				E021E82F1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1145,7 +1150,8 @@
 				E021E8431A97282200A865E7 /* NSDataTests.swift in Sources */,
 				E021E8451A97285200A865E7 /* TestUtils.swift in Sources */,
 				E021E8481A973C7600A865E7 /* SnapshotTests.swift in Sources */,
-				E021E8461A97288000A865E7 /* LevelDBTests.swift in Sources */,
+				E021E8461A97288000A865E7 /* DatabaseTests.swift in Sources */,
+				E021E84C1A976C9F00A865E7 /* LevelDBTests.m in Sources */,
 				E021E82E1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

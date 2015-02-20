@@ -1,8 +1,7 @@
 //
-//  LevelDBTests.swift
-//  LevelDBTests
+//  DatabaseTests.swift
+//  DatabaseTests
 //
-//  Created by Pyry Jahkola on 26.01.2015.
 //  Copyright (c) 2015 Pyrtsa. All rights reserved.
 //
 
@@ -10,21 +9,17 @@ import Foundation
 import XCTest
 import LevelDB
 
-class LevelDBTests: XCTestCase {
+class DatabaseTests : XCTestCase {
 
     var path = ""
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        path = NSTemporaryDirectory().stringByAppendingPathComponent(NSProcessInfo.processInfo().globallyUniqueString)
-        // NSLog("using temp path: %@", path)
+        path = tempDbPath()
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        LDBDatabase.destroyDatabaseAtPath(path, error: nil)
-        assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
+        destroyTempDb(path)
         super.tearDown()
     }
     

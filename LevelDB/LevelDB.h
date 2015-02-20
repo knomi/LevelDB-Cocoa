@@ -19,13 +19,13 @@ FOUNDATION_EXPORT const unsigned char LevelDBVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <LevelDB/PublicHeader.h>
 
-#import "LDBDatabase.h"
-#import "LDBError.h"
-#import "LDBIterator.h"
-#import "LDBLogger.h"
-#import "LDBSnapshot.h"
-#import "LDBWriteBatch.h"
-#import "NSData+LDB.h"
+#import <LevelDB/LDBDatabase.h>
+#import <LevelDB/LDBError.h>
+#import <LevelDB/LDBIterator.h>
+#import <LevelDB/LDBLogger.h>
+#import <LevelDB/LDBSnapshot.h>
+#import <LevelDB/LDBWriteBatch.h>
+#import <LevelDB/NSData+LDB.h>
 
 #ifdef __cplusplus
 } // extern "C"
