@@ -10,77 +10,6 @@ import Foundation
 import XCTest
 import LevelDB
 
-extension String {
-    var UTF8: NSData {
-        return dataUsingEncoding(NSUTF8StringEncoding)!
-    }
-}
-
-private func forkEqualRange<Ix : RandomAccessIndexType>
-    (range: Range<Ix>, ord: Ix -> Ordering) -> (lower: Range<Ix>,
-                                                upper: Range<Ix>)
-{
-    var (lo, hi) = (range.startIndex, range.endIndex)
-    while lo < hi {
-        let m = midIndex(lo, hi)
-        switch ord(m) {
-        case .LT: lo = m.successor()
-        case .EQ: return (lo ..< m, m ..< hi)
-        case .GT: hi = m
-        }
-    }
-    return (lo ..< lo, lo ..< lo)
-}
-
-private func midIndex<Ix : RandomAccessIndexType>(start: Ix, end: Ix) -> Ix {
-    return start.advancedBy(start.distanceTo(end) / 2)
-}
-
-extension WriteBatch {
-    
-    var diff: [(Key, Value?)] {
-        var diffs: [(Key, Value?)] = []
-        enumerate {key, value in
-            let (lower, upper) = forkEqualRange(indices(diffs)) {i in
-                return diffs[i].0.threeWayCompare(key)
-            }
-            if lower.startIndex != upper.endIndex {
-                diffs[lower.endIndex] = (key, value)
-            } else {
-                diffs.insert((key, value), atIndex: lower.endIndex)
-            }
-        }
-        return diffs
-    }
-    
-}
-
-extension NSData {
-    var UTF8String: String {
-        return NSString(data: self, encoding: NSUTF8StringEncoding)!
-    }
-}
-
-func XCTAssertEqual<A : Equatable>(x: A?, y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
-    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
-}
-
-func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
-    XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
-    for (x, y) in Zip2(xs, ys) {
-        XCTAssertEqual(x.0, y.0, message, file: file, line: line)
-        XCTAssertEqual(x.1, y.1, message, file: file, line: line)
-    }
-}
-
-func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], ys: [(A, B?)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
-    XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
-    for (x, y) in Zip2(xs, ys) {
-        XCTAssertEqual(x.0, y.0, message, file: file, line: line)
-        XCTAssertEqual(x.1, y.1, message, file: file, line: line)
-    }
-}
-
 class LevelDBTests: XCTestCase {
 
     var path = ""
@@ -94,13 +23,13 @@ class LevelDBTests: XCTestCase {
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        destroyDatabase(path)
+        LDBDatabase.destroyDatabaseAtPath(path, error: nil)
         assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
         super.tearDown()
     }
     
     func testInMemory() {
-        let db = ByteDatabase()
+        let db: LDBDatabase = LDBDatabase()
         XCTAssertNil(db[NSData()])
         db[NSData()] = NSData()
         XCTAssertNotNil(db[NSData()])
@@ -109,7 +38,7 @@ class LevelDBTests: XCTestCase {
     }
     
     func testOnDisk() {
-        let maybeDb = ByteDatabase(path)
+        let maybeDb: LDBDatabase? = LDBDatabase(path)
         XCTAssertNotNil(maybeDb)
         
         if maybeDb == nil { return }
@@ -123,271 +52,132 @@ class LevelDBTests: XCTestCase {
         XCTAssertNil(db[NSData()])
     }
     
-    func testSnapshot() {
-        let db = ByteDatabase(path)!
-        for (k, v) in db.snapshot() {
-            XCTFail("Expected empty database")
-        }
-        
-        db[NSData()]  = NSData()
-        db["a".UTF8]  = "foo".UTF8
-        db["b".UTF8]  = "bar".UTF8
-        db["ab".UTF8] = "qux".UTF8
-        db["1".UTF8]  = "one".UTF8
-        
-        let snapshot = db.snapshot()
-        db["2".UTF8]  = "two".UTF8
-        let pairs = Array(snapshot).map {(k, v) -> (String, String) in
-            db[k] = k
-            return (k.UTF8String, v.UTF8String)
-        }
-
-        XCTAssertEqual(pairs, [("",  ""),
-                               ("1",  "one"),
-                               ("a",  "foo"),
-                               ("ab", "qux"),
-                               ("b",  "bar")])
-        
-        if true {
-            XCTAssertEqual(snapshot["".UTF8], "".UTF8)
-            XCTAssertEqual(snapshot["1".UTF8], "one".UTF8)
-            XCTAssertNil(snapshot["2".UTF8])
-        }
-        
-        let revPairs = Array(snapshot.reverse).map {(k, v) -> (String, String) in
-            return (k.UTF8String, v.UTF8String)
-        }
-        XCTAssertEqual(revPairs, [("b",  "bar"),
-                                  ("ab", "qux"),
-                                  ("a",  "foo"),
-                                  ("1",  "one"),
-                                  ("",  "")])
-        
-        let clampPairs = Array(snapshot["aa".UTF8 ..< "c".UTF8]).map {(k, v) -> (String, String) in
-            return (k.UTF8String, v.UTF8String)
-        }
-
-        XCTAssertEqual(clampPairs, [("ab", "qux"),
-                                    ("b",  "bar")])
-
-        let clampRevPairs = Array(snapshot.reverse["1".UTF8 ..< "a ".UTF8]).map {(k, v) -> (String, String) in
-            return (k.UTF8String, v.UTF8String)
-        }
-        println(clampRevPairs)
-        XCTAssertEqual(clampRevPairs, [("a",  "foo"),
-                                       ("1",  "one")])
-
-    }
-    
-    func testStringDatabase() {
-    
-        let db = Database<String, String>()
-        
-        db["foo"] = "bar"
-        
-        let byteValued = db.cast() as Database<String, NSData>
-        let byteKeyed = db.cast() as Database<NSData, String>
-        let byteDb = db.cast() as Database<NSData, NSData>
-
-        XCTAssertEqual(db["foo"],             Optional("bar"))
-        XCTAssertEqual(byteValued["foo"],     Optional("bar".UTF8))
-        XCTAssertEqual(byteKeyed["foo".UTF8], Optional("bar"))
-        XCTAssertEqual(byteDb["foo".UTF8],    Optional("bar".UTF8))
-
-        db["foo"] = nil
-    
-        XCTAssertNil(db["foo"])
-
-    }
-    
-    func testWriteBatch() {
-    
-        let batch = WriteBatch<String, String>()
-        
-        batch.put("foo", "bar")
-        batch.delete("foo")
-        
-        XCTAssertEqual(batch.diff, [("foo", nil)])
-
-        batch.put("qux", "abc")
-        batch.delete("def")
-        batch.delete("bar")
-        batch.put("foo", "def")
-
-        XCTAssertEqual(batch.diff, [("bar", nil),
-                                    ("def", nil),
-                                    ("foo", "def"),
-                                    ("qux", "abc")])
-    
-        let db1 = Database<String, String>()
-        
-        db1["bar"] = "ghi"
-        db1["baz"] = "jkl"
-        
-        XCTAssertEqual(db1["bar"], "ghi")
-        XCTAssertEqual(db1["baz"], "jkl")
-        
-        XCTAssertNil(db1.write(batch).justError)
-        
-        XCTAssertEqual(db1["bar"], nil)
-        XCTAssertEqual(db1["baz"], "jkl")
-        XCTAssertEqual(db1["def"], nil)
-        XCTAssertEqual(db1["foo"], "def")
-        XCTAssertEqual(db1["qux"], "abc")
-
-        let db2 = Database<String, String>(path)!
-        
-        db2["def"] = "ghi"
-        db2["baz"] = "jkl"
-        
-        XCTAssertEqual(db2["def"], "ghi")
-        XCTAssertEqual(db2["baz"], "jkl")
-        
-        XCTAssertNil(db2.write(batch).justError)
-        
-        XCTAssertEqual(db2["bar"], nil)
-        XCTAssertEqual(db2["baz"], "jkl")
-        XCTAssertEqual(db2["def"], nil)
-        XCTAssertEqual(db2["foo"], "def")
-        XCTAssertEqual(db2["qux"], "abc")
-        
-    }
-    
-    func testPrefix() {
-        let db = Database<String, String>(path)!
-        
-        db["/z"]          = "end"
-        db["/people/foo"] = "foo"
-        db["/people/bar"] = "bar"
-        db["/pets/cat"]   = "meow"
-        db["/pets/dog"]   = "barf"
-        db["/other"]      = "other"
-
-        let snapshot = db.snapshot()
-        
-        XCTAssertEqual(snapshot.values.array, ["other", "bar", "foo", "meow", "barf", "end"])
-        
-        let people = snapshot.prefix("/people/")
-        let pets   = snapshot.prefix("/pets/")
-        let peh    = snapshot.prefix("/pe")
-        let dehcat0 = snapshot["/people/deh" ..< "/pets/cat"]
-        let dehcat1 = snapshot["/people/deh" ..< "/pets/cat "]
-        let dehcat2 = snapshot["/people/deh" ... "/pets/cat"]
-        let dehdog  = snapshot["/people/deh" ... "/pets/dog"]
-        let postcat = snapshot.after("/pets/cat")
-        
-        XCTAssertEqual(people.values.array, ["bar", "foo"])
-        XCTAssertEqual(pets.values.array, ["meow", "barf"])
-        XCTAssertEqual(peh.values.array, ["bar", "foo", "meow", "barf"])
-        XCTAssertEqual(dehcat0.values.array, ["foo"])
-        XCTAssertEqual(dehcat1.values.array, ["foo", "meow"])
-        XCTAssertEqual(dehcat2.values.array, ["foo", "meow"])
-        XCTAssertEqual(dehdog.values.array, ["foo", "meow", "barf"])
-        XCTAssertEqual(postcat.values.array, ["barf", "end"])
-        
-    }
+//    func testStringDatabase() {
+//    
+//        let db = Database<String, String>()
+//        
+//        db["foo"] = "bar"
+//        
+//        let byteValued = db.cast() as Database<String, NSData>
+//        let byteKeyed = db.cast() as Database<NSData, String>
+//        let byteDb = db.cast() as Database<NSData, NSData>
+//
+//        XCTAssertEqual(db["foo"],             Optional("bar"))
+//        XCTAssertEqual(byteValued["foo"],     Optional("bar".UTF8))
+//        XCTAssertEqual(byteKeyed["foo".UTF8], Optional("bar"))
+//        XCTAssertEqual(byteDb["foo".UTF8],    Optional("bar".UTF8))
+//
+//        db["foo"] = nil
+//    
+//        XCTAssertNil(db["foo"])
+//
+//    }
+//    
+//    func testWriteBatch() {
+//    
+//        let batch = WriteBatch<String, String>()
+//        
+//        batch.put("foo", "bar")
+//        batch.delete("foo")
+//        
+//        XCTAssertEqual(batch.diff, [("foo", nil)])
+//
+//        batch.put("qux", "abc")
+//        batch.delete("def")
+//        batch.delete("bar")
+//        batch.put("foo", "def")
+//
+//        XCTAssertEqual(batch.diff, [("bar", nil),
+//                                    ("def", nil),
+//                                    ("foo", "def"),
+//                                    ("qux", "abc")])
+//    
+//        let db1 = Database<String, String>()
+//        
+//        db1["bar"] = "ghi"
+//        db1["baz"] = "jkl"
+//        
+//        XCTAssertEqual(db1["bar"], "ghi")
+//        XCTAssertEqual(db1["baz"], "jkl")
+//        
+//        XCTAssertNil(db1.write(batch).error)
+//        
+//        XCTAssertEqual(db1["bar"], nil)
+//        XCTAssertEqual(db1["baz"], "jkl")
+//        XCTAssertEqual(db1["def"], nil)
+//        XCTAssertEqual(db1["foo"], "def")
+//        XCTAssertEqual(db1["qux"], "abc")
+//
+//        let db2 = Database<String, String>(path)!
+//        
+//        db2["def"] = "ghi"
+//        db2["baz"] = "jkl"
+//        
+//        XCTAssertEqual(db2["def"], "ghi")
+//        XCTAssertEqual(db2["baz"], "jkl")
+//        
+//        XCTAssertNil(db2.write(batch).error)
+//        
+//        XCTAssertEqual(db2["bar"], nil)
+//        XCTAssertEqual(db2["baz"], "jkl")
+//        XCTAssertEqual(db2["def"], nil)
+//        XCTAssertEqual(db2["foo"], "def")
+//        XCTAssertEqual(db2["qux"], "abc")
+//        
+//    }
     
     func testOpenFailures() {
-        XCTAssertNotNil(Database<String, String>.open(path).justError, "should fail with `createIfMissing: false`")
-        XCTAssertNotNil(Database<String, String>.open(path, createIfMissing: true).justValue, "should succeed with `createIfMissing: true`")
-        XCTAssertNotNil(Database<String, String>.open(path, errorIfExists: true).justError, "should fail with `errorIfExists: true`")
+//        XCTAssertNotNil(Database<String, String>.open(path).error, "should fail with `createIfMissing: false`")
+//        XCTAssertNotNil(Database<String, String>.open(path, createIfMissing: true).value, "should succeed with `createIfMissing: true`")
+//        XCTAssertNotNil(Database<String, String>.open(path, errorIfExists: true).error, "should fail with `errorIfExists: true`")
+
+        if true {
+            var error: NSError?
+            XCTAssertNil(LDBDatabase(path: path, error: &error))
+            XCTAssertNotNil(error, "should fail with `createIfMissing: false`")
+        }
+        if true {
+            var error: NSError?
+            XCTAssertNotNil(LDBDatabase(path: path, error: &error, createIfMissing: true))
+            XCTAssertNil(error, "should succeed with `createIfMissing: true`")
+        }
+        if true {
+            var error: NSError?
+            XCTAssertNil(LDBDatabase(path: path, error: &error, errorIfExists: true))
+            XCTAssertNotNil(error, "should fail with `errorIfExists: true`")
+        }
     }
     
     func testFilterPolicyOption() {
-        let either = Database<String, String>.open(path,
+        var error: NSError?
+        let maybeDb = LDBDatabase(path: path, error: &error,
             createIfMissing: true,
             bloomFilterBits: 10)
-        if let error = either.justError {
+        if let error = error {
             XCTFail("Database.open failed with error: \(error)")
             return
         }
-        let db = either.justValue!
+        let db = maybeDb!
         
-        db["foo"] = "bar"
+        db["foo".UTF8] = "bar".UTF8
         
-        XCTAssertEqual(db["foo"], "bar")
+        XCTAssertEqual(db["foo".UTF8], "bar".UTF8)
     }
     
     func testCacheOption() {
-        let either = Database<String, String>.open(path,
+        var error: NSError?
+        let maybeDb = LDBDatabase(path: path, error: &error,
             createIfMissing: true,
             cacheCapacity: 2 << 20)
-        if let error = either.justError {
+        if let error = error {
             XCTFail("Database.open failed with error: \(error)")
             return
         }
-        let db = either.justValue!
+        let db = maybeDb!
         
-        db["foo"] = "bar"
+        db["foo".UTF8] = "bar".UTF8
         
-        XCTAssertEqual(db["foo"], "bar")
-    }
-    
-    func testReadOptions() {
-        let db = Database<String, String>(path)!
-        
-        db["foo"] = "FOO"
-        db["bar"] = "BAR"
-        
-        let snapshot = db.snapshot()
-        
-        let foo = snapshot.verifyingChecksums {snap in snap["foo"]}
-        let bar = snapshot.keepingCache {snap in snap["bar"]}
-        let all = snapshot.keepingCache {snap in snap.values.array}
-        XCTAssertEqual(foo, "FOO")
-        XCTAssertEqual(bar, "BAR")
-        XCTAssertEqual(all, ["BAR", "FOO"])
-    }
-    
-    func testInfinity() {
-        XCTAssertEqual(NSData(),      NSData())
-        XCTAssertLessThan(NSData(),   "a".UTF8)
-        XCTAssertLessThan(NSData(),   NSData.infinity)
-        XCTAssertLessThan("a".UTF8,   "zzz".UTF8)
-        XCTAssertLessThan("a".UTF8,   NSData.infinity)
-        XCTAssertLessThan("zzz".UTF8, NSData.infinity)
-        XCTAssertEqual(NSData.infinity, NSData.infinity)
-    }
-    
-    func testLexicographicalNextSibling() {
-        let bytes = {(var array: [UInt8]) -> NSData in
-            NSData(bytes: &array, length: array.count)
-        }
-        
-        XCTAssertEqual(NSData().lexicographicNextSibling(),        NSData.infinity)
-        XCTAssertEqual(NSData.infinity.lexicographicNextSibling(), NSData.infinity)
-
-        XCTAssertEqual("A".UTF8.lexicographicNextSibling(), "B".UTF8)
-        XCTAssertEqual("Ab".UTF8.lexicographicNextSibling(), "Ac".UTF8)
-        XCTAssertEqual("x 8".UTF8.lexicographicNextSibling(), "x 9".UTF8)
-
-        let m = UInt8.max
-        XCTAssertEqual(bytes([m]).lexicographicNextSibling(),       NSData.infinity)
-        XCTAssertEqual(bytes([m, m]).lexicographicNextSibling(),    NSData.infinity)
-        XCTAssertEqual(bytes([m, m, m]).lexicographicNextSibling(), NSData.infinity)
-        XCTAssertEqual(bytes([m, m, 9]).lexicographicNextSibling(), bytes([m, m, 10]))
-        XCTAssertEqual(bytes([m, 0, m]).lexicographicNextSibling(), bytes([m, 1, 0]))
-        XCTAssertEqual(bytes([m, 1, m]).lexicographicNextSibling(), bytes([m, 2, 0]))
-        XCTAssertEqual(bytes([5, m, m]).lexicographicNextSibling(), bytes([6, 0, 0]))
-    }
-    
-    func testLexicographicalNextChild() {
-        let bytes = {(var array: [UInt8]) -> NSData in
-            NSData(bytes: &array, length: array.count)
-        }
-        
-        XCTAssertEqual(NSData().lexicographicFirstChild(),        bytes([0]))
-        XCTAssertEqual(NSData.infinity.lexicographicFirstChild(), NSData.infinity)
-
-        XCTAssertEqual(bytes([0]).lexicographicFirstChild(), bytes([0, 0]))
-        XCTAssertEqual(bytes([10]).lexicographicFirstChild(), bytes([10, 0]))
-        XCTAssertEqual(bytes([10, 20]).lexicographicFirstChild(), bytes([10, 20, 0]))
-
-        let m = UInt8.max
-        XCTAssertEqual(bytes([m]).lexicographicFirstChild(),       bytes([m, 0]))
-        XCTAssertEqual(bytes([m, m]).lexicographicFirstChild(),    bytes([m, m, 0]))
-        XCTAssertEqual(bytes([m, m, m]).lexicographicFirstChild(), bytes([m, m, m, 0]))
-        XCTAssertEqual(bytes([m, m, 9]).lexicographicFirstChild(), bytes([m, m, 9, 0]))
+        XCTAssertEqual(db["foo".UTF8], "bar".UTF8)
     }
     
     func testPerformanceExample() {
