@@ -7,13 +7,7 @@
 
 import Foundation
 
-/// Value type that can be serialised into bytes. If `Self` also conforms to
-/// `Allsorts.Orderable`, then the binary serialisation **must** preserve the
-/// relative sort order, i.e. for all `a` and `b` of type `Self`,
-///
-/// ```swift
-/// (a <=> b) == (a.serializedBytes <=> b.serializedBytes)
-/// ```
+/// Value type that can be serialised into bytes.
 public protocol ByteSerializable {
     
     /// TODO
@@ -32,6 +26,19 @@ extension String : ByteSerializable {
     
     public var serializedBytes: NSData {
         return dataUsingEncoding(NSUTF8StringEncoding)!
+    }
+
+}
+
+extension NSData : ByteSerializable {
+
+    public class func fromSerializedBytes(data: NSData) -> Self? {
+        let x = Double()
+        return self(data: data)
+    }
+    
+    public var serializedBytes: NSData {
+        return self
     }
 
 }

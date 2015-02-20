@@ -95,7 +95,7 @@ NSComparisonResult compare(NSData *left, NSData *right);
 NSData *min(NSData *left, NSData *right);
 NSData *max(NSData *left, NSData *right);
 
-NSData *lexicographicalSuccessor(NSData *data);
-NSData *lexicographicalChild(NSData *data);
+NSData *lexicographicalNextSibling(NSData *data);
+NSData *lexicographicalFirstChild(NSData *data);
 
 } // namespace leveldb_objc

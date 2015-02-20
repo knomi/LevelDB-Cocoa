@@ -16,44 +16,24 @@ extension String {
     }
 }
 
-private func forkEqualRange<Ix : RandomAccessIndexType>
-    (range: Range<Ix>, ord: Ix -> Ordering) -> (lower: Range<Ix>,
-                                                upper: Range<Ix>)
-{
-    var (lo, hi) = (range.startIndex, range.endIndex)
-    while lo < hi {
-        let m = midIndex(lo, hi)
-        switch ord(m) {
-        case .LT: lo = m.successor()
-        case .EQ: return (lo ..< m, m ..< hi)
-        case .GT: hi = m
-        }
-    }
-    return (lo ..< lo, lo ..< lo)
-}
-
-private func midIndex<Ix : RandomAccessIndexType>(start: Ix, end: Ix) -> Ix {
-    return start.advancedBy(start.distanceTo(end) / 2)
-}
-
-extension WriteBatch {
-    
-    var diff: [(Key, Value?)] {
-        var diffs: [(Key, Value?)] = []
-        enumerate {key, value in
-            let (lower, upper) = forkEqualRange(indices(diffs)) {i in
-                return diffs[i].0 <=> key
-            }
-            if lower.startIndex != upper.endIndex {
-                diffs[lower.endIndex] = (key, value)
-            } else {
-                diffs.insert((key, value), atIndex: lower.endIndex)
-            }
-        }
-        return diffs
-    }
-    
-}
+//extension WriteBatch {
+//    
+//    var diff: [(Key, Value?)] {
+//        var diffs: [(Key, Value?)] = []
+//        enumerate {key, value in
+//            let (lower, upper) = forkEqualRange(indices(diffs)) {i in
+//                return diffs[i].0 <=> key
+//            }
+//            if lower.startIndex != upper.endIndex {
+//                diffs[lower.endIndex] = (key, value)
+//            } else {
+//                diffs.insert((key, value), atIndex: lower.endIndex)
+//            }
+//        }
+//        return diffs
+//    }
+//    
+//}
 
 extension NSData {
     var UTF8String: String {
@@ -62,6 +42,14 @@ extension NSData {
 }
 
 func XCTAssertEqual<A : Equatable>(x: A?, y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
+}
+
+func XCTAssertEqual<A : Equatable>(x: A, y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
+}
+
+func XCTAssertEqual<A : Equatable>(x: A?, y: A, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
     XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
 }
 

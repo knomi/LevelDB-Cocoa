@@ -25,6 +25,7 @@ FOUNDATION_EXPORT const unsigned char LevelDBVersionString[];
 #import "LDBLogger.h"
 #import "LDBSnapshot.h"
 #import "LDBWriteBatch.h"
+#import "NSData+LDB.h"
 
 #ifdef __cplusplus
 } // extern "C"

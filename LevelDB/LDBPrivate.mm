@@ -108,7 +108,7 @@ NSData *leveldb_objc::max(NSData *left, NSData *right)
     return leveldb_objc::compare(left, right) >= 0 ? left : right;
 }
 
-NSData *leveldb_objc::lexicographicalSuccessor(NSData *data)
+NSData *leveldb_objc::lexicographicalNextSibling(NSData *data)
 {
     if (!data) return nil;
     auto result = [NSMutableData dataWithData:data];
@@ -125,7 +125,7 @@ NSData *leveldb_objc::lexicographicalSuccessor(NSData *data)
     return nil;
 }
 
-NSData *leveldb_objc::lexicographicalChild(NSData *data)
+NSData *leveldb_objc::lexicographicalFirstChild(NSData *data)
 {
     if (!data) return nil;
     auto result = [NSMutableData dataWithCapacity:data.length + 1];

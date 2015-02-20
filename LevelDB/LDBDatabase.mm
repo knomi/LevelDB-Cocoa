@@ -120,14 +120,16 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     [self _readOptions:options optionsDictionary:optionsDictionary];
     leveldb::DB *db = nullptr;
     auto status = leveldb::DB::Open(options, path.UTF8String, &db);
+    _db.reset(db);
 
     if (!status.ok()) {
+        if (error) {
+            *error = leveldb_objc::to_NSError(status);
+        }
         return nil;
+    } else {
+        return self;
     }
-
-    _db = std::unique_ptr<leveldb::DB>(db);
-
-    return self;
 }
 
 - (NSData *)dataForKey:(NSData *)key

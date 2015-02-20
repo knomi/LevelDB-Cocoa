@@ -146,14 +146,14 @@ private:
 
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey
 {
-    auto startKey = leveldb_objc::lexicographicalChild(exclusiveStartKey);
+    auto startKey = leveldb_objc::lexicographicalFirstChild(exclusiveStartKey);
     return [self clampStart:startKey end:self.endKey];
 }
 
 - (LDBSnapshot *)prefix:(NSData *)keyPrefix
 {
     auto startKey = keyPrefix;
-    NSData *endKey = leveldb_objc::lexicographicalSuccessor(keyPrefix);
+    NSData *endKey = leveldb_objc::lexicographicalNextSibling(keyPrefix);
     return [self clampStart:startKey end:endKey];
 }
 

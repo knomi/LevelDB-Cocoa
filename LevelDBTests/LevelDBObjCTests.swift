@@ -22,34 +22,6 @@ extension String {
     }
 }
 
-extension LDBIterator : GeneratorType {
-    public typealias Element = (NSData, NSData)
-    public func next() -> Element? {
-        if let k = key {
-            if let v = value {
-                self.step()
-                return (k, v)
-            }
-        }
-        return nil
-    }
-}
-
-extension LDBSnapshot : SequenceType {
-    public typealias Generator = LDBIterator
-    public func generate() -> Generator {
-        return iterate()
-    }
-    
-    var keys: LazySequence<MapSequenceView<LDBSnapshot, NSData>> {
-        return lazy(self).map {k, _ in k}
-    }
-
-    var vals: LazySequence<MapSequenceView<LDBSnapshot, NSData>> {
-        return lazy(self).map {_, v in v}
-    }
-}
-
 class LevelDBObjCTests: XCTestCase {
 
     func testInMemory() {
@@ -63,7 +35,7 @@ class LevelDBObjCTests: XCTestCase {
             XCTAssertEqual(db["a".utf8Data], "A".utf8Data)
             XCTAssertEqual(snap["a".utf8Data].utf8String!, "A")
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["a"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["A"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["A"])
         }
         
         if true {
@@ -76,49 +48,49 @@ class LevelDBObjCTests: XCTestCase {
             let snap = db.snapshot()
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "a", "b", "c", "z", "zzz"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["", "A", "B", "C", "Z", "ZZZ"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["", "A", "B", "C", "Z", "ZZZ"])
         }
         
         if true {
             let snap = db.snapshot().reversed
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["zzz", "z", "c", "b", "a", ""])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["ZZZ", "Z", "C", "B", "A", ""])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["ZZZ", "Z", "C", "B", "A", ""])
         }
         
         if true {
             let snap = db.snapshot().clampStart("a".utf8Data, end: "c!".utf8Data)
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["a", "b", "c"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["A", "B", "C"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["A", "B", "C"])
         }
         
         if true {
             let snap = db.snapshot().clampStart(NSData(), end: "c".utf8Data)
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "a", "b"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["", "A", "B"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["", "A", "B"])
         }
         
         if true {
             let snap = db.snapshot().after("a".utf8Data).clampStart(NSData(), end: "zz".utf8Data)
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["b", "c", "z"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["B", "C", "Z"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["B", "C", "Z"])
         }
         
         if true {
             let snap = db.snapshot().prefix("z".utf8Data)
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["z", "zzz"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["Z", "ZZZ"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["Z", "ZZZ"])
         }
         
         if true {
             let snap = db.snapshot().prefix("z".utf8Data).reversed
             
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["zzz", "z"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["ZZZ", "Z"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["ZZZ", "Z"])
         }
         
         if true {
@@ -127,7 +99,7 @@ class LevelDBObjCTests: XCTestCase {
             let snap = db.snapshot()
 
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "b", "c", "z", "zzz"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["", "B", "C", "Z", "ZZZ"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["", "B", "C", "Z", "ZZZ"])
         }
         
         if true {
@@ -144,7 +116,7 @@ class LevelDBObjCTests: XCTestCase {
             
             XCTAssert(ok, "\(error?.description)")
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["",      "a", "z", "zzz"])
-            XCTAssertEqual(snap.vals.map{$0.utf8String!}.array, ["empty", "?", "Z", "ZZZ"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["empty", "?", "Z", "ZZZ"])
         }
         
     }
