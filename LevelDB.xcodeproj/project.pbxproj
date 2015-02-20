@@ -118,12 +118,6 @@
 		E0BF393A1A76D55300FC96E0 /* memenv.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0BF37E61A76CD3B00FC96E0 /* memenv.cc */; };
 		E0BF393B1A76D55300FC96E0 /* memtable.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0BF37C91A76CD3B00FC96E0 /* memtable.cc */; };
 		E0BF393C1A76D55300FC96E0 /* db_iter.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0BF37B71A76CD3B00FC96E0 /* db_iter.cc */; };
-		E0E829CD1A935C74004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
-		E0E829CE1A935C74004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
-		E0E829D31A935C86004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D11A935C86004A08F4 /* Allsorts.framework */; };
-		E0E829DF1A936481004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829D11A935C86004A08F4 /* Allsorts.framework */; };
-		E0E829E01A936484004A08F4 /* Allsorts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; };
-		E0E829E41A936515004A08F4 /* Allsorts.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = E0E829CB1A935C74004A08F4 /* Allsorts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FF1A947D79004A08F4 /* LDBDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */; };
@@ -188,7 +182,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E0E829E41A936515004A08F4 /* Allsorts.framework in Copy Frameworks */,
 				E0B052771A7FFD0F00DCE453 /* LevelDB.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -364,8 +357,6 @@
 		E0BF39061A76D49D00FC96E0 /* LevelDBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LevelDBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelDB.swift; sourceTree = "<group>"; };
 		E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteSerializable.swift; sourceTree = "<group>"; };
-		E0E829CB1A935C74004A08F4 /* Allsorts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Allsorts.framework; path = Carthage/Build/iOS/Allsorts.framework; sourceTree = SOURCE_ROOT; };
-		E0E829D11A935C86004A08F4 /* Allsorts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Allsorts.framework; path = Carthage/Build/Mac/Allsorts.framework; sourceTree = SOURCE_ROOT; };
 		E0E829FB1A947D79004A08F4 /* LDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBDatabase.h; sourceTree = "<group>"; };
 		E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBDatabase.mm; sourceTree = "<group>"; };
 		E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBSnapshot.h; sourceTree = "<group>"; };
@@ -385,7 +376,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0E829CE1A935C74004A08F4 /* Allsorts.framework in Frameworks */,
 				E0B052711A7FF55C00DCE453 /* LevelDB.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -394,7 +384,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0E829CD1A935C74004A08F4 /* Allsorts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,7 +392,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0BF37961A7674E400FC96E0 /* LevelDB.framework in Frameworks */,
-				E0E829E01A936484004A08F4 /* Allsorts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,7 +399,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0E829D31A935C86004A08F4 /* Allsorts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,7 +407,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0BF39071A76D49D00FC96E0 /* LevelDB.framework in Frameworks */,
-				E0E829DF1A936481004A08F4 /* Allsorts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,8 +502,6 @@
 		E0BF37A71A76CD3B00FC96E0 /* External */ = {
 			isa = PBXGroup;
 			children = (
-				E0E829D11A935C86004A08F4 /* Allsorts.framework */,
-				E0E829CB1A935C74004A08F4 /* Allsorts.framework */,
 				E0BF37A81A76CD3B00FC96E0 /* leveldb */,
 			);
 			path = External;
