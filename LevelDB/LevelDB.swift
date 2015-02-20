@@ -50,28 +50,28 @@ public extension LDBDatabase {
     }
     
     /// TODO
-    public func get<K : ByteSerializable,
-                    V : ByteSerializable>(key: K) -> V?
+    public func get<K : DataSerializable,
+                    V : DataSerializable>(key: K) -> V?
     {
-        return V.fromSerializedBytes(self[key.serializedBytes])
+        return V(serializedData: self[key.serializedData])
     }
     
     /// TODO
-    public func put<K : ByteSerializable,
-                    V : ByteSerializable>(key: K, _ value: V)
+    public func put<K : DataSerializable,
+                    V : DataSerializable>(key: K, _ value: V)
     {
-        self[key.serializedBytes] = value.serializedBytes
+        self[key.serializedData] = value.serializedData
     }
     
     /// TODO
-    public func delete<K : ByteSerializable>(key: K) {
-        self[key.serializedBytes] = nil
+    public func delete<K : DataSerializable>(key: K) {
+        self[key.serializedData] = nil
     }
     
 }
 
-//public final class Database<K : protocol<ByteSerializable, Comparable>,
-//                            V : ByteSerializable>
+//public final class Database<K : protocol<DataSerializable, Comparable>,
+//                            V : DataSerializable>
 //{
 //    
 //}
@@ -111,13 +111,13 @@ extension LDBSnapshot {
         return lazy(self).map {_, v in v}
     }
     
-    public func clamp<K : ByteSerializable>(#from: K, to: K) -> LDBSnapshot {
-        return clampStart(from.serializedBytes, end: to.serializedBytes)
+    public func clamp<K : DataSerializable>(#from: K, to: K) -> LDBSnapshot {
+        return clampStart(from.serializedData, end: to.serializedData)
     }
     
-    public func clamp<K : ByteSerializable>(#from: K, through: K) -> LDBSnapshot {
-        let end: NSData? = through.serializedBytes.ldb_lexicographicalFirstChild()
-        return clampStart(from.serializedBytes, end: end)
+    public func clamp<K : DataSerializable>(#from: K, through: K) -> LDBSnapshot {
+        let end: NSData? = through.serializedData.ldb_lexicographicalFirstChild()
+        return clampStart(from.serializedData, end: end)
     }
     
 }
@@ -125,23 +125,23 @@ extension LDBSnapshot {
 extension LDBWriteBatch {
 
     /// TODO
-    public func put<K : ByteSerializable,
-                    V : ByteSerializable>(key: K, _ value: V)
+    public func put<K : DataSerializable,
+                    V : DataSerializable>(key: K, _ value: V)
     {
-        self[key.serializedBytes] = value.serializedBytes
+        self[key.serializedData] = value.serializedData
     }
     
     /// TODO
-    public func delete<K : ByteSerializable>(key: K) {
-        self[key.serializedBytes] = nil
+    public func delete<K : DataSerializable>(key: K) {
+        self[key.serializedData] = nil
     }
 
-    public func enumerate<K : ByteSerializable,
-                          V : ByteSerializable>(block: (K, V?) -> ()) {
+    public func enumerate<K : DataSerializable,
+                          V : DataSerializable>(block: (K, V?) -> ()) {
         enumerate {k, v in
-            if let key = K.fromSerializedBytes(k) {
+            if let key = K(serializedData: k) {
                 if let data = v {
-                    if let value = V.fromSerializedBytes(data) {
+                    if let value = V(serializedData: data) {
                         block(key, value)
                     } else {
                         // skipped

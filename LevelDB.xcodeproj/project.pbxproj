@@ -13,8 +13,8 @@
 		E021E82C1A95DB5800A865E7 /* LDBIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = E021E8281A95DB5800A865E7 /* LDBIterator.mm */; };
 		E021E82E1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */; };
 		E021E82F1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E021E82D1A95FAEA00A865E7 /* LevelDBObjCTests.swift */; };
-		E021E8301A962EE200A865E7 /* ByteSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */; };
-		E021E8311A962EE300A865E7 /* ByteSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */; };
+		E021E8301A962EE200A865E7 /* DataSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */; };
+		E021E8311A962EE300A865E7 /* DataSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */; };
 		E021E8341A9630BD00A865E7 /* LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */; };
 		E021E8351A9630BE00A865E7 /* LevelDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */; };
 		E021E83E1A97215400A865E7 /* NSData+LDB.h in Headers */ = {isa = PBXBuildFile; fileRef = E021E83C1A97215400A865E7 /* NSData+LDB.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -356,7 +356,7 @@
 		E0BF38FC1A76D49D00FC96E0 /* LevelDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LevelDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF39061A76D49D00FC96E0 /* LevelDBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LevelDBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelDB.swift; sourceTree = "<group>"; };
-		E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteSerializable.swift; sourceTree = "<group>"; };
+		E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSerializable.swift; sourceTree = "<group>"; };
 		E0E829FB1A947D79004A08F4 /* LDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBDatabase.h; sourceTree = "<group>"; };
 		E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBDatabase.mm; sourceTree = "<group>"; };
 		E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBSnapshot.h; sourceTree = "<group>"; };
@@ -480,7 +480,7 @@
 				E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */,
 				E0BF378E1A7674E400FC96E0 /* Info.plist */,
 				E0B0527B1A80209E00DCE453 /* version.sh */,
-				E0BF39721A777CBC00FC96E0 /* ByteSerializable.swift */,
+				E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 			);
 			path = LevelDB;
@@ -1057,7 +1057,7 @@
 				E0BF38DF1A76D0D200FC96E0 /* block_builder.cc in Sources */,
 				E0BF38E01A76D0D200FC96E0 /* filter_block.cc in Sources */,
 				E0BF38DB1A76D0AD00FC96E0 /* version_edit.cc in Sources */,
-				E021E8311A962EE300A865E7 /* ByteSerializable.swift in Sources */,
+				E021E8311A962EE300A865E7 /* DataSerializable.swift in Sources */,
 				E0BF38EA1A76D10800FC96E0 /* coding.cc in Sources */,
 				E0BF38EE1A76D10800FC96E0 /* env_posix.cc in Sources */,
 				E0BF38ED1A76D10800FC96E0 /* env.cc in Sources */,
@@ -1125,7 +1125,7 @@
 				E0BF392F1A76D55300FC96E0 /* status.cc in Sources */,
 				E0BF39381A76D55300FC96E0 /* env.cc in Sources */,
 				E0BF39181A76D55300FC96E0 /* histogram.cc in Sources */,
-				E021E8301A962EE200A865E7 /* ByteSerializable.swift in Sources */,
+				E021E8301A962EE200A865E7 /* DataSerializable.swift in Sources */,
 				E0BF39171A76D55300FC96E0 /* iterator.cc in Sources */,
 				E0BF39241A76D55300FC96E0 /* table_cache.cc in Sources */,
 				E0BF39361A76D55300FC96E0 /* coding.cc in Sources */,
