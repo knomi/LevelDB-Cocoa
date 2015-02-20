@@ -209,7 +209,7 @@
 		E0B052561A7FF50A00DCE453 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E0B052581A7FF50A00DCE453 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		E0B0525B1A7FF50A00DCE453 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		E0B0527B1A80209E00DCE453 /* version.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = version.sh; sourceTree = "<group>"; };
+		E0B0527B1A80209E00DCE453 /* version.bash */ = {isa = PBXFileReference; lastKnownFileType = text; path = version.bash; sourceTree = "<group>"; };
 		E0BF378A1A7674E400FC96E0 /* LevelDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LevelDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF378E1A7674E400FC96E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0BF378F1A7674E400FC96E0 /* LevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelDB.h; sourceTree = "<group>"; };
@@ -464,6 +464,7 @@
 		E0BF378C1A7674E400FC96E0 /* LevelDB-Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				E0B0527B1A80209E00DCE453 /* version.bash */,
 				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
 				E0E82A0D1A949404004A08F4 /* LDBError.h */,
 				E021E8271A95DB5800A865E7 /* LDBIterator.h */,
@@ -473,7 +474,6 @@
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
 				E021E83C1A97215400A865E7 /* NSData+LDB.h */,
 				E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */,
-				E021E83D1A97215400A865E7 /* NSData+LDB.mm */,
 				E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */,
 				E0E82A0E1A949404004A08F4 /* LDBError.mm */,
 				E021E8281A95DB5800A865E7 /* LDBIterator.mm */,
@@ -481,8 +481,8 @@
 				E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */,
 				E0E82A021A947DAF004A08F4 /* LDBSnapshot.mm */,
 				E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */,
+				E021E83D1A97215400A865E7 /* NSData+LDB.mm */,
 				E0BF378E1A7674E400FC96E0 /* Info.plist */,
-				E0B0527B1A80209E00DCE453 /* version.sh */,
 				E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 			);
@@ -990,7 +990,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nsource LevelDB/version.sh\n";
+			shellScript = "source LevelDB/version.bash\n";
 		};
 		E0B0527D1A80212E00DCE453 /* Set Version Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1003,8 +1003,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nsource LevelDB/version.sh\n";
+			shellPath = /bin/bash;
+			shellScript = "source LevelDB/version.bash\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
