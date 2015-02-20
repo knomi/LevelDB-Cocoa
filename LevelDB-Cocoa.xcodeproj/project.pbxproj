@@ -442,10 +442,10 @@
 			children = (
 				E02C25111A89F7CB0059C28C /* README.md */,
 				E0BF378B1A7674E400FC96E0 /* Products */,
-				E0BF378C1A7674E400FC96E0 /* LevelDB */,
+				E0BF378C1A7674E400FC96E0 /* LevelDB-Cocoa */,
 				E0BF37991A7674E400FC96E0 /* LevelDBTests */,
 				E0B0524E1A7FF50A00DCE453 /* LevelDBDemo */,
-				E0BF37A71A76CD3B00FC96E0 /* Checkouts */,
+				E0BF37A71A76CD3B00FC96E0 /* Vendor */,
 			);
 			sourceTree = "<group>";
 		};
@@ -461,7 +461,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E0BF378C1A7674E400FC96E0 /* LevelDB */ = {
+		E0BF378C1A7674E400FC96E0 /* LevelDB-Cocoa */ = {
 			isa = PBXGroup;
 			children = (
 				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
@@ -486,6 +486,7 @@
 				E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */,
 				E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */,
 			);
+			name = "LevelDB-Cocoa";
 			path = LevelDB;
 			sourceTree = "<group>";
 		};
@@ -503,16 +504,15 @@
 			path = LevelDBTests;
 			sourceTree = "<group>";
 		};
-		E0BF37A71A76CD3B00FC96E0 /* Checkouts */ = {
+		E0BF37A71A76CD3B00FC96E0 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				E0BF37A81A76CD3B00FC96E0 /* leveldb */,
+				E0BF37A81A76CD3B00FC96E0 /* LevelDB */,
 			);
-			name = Checkouts;
-			path = Carthage/Checkouts;
+			path = Vendor;
 			sourceTree = SOURCE_ROOT;
 		};
-		E0BF37A81A76CD3B00FC96E0 /* leveldb */ = {
+		E0BF37A81A76CD3B00FC96E0 /* LevelDB */ = {
 			isa = PBXGroup;
 			children = (
 				E0BF37A91A76CD3B00FC96E0 /* .gitignore */,
@@ -533,7 +533,7 @@
 				E0BF381D1A76CD3B00FC96E0 /* TODO */,
 				E0BF381E1A76CD3B00FC96E0 /* util */,
 			);
-			path = leveldb;
+			path = LevelDB;
 			sourceTree = "<group>";
 		};
 		E0BF37AD1A76CD3B00FC96E0 /* db */ = {
@@ -914,7 +914,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E0BF37841A7674E400FC96E0 /* Build configuration list for PBXProject "LevelDB" */;
+			buildConfigurationList = E0BF37841A7674E400FC96E0 /* Build configuration list for PBXProject "LevelDB-Cocoa" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1270,8 +1270,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/Carthage/Checkouts/leveldb/include",
-					"$(SRCROOT)/Carthage/Checkouts/leveldb",
+					"$(SRCROOT)/Vendor/LevelDB/include",
+					"$(SRCROOT)/Vendor/LevelDB",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_DYLIB_INSTALL_NAME = "@rpath/$(PRODUCT_NAME).$(WRAPPER_EXTENSION)/$(PRODUCT_NAME)";
@@ -1325,8 +1325,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/Carthage/Checkouts/leveldb/include",
-					"$(SRCROOT)/Carthage/Checkouts/leveldb",
+					"$(SRCROOT)/Vendor/LevelDB/include",
+					"$(SRCROOT)/Vendor/LevelDB",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_DYLIB_INSTALL_NAME = "@rpath/$(PRODUCT_NAME).$(WRAPPER_EXTENSION)/$(PRODUCT_NAME)";
@@ -1495,7 +1495,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E0BF37841A7674E400FC96E0 /* Build configuration list for PBXProject "LevelDB" */ = {
+		E0BF37841A7674E400FC96E0 /* Build configuration list for PBXProject "LevelDB-Cocoa" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E0BF379E1A7674E400FC96E0 /* Debug */,

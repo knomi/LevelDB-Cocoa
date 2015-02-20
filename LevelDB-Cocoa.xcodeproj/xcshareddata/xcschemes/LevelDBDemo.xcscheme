@@ -17,7 +17,7 @@
                BlueprintIdentifier = "E0B0524C1A7FF50A00DCE453"
                BuildableName = "LevelDBDemo.app"
                BlueprintName = "LevelDBDemo"
-               ReferencedContainer = "container:LevelDB.xcodeproj">
+               ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
             BlueprintIdentifier = "E0B0524C1A7FF50A00DCE453"
             BuildableName = "LevelDBDemo.app"
             BlueprintName = "LevelDBDemo"
-            ReferencedContainer = "container:LevelDB.xcodeproj">
+            ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -54,7 +54,7 @@
             BlueprintIdentifier = "E0B0524C1A7FF50A00DCE453"
             BuildableName = "LevelDBDemo.app"
             BlueprintName = "LevelDBDemo"
-            ReferencedContainer = "container:LevelDB.xcodeproj">
+            ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -72,7 +72,7 @@
             BlueprintIdentifier = "E0B0524C1A7FF50A00DCE453"
             BuildableName = "LevelDBDemo.app"
             BlueprintName = "LevelDBDemo"
-            ReferencedContainer = "container:LevelDB.xcodeproj">
+            ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

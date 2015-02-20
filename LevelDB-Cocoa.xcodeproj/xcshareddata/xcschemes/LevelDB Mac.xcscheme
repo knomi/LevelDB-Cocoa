@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E0BF37891A7674E400FC96E0"
+               BlueprintIdentifier = "E0BF38FB1A76D49D00FC96E0"
                BuildableName = "LevelDB.framework"
-               BlueprintName = "LevelDB-iOS"
-               ReferencedContainer = "container:LevelDB.xcodeproj">
+               BlueprintName = "LevelDB-Mac"
+               ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,24 +28,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E0BF37941A7674E400FC96E0"
+               BlueprintIdentifier = "E0BF39051A76D49D00FC96E0"
                BuildableName = "LevelDBTests.xctest"
-               BlueprintName = "LevelDBTests-iOS"
-               ReferencedContainer = "container:LevelDB.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E0B0524C1A7FF50A00DCE453"
-               BuildableName = "LevelDBDemo.app"
-               BlueprintName = "LevelDBDemo"
-               ReferencedContainer = "container:LevelDB.xcodeproj">
+               BlueprintName = "LevelDBTests-Mac"
+               ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -60,20 +46,20 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E0BF37941A7674E400FC96E0"
+               BlueprintIdentifier = "E0BF39051A76D49D00FC96E0"
                BuildableName = "LevelDBTests.xctest"
-               BlueprintName = "LevelDBTests-iOS"
-               ReferencedContainer = "container:LevelDB.xcodeproj">
+               BlueprintName = "LevelDBTests-Mac"
+               ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0BF37891A7674E400FC96E0"
+            BlueprintIdentifier = "E0BF38FB1A76D49D00FC96E0"
             BuildableName = "LevelDB.framework"
-            BlueprintName = "LevelDB-iOS"
-            ReferencedContainer = "container:LevelDB.xcodeproj">
+            BlueprintName = "LevelDB-Mac"
+            ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -89,12 +75,19 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0BF37891A7674E400FC96E0"
+            BlueprintIdentifier = "E0BF38FB1A76D49D00FC96E0"
             BuildableName = "LevelDB.framework"
-            BlueprintName = "LevelDB-iOS"
-            ReferencedContainer = "container:LevelDB.xcodeproj">
+            BlueprintName = "LevelDB-Mac"
+            ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "DYLD_FRAMEWORK_PATH"
+            value = "$(SRCROOT)/Carthage/Build/Mac"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -107,10 +100,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0BF37891A7674E400FC96E0"
+            BlueprintIdentifier = "E0BF38FB1A76D49D00FC96E0"
             BuildableName = "LevelDB.framework"
-            BlueprintName = "LevelDB-iOS"
-            ReferencedContainer = "container:LevelDB.xcodeproj">
+            BlueprintName = "LevelDB-Mac"
+            ReferencedContainer = "container:LevelDB-Cocoa.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
