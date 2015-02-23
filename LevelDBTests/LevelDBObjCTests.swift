@@ -44,7 +44,7 @@ class LevelDBObjCTests: XCTestCase {
             let snap = db.snapshot()
 
             XCTAssertEqual(db["a".utf8Data], "A".utf8Data)
-            XCTAssertEqual(snap["a".utf8Data].utf8String!, "A")
+            XCTAssertEqual(snap["a".utf8Data]?.utf8String, "A")
             XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["a"])
             XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["A"])
         }

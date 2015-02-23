@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma clang assume_nonnull begin
+
 @class LDBDatabase;
 @class LDBIterator;
 
@@ -18,21 +20,23 @@
 @property (nonatomic, readonly) LDBSnapshot *noncaching;
 @property (nonatomic, readonly) LDBSnapshot *checksummed;
 @property (nonatomic, readonly) LDBSnapshot *reversed;
-@property (nonatomic, readonly) NSData *startKey;
-@property (nonatomic, readonly) NSData *endKey;
+@property (nonatomic, readonly, nullable) NSData *startKey;
+@property (nonatomic, readonly, nullable) NSData *endKey;
 @property (nonatomic, readonly) BOOL isNoncaching;
 @property (nonatomic, readonly) BOOL isChecksummed;
 @property (nonatomic, readonly) BOOL isReversed;
 
-- (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey;
+- (LDBSnapshot *)clampStart:(nullable NSData *)startKey end:(nullable NSData *)endKey;
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
 - (LDBSnapshot *)prefix:(NSData *)keyPrefix;
 
-- (NSData *)dataForKey:(NSData *)key;
-- (NSData *)objectForKeyedSubscript:(NSData *)key;
+- (nullable NSData *)dataForKey:(NSData *)key;
+- (nullable NSData *)objectForKeyedSubscript:(NSData *)key;
 
-- (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block;
+- (void)enumerate:(__attribute__((noescape)) void (^)(NSData *key, NSData *data, BOOL *stop))block;
 
 - (LDBIterator *)iterate;
 
 @end
+
+#pragma clang assume_nonnull end

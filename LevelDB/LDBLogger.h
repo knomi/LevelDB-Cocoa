@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma clang assume_nonnull begin
+
 @interface LDBLogger : NSObject
 
 + (instancetype)loggerWithBlock:(void (^)(NSString *message))block;
@@ -17,3 +19,5 @@
 @property (nonatomic, readonly) void (^block)(NSString *message);
 
 @end
+
+#pragma clang assume_nonnull end

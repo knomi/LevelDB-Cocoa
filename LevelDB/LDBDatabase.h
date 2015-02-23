@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma clang assume_nonnull begin
+
 @class LDBSnapshot;
 @class LDBWriteBatch;
 
@@ -79,7 +81,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Also sets up the database using the 10-bit Bloom filter.
 ///
 /// **See also:** `-[LDBDatabase initWithPath:options:error:]`
-- (instancetype)initWithPath:(NSString *)path;
+- (nullable instancetype)initWithPath:(NSString *)path;
 
 
 /// Create or open the database with the given `options`. Iff there is an
@@ -102,7 +104,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 ///
 /// Iff there is an error, returns `NO` and sets the `error` pointer with
 /// `LDBErrorMessageKey` set in the `userInfo`.
-- (instancetype)
+- (nullable instancetype)
     initWithPath:(NSString *)path
     options:(NSDictionary *)options
     error:(NSError * __autoreleasing *)error;
@@ -116,13 +118,13 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// ```
 ///
 /// **See also:** `snapshot`
-- (NSData *)dataForKey:(NSData *)key;
+- (nullable NSData *)dataForKey:(NSData *)key;
 
 
 /// Return the `NSData` stored at `key` or `nil` if not found.
 ///
 /// **See also:** `-[LDBDatabase snapshot]`
-- (NSData *)objectForKeyedSubscript:(NSData *)key;
+- (nullable NSData *)objectForKeyedSubscript:(NSData *)key;
 
 
 /// Take an immutable snapshot of `self` for performing multiple reads
@@ -149,7 +151,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setData:(NSData *)data forKey:(NSData *)key;
+- (BOOL)setData:(nullable NSData *)data forKey:(NSData *)key;
 
 
 /// Set the `NSData` at `key` to `data` if `data` is not `nil`. Otherwise,
@@ -165,7 +167,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setObject:(NSData *)data forKeyedSubscript:(NSData *)key;
+- (BOOL)setObject:(nullable NSData *)data forKeyedSubscript:(NSData *)key;
 
 
 /// Remove the `NSData` stored at `key`.
@@ -195,3 +197,5 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
     error:(NSError * __autoreleasing *)error;
 
 @end
+
+#pragma clang assume_nonnull end

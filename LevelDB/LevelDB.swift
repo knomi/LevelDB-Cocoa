@@ -53,7 +53,11 @@ public extension LDBDatabase {
     public func get<K : DataSerializable,
                     V : DataSerializable>(key: K) -> V?
     {
-        return V(serializedData: self[key.serializedData])
+        if let data = self[key.serializedData] {
+            return V(serializedData: data)
+        } else {
+            return nil
+        }
     }
     
     /// TODO

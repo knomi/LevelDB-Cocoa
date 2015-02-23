@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma clang assume_nonnull begin
+
 @class LDBDatabase;
 @class LDBSnapshot;
 
@@ -17,9 +19,11 @@
 
 @property (nonatomic, readonly) LDBSnapshot *snapshot;
 @property (nonatomic, readonly) BOOL isValid;
-@property (nonatomic, readonly, copy) NSData *key;
-@property (nonatomic, readonly, copy) NSData *value;
+@property (nonatomic, readonly, copy, nullable) NSData *key;
+@property (nonatomic, readonly, copy, nullable) NSData *value;
 
 - (void)step;
 
 @end
+
+#pragma clang assume_nonnull end

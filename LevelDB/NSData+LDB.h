@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma clang assume_nonnull begin
+
 @interface NSData (LDB)
 
 /// Compare `left` to `right` lexicographically. This method accepts `nil` as
@@ -25,7 +27,7 @@
 ///
 /// **Remark:** Since the lexicographical next sibling of "infinity" is
 /// "infinity", sending this selector to `nil` produces consistent results.
-- (NSData *)ldb_lexicographicalNextSibling;
+- (nullable NSData *)ldb_lexicographicalNextSibling;
 
 /// Get the immediate lexicographical successor to `self`, with length
 /// `self.length + 1`. Returns a copy of `self` with the `0x00` byte appended.
@@ -35,3 +37,5 @@
 - (NSData *)ldb_lexicographicalFirstChild;
 
 @end
+
+#pragma clang assume_nonnull end

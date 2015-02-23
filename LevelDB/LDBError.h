@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/FoundationErrors.h>
 
+#pragma clang assume_nonnull begin
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,7 +19,7 @@ extern NSString * const LDBErrorDomain;
 extern NSString * const LDBErrorMessageKey; // NSString
 
 @interface NSError (LevelDB)
-@property (readonly, copy) NSString *ldb_errorMessage;
+@property (readonly, copy, nullable) NSString *ldb_errorMessage;
 @end
 
 /// NSError codes in LDBErrorDomain.
@@ -32,3 +34,5 @@ typedef NS_ENUM(NSInteger, LDBError) {
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#pragma clang assume_nonnull end
