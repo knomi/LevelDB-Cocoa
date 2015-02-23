@@ -22,7 +22,7 @@ extension String : DataSerializable {
     
     public init?(serializedData data: NSData) {
         if let s = NSString(data: data, encoding: NSUTF8StringEncoding) {
-            self = s
+            self = s as String
         } else {
             return nil
         }
