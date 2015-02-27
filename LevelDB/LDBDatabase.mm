@@ -213,9 +213,9 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
         if (id value = dict[key]) {
             NSString *error;
             block(value, &error);
-            if (error.length) {
+            if (error && error.length) {
                 NSLog(@"[WARN] invalid LDBDatabase option %@ for key %@, %@", dict[key], key, error);
-            } else {
+            } else if (error) {
                 NSLog(@"[WARN] invalid LDBDatabase option %@ for key %@", dict[key], key);
             }
         }

@@ -1424,7 +1424,7 @@
 				INFOPLIST_FILE = LevelDB/Info.plist;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = LevelDB;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1445,7 +1445,7 @@
 				INFOPLIST_FILE = LevelDB/Info.plist;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = LevelDB;
 				SDKROOT = macosx;
 			};
