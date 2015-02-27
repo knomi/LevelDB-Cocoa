@@ -46,8 +46,8 @@
     
     if (YES) {
         LDBSnapshot *empty = [db snapshot];
-        for (LDBIterator *it = empty.iterate; it.isValid; [it step]) {
-            XCTFail(@"expected empty snapshot, got (%@, %@)", it.key, it.value);
+        for (LDBEnumerator *e = empty.enumerator; e.isValid; [e step]) {
+            XCTFail(@"expected empty snapshot, got (%@, %@)", e.key, e.value);
         }
     }
     
@@ -58,16 +58,10 @@
         db[@"d".ldb_UTF8Data] = nil;
 
         LDBSnapshot *snap = [db snapshot];
-        LDBIterator *it = snap.iterate;
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   @"b".ldb_UTF8Data);
-        XCTAssertEqualObjects(it.value, @"B".ldb_UTF8Data);
-        [it step];
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   @"e".ldb_UTF8Data);
-        XCTAssertEqualObjects(it.value, @"E".ldb_UTF8Data);
-        [it step];
-        XCTAssertFalse(it.isValid);
+        XCTAssertEqualObjects(snap.enumerator.allObjects, (@[
+            @[@"b".ldb_UTF8Data, @"B".ldb_UTF8Data],
+            @[@"e".ldb_UTF8Data, @"E".ldb_UTF8Data],
+        ]));
     }
         
     if (YES) {
@@ -84,20 +78,11 @@
     
     if (YES) {
         LDBSnapshot *snap = [db snapshot];
-        LDBIterator *it = snap.iterate;
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   @"a".ldb_UTF8Data);
-        XCTAssertEqualObjects(it.value, @"A".ldb_UTF8Data);
-        [it step];
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   @"b".ldb_UTF8Data);
-        XCTAssertEqualObjects(it.value, @"!".ldb_UTF8Data);
-        [it step];
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   @"c".ldb_UTF8Data);
-        XCTAssertEqualObjects(it.value, @"C".ldb_UTF8Data);
-        [it step];
-        XCTAssertFalse(it.isValid);
+        XCTAssertEqualObjects(snap.enumerator.allObjects, (@[
+            @[@"a".ldb_UTF8Data, @"A".ldb_UTF8Data],
+            @[@"b".ldb_UTF8Data, @"!".ldb_UTF8Data],
+            @[@"c".ldb_UTF8Data, @"C".ldb_UTF8Data],
+        ]));
     }
 }
 
@@ -123,10 +108,10 @@
         LDBSnapshot *snapshot = database.snapshot;
 
         NSLog(@"snapshot contents:");
-        for (LDBIterator *it = snapshot.iterate; it.isValid; [it step]) {
-            NSLog(@"  - %@: %@", it.key.ldb_UTF8String, it.value.ldb_UTF8String);
+        for (LDBEnumerator *e = snapshot.enumerator; e.isValid; [e step]) {
+            NSLog(@"  - %@: %@", e.key.ldb_UTF8String, e.value.ldb_UTF8String);
         }
-        XCTAssertEqualObjects(snapshot.iterate.allObjects, (@[
+        XCTAssertEqualObjects(snapshot.enumerator.allObjects, (@[
             @[@"aha".ldb_UTF8Data, @"AHA".ldb_UTF8Data],
             @[@"bar".ldb_UTF8Data, @"BAR".ldb_UTF8Data],
             @[@"baz".ldb_UTF8Data, @"BAZ".ldb_UTF8Data],
@@ -137,10 +122,10 @@
 
         LDBSnapshot *clamped = [snapshot prefix:@"ba".ldb_UTF8Data];
         NSLog(@"clamped snapshot contents:");
-        for (LDBIterator *it = clamped.iterate; it.isValid; [it step]) {
-            NSLog(@"  - %@: %@", it.key.ldb_UTF8String, it.value.ldb_UTF8String);
+        for (NSArray *pair in clamped.enumerator) {
+            NSLog(@"  - %@: %@", [pair[0] ldb_UTF8String], [pair[1] ldb_UTF8String]);
         }
-        XCTAssertEqualObjects(clamped.iterate.allObjects, (@[
+        XCTAssertEqualObjects(clamped.enumerator.allObjects, (@[
             @[@"bar".ldb_UTF8Data, @"BAR".ldb_UTF8Data],
             @[@"baz".ldb_UTF8Data, @"BAZ".ldb_UTF8Data],
         ]));

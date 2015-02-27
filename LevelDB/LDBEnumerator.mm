@@ -1,11 +1,11 @@
 //
-//  LDBIterator.mm
+//  LDBEnumerator.mm
 //  LevelDB
 //
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
 //
 
-#import "LDBIterator.h"
+#import "LDBEnumerator.h"
 
 #import "LDBDatabase.h"
 #import "LDBSnapshot.h"
@@ -14,18 +14,18 @@
 #include "leveldb/db.h"
 #include <memory>
 
-@interface LDBIterator () {
+@interface LDBEnumerator () {
     std::unique_ptr<leveldb::Iterator> _impl;
     NSData *_value;
 }
 @end
 
-@implementation LDBIterator
+@implementation LDBEnumerator
 
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:@"-init is not a valid initializer for the class LDBIterator"
+                                   reason:@"-init is not a valid initializer for the class LDBEnumerator"
                                  userInfo:nil];
     return nil;
 }

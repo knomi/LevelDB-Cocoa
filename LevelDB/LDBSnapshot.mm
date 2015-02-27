@@ -8,7 +8,7 @@
 #import "LDBSnapshot.h"
 
 #import "LDBDatabase.h"
-#import "LDBIterator.h"
+#import "LDBEnumerator.h"
 #import "LDBPrivate.hpp"
 
 #include "leveldb/db.h"
@@ -182,17 +182,17 @@ private:
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block
 {
-    auto iterator = [self iterate];
+    auto enumerator = [self enumerator];
     BOOL stop = NO;
-    while (!stop && iterator.isValid) {
-        block(iterator.key, iterator.value, &stop);
-        [iterator step];
+    while (!stop && enumerator.isValid) {
+        block(enumerator.key, enumerator.value, &stop);
+        [enumerator step];
     }
 }
 
-- (LDBIterator *)iterate
+- (LDBEnumerator *)enumerator
 {
-    return [[LDBIterator alloc] initWithSnapshot:self];
+    return [[LDBEnumerator alloc] initWithSnapshot:self];
 }
 
 @end

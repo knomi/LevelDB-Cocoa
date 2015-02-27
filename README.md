@@ -30,10 +30,10 @@ if (![database write:batch sync:NO error:&error]) {
     LDBSnapshot *snapshot = database.snapshot;
 
     NSLog(@"snapshot contents:");
-    for (LDBIterator *it = snapshot.iterate; it.isValid; [it step]) {
+    for (LDBEnumerator *e = snapshot.enumerator; e.isValid; [e step]) {
         NSLog(@"  - %@: %@",
-            [[NSString alloc] initWithData:it.key encoding:NSUTF8StringEncoding],
-            [[NSString alloc] initWithData:it.value encoding:NSUTF8StringEncoding]);
+            [[NSString alloc] initWithData:e.key encoding:NSUTF8StringEncoding],
+            [[NSString alloc] initWithData:e.value encoding:NSUTF8StringEncoding]);
     }
     // snapshot contents:
     //   - aha: AHA
@@ -45,10 +45,10 @@ if (![database write:batch sync:NO error:&error]) {
 
     LDBSnapshot *clamped = [snapshot prefix:[@"ba" dataUsingEncoding:NSUTF8StringEncoding]];
     NSLog(@"clamped snapshot contents:");
-    for (LDBIterator *it = clamped.iterate; it.isValid; [it step]) {
+    for (LDBEnumerator *e = clamped.enumerator; e.isValid; [e step]) {
         NSLog(@"  - %@: %@",
-            [[NSString alloc] initWithData:it.key encoding:NSUTF8StringEncoding],
-            [[NSString alloc] initWithData:it.value encoding:NSUTF8StringEncoding]);
+            [[NSString alloc] initWithData:e.key encoding:NSUTF8StringEncoding],
+            [[NSString alloc] initWithData:e.value encoding:NSUTF8StringEncoding]);
     }
     // clamped snapshot contents:
     //   - bar: BAR

@@ -80,7 +80,7 @@ public extension LDBDatabase {
 //    
 //}
 
-extension LDBIterator : GeneratorType {
+extension LDBEnumerator : GeneratorType {
 
     public typealias Element = (NSData, NSData)
     
@@ -98,10 +98,10 @@ extension LDBIterator : GeneratorType {
 
 extension LDBSnapshot : SequenceType {
     
-    public typealias Generator = LDBIterator
+    public typealias Generator = LDBEnumerator
     
     public func generate() -> Generator {
-        return iterate()
+        return enumerator()
     }
 }
 

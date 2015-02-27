@@ -1,5 +1,5 @@
 //
-//  LDBIterator.h
+//  LDBEnumerator.h
 //  LevelDB
 //
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
@@ -10,7 +10,7 @@
 @class LDBDatabase;
 @class LDBSnapshot;
 
-@interface LDBIterator : NSEnumerator
+@interface LDBEnumerator : NSEnumerator
 
 - (instancetype)init __attribute__((unavailable("init not available")));
 - (instancetype)initWithSnapshot:(LDBSnapshot *)snapshot;
