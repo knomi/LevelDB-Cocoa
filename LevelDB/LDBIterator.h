@@ -10,7 +10,7 @@
 @class LDBDatabase;
 @class LDBSnapshot;
 
-@interface LDBIterator : NSObject
+@interface LDBIterator : NSEnumerator
 
 - (instancetype)init __attribute__((unavailable("init not available")));
 - (instancetype)initWithSnapshot:(LDBSnapshot *)snapshot;
@@ -21,5 +21,6 @@
 @property (nonatomic, readonly, copy) NSData *value;
 
 - (void)step;
+- (NSArray *)nextObject;
 
 @end

@@ -86,6 +86,17 @@
     }
 }
 
+- (NSArray *)nextObject
+{
+    if (!self.isValid) {
+        return nil;
+    } else {
+        NSArray *pair = @[self.key, self.value];
+        [self step];
+        return pair;
+    }
+}
+
 - (void)private_stepForward
 {
     if (!self.isValid) return;
