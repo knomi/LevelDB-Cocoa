@@ -72,6 +72,19 @@ public extension LDBDatabase {
         self[key.serializedData] = nil
     }
     
+    /// TODO
+    public func approximateSizes<K : DataSerializable>(intervals: [(K?, K?)]) -> [UInt64] {
+        return approximateSizesForIntervals(intervals.map {start, end in
+            LDBInterval(start: start?.serializedData,
+                        end: end?.serializedData)
+        }).map {n in (n as NSNumber).unsignedLongLongValue}
+    }
+
+    /// TODO
+    public func approximateSize<K : DataSerializable>(start: K?, _ end: K?) -> UInt64 {
+        return approximateSizes([(start, end)])[0]
+    }
+
 }
 
 //public final class Database<K : protocol<DataSerializable, Comparable>,

@@ -9,6 +9,7 @@
 
 #import "LDBDatabase.h"
 #import "LDBEnumerator.h"
+#import "LDBInterval.h"
 #import "LDBPrivate.hpp"
 
 #include "leveldb/db.h"
@@ -142,6 +143,11 @@ private:
         reversed:     self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  self.isChecksummed];
+}
+
+- (LDBSnapshot *)clampToInterval:(LDBInterval *)interval
+{
+    return [self clampStart:interval.start end:interval.end];
 }
 
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey

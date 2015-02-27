@@ -42,6 +42,8 @@ class DatabaseTests : XCTestCase {
         
         db[NSData()] = NSData()
         XCTAssertNotNil(db[NSData()])
+
+        NSLog("approximate size: %u", db.approximateSize("", nil))
         
         db[NSData()] = nil
         XCTAssertNil(db[NSData()])

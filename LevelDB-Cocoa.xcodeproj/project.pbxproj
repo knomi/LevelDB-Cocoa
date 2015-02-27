@@ -120,6 +120,10 @@
 		E0BF393A1A76D55300FC96E0 /* memenv.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0BF37E61A76CD3B00FC96E0 /* memenv.cc */; };
 		E0BF393B1A76D55300FC96E0 /* memtable.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0BF37C91A76CD3B00FC96E0 /* memtable.cc */; };
 		E0BF393C1A76D55300FC96E0 /* db_iter.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0BF37B71A76CD3B00FC96E0 /* db_iter.cc */; };
+		E0BFF4DE1AA0B7DE00ED5230 /* LDBInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BFF4DC1AA0B7DE00ED5230 /* LDBInterval.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E0BFF4DF1AA0B7DE00ED5230 /* LDBInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BFF4DC1AA0B7DE00ED5230 /* LDBInterval.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E0BFF4E01AA0B7DE00ED5230 /* LDBInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */; };
+		E0BFF4E11AA0B7DE00ED5230 /* LDBInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */; };
 		E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FF1A947D79004A08F4 /* LDBDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */; };
@@ -360,6 +364,8 @@
 		E0BF39061A76D49D00FC96E0 /* LevelDBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LevelDBTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0BF393D1A76DD8400FC96E0 /* LevelDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelDB.swift; sourceTree = "<group>"; };
 		E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSerializable.swift; sourceTree = "<group>"; };
+		E0BFF4DC1AA0B7DE00ED5230 /* LDBInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBInterval.h; sourceTree = "<group>"; };
+		E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LDBInterval.m; sourceTree = "<group>"; };
 		E0E829FB1A947D79004A08F4 /* LDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBDatabase.h; sourceTree = "<group>"; };
 		E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBDatabase.mm; sourceTree = "<group>"; };
 		E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBSnapshot.h; sourceTree = "<group>"; };
@@ -468,12 +474,14 @@
 				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
 				E021E8271A95DB5800A865E7 /* LDBEnumerator.h */,
 				E0E82A0D1A949404004A08F4 /* LDBError.h */,
+				E0BFF4DC1AA0B7DE00ED5230 /* LDBInterval.h */,
 				E0E82A1F1A952388004A08F4 /* LDBLogger.h */,
 				E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */,
 				E0E82A071A947DEE004A08F4 /* LDBWriteBatch.h */,
 				E0BF378F1A7674E400FC96E0 /* LevelDB.h */,
 				E021E83C1A97215400A865E7 /* NSData+LDB.h */,
 				E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */,
+				E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */,
 				E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */,
 				E021E8281A95DB5800A865E7 /* LDBEnumerator.mm */,
 				E0E82A0E1A949404004A08F4 /* LDBError.mm */,
@@ -762,6 +770,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0BFF4DF1AA0B7DE00ED5230 /* LDBInterval.h in Headers */,
 				E0E82A0A1A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
 				E021E82A1A95DB5800A865E7 /* LDBEnumerator.h in Headers */,
 				E021E83F1A97215400A865E7 /* NSData+LDB.h in Headers */,
@@ -778,6 +787,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0BFF4DE1AA0B7DE00ED5230 /* LDBInterval.h in Headers */,
 				E0E82A091A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
 				E021E8291A95DB5800A865E7 /* LDBEnumerator.h in Headers */,
 				E021E83E1A97215400A865E7 /* NSData+LDB.h in Headers */,
@@ -1037,6 +1047,7 @@
 				E0E82A181A9496DC004A08F4 /* LDBPrivate.mm in Sources */,
 				E0BF38D41A76D0AD00FC96E0 /* dumpfile.cc in Sources */,
 				E0BF38E41A76D0D200FC96E0 /* table.cc in Sources */,
+				E0BFF4E11AA0B7DE00ED5230 /* LDBInterval.m in Sources */,
 				E0BF38D51A76D0AD00FC96E0 /* filename.cc in Sources */,
 				E0E82A061A947DAF004A08F4 /* LDBSnapshot.mm in Sources */,
 				E0BF38D11A76D0AD00FC96E0 /* db_impl.cc in Sources */,
@@ -1106,6 +1117,7 @@
 				E0E82A171A9496DC004A08F4 /* LDBPrivate.mm in Sources */,
 				E0BF393B1A76D55300FC96E0 /* memtable.cc in Sources */,
 				E0BF391F1A76D55300FC96E0 /* table.cc in Sources */,
+				E0BFF4E01AA0B7DE00ED5230 /* LDBInterval.m in Sources */,
 				E0BF39321A76D55300FC96E0 /* block_builder.cc in Sources */,
 				E0E82A051A947DAF004A08F4 /* LDBSnapshot.mm in Sources */,
 				E0BF39261A76D55300FC96E0 /* log_writer.cc in Sources */,

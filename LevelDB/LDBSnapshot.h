@@ -9,6 +9,7 @@
 
 @class LDBDatabase;
 @class LDBEnumerator;
+@class LDBInterval;
 
 @interface LDBSnapshot : NSObject
 
@@ -25,6 +26,7 @@
 @property (nonatomic, readonly) BOOL isReversed;
 
 - (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey;
+- (LDBSnapshot *)clampToInterval:(LDBInterval *)interval;
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
 - (LDBSnapshot *)prefix:(NSData *)keyPrefix;
 

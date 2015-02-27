@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class LDBInterval;
 @class LDBSnapshot;
 @class LDBWriteBatch;
 
@@ -193,5 +194,34 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
     write:(LDBWriteBatch *)batch
     sync:(BOOL)sync
     error:(NSError * __autoreleasing *)error;
+
+/// DB implementations may export properties about their state. If `name` is a
+/// valid property understood by this DB implementation, returns its value.
+/// Otherwise returns `nil`.
+///
+/// Valid property names include:
+///
+/// - `"leveldb.num-files-at-level<N>"` -- return the number of files at level
+///   `<N>`, where `<N>` is an ASCII representation of a level number (e.g.
+///   `"0"`).
+/// - `"leveldb.stats"` -- returns a multi-line string that describes statistics
+///   about the internal operation of the DB.
+/// - `"leveldb.sstables"` -- returns a multi-line string that describes all
+///   of the sstables that make up the db contents.
+- (NSString *)propertyNamed:(NSString *)name;
+
+/// Retrieve as an `NSArray` of `NSNumber`s the approximate file system space
+/// used by the keys `intervals[i].start ..< intervals[i].end` where `intervals`
+/// is an array of `LDBInterval`s.
+- (NSArray *)approximateSizesForIntervals:(NSArray *)intervals;
+
+/// Compact the underlying storage for the key range `interval`. In particular,
+/// deleted and overwritten versions are discarded, and the data is rearranged
+/// to reduce the cost of operations needed to access the data. This operation
+/// should typically only be invoked by users who understand the underlying
+/// implementation.
+///
+/// To compact the entire database, pass `[LDBInterval everything]` as interval.
+- (void)compactInterval:(LDBInterval *)interval;
 
 @end

@@ -22,6 +22,7 @@ FOUNDATION_EXPORT const unsigned char LevelDBVersionString[];
 #import <LevelDB/LDBDatabase.h>
 #import <LevelDB/LDBEnumerator.h>
 #import <LevelDB/LDBError.h>
+#import <LevelDB/LDBInterval.h>
 #import <LevelDB/LDBLogger.h>
 #import <LevelDB/LDBSnapshot.h>
 #import <LevelDB/LDBWriteBatch.h>
