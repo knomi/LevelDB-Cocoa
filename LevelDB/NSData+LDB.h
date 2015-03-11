@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
@@ -27,7 +28,7 @@
 ///
 /// **Remark:** Since the lexicographical next sibling of "infinity" is
 /// "infinity", sending this selector to `nil` produces consistent results.
-- (nullable NSData *)ldb_lexicographicalNextSibling;
+- (__nullable NSData *)ldb_lexicographicalNextSibling;
 
 /// Get the immediate lexicographical successor to `self`, with length
 /// `self.length + 1`. Returns a copy of `self` with the `0x00` byte appended.

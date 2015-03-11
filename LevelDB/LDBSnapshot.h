@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
@@ -21,21 +22,21 @@
 @property (nonatomic, readonly) LDBSnapshot *noncaching;
 @property (nonatomic, readonly) LDBSnapshot *checksummed;
 @property (nonatomic, readonly) LDBSnapshot *reversed;
-@property (nonatomic, readonly, nullable) NSData *startKey;
-@property (nonatomic, readonly, nullable) NSData *endKey;
+@property (nonatomic, readonly) NSData * __nullable startKey;
+@property (nonatomic, readonly) NSData * __nullable endKey;
 @property (nonatomic, readonly) BOOL isNoncaching;
 @property (nonatomic, readonly) BOOL isChecksummed;
 @property (nonatomic, readonly) BOOL isReversed;
 
-- (LDBSnapshot *)clampStart:(nullable NSData *)startKey end:(nullable NSData *)endKey;
+- (LDBSnapshot *)clampStart:(__nullable NSData *)startKey end:(__nullable NSData *)endKey;
 - (LDBSnapshot *)clampToInterval:(LDBInterval *)interval;
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
 - (LDBSnapshot *)prefix:(NSData *)keyPrefix;
 
-- (nullable NSData *)dataForKey:(NSData *)key;
-- (nullable NSData *)objectForKeyedSubscript:(NSData *)key;
+- (__nullable NSData *)dataForKey:(NSData *)key;
+- (__nullable NSData *)objectForKeyedSubscript:(NSData *)key;
 
-- (void)enumerate:(__attribute__((noescape)) void (^)(NSData *key, NSData *data, BOOL *stop))block;
+- (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, NSData *data, BOOL *stop))block;
 
 - (LDBEnumerator *)enumerator;
 

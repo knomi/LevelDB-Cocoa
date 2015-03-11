@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
@@ -19,8 +20,8 @@
 
 @property (nonatomic, readonly) LDBSnapshot *snapshot;
 @property (nonatomic, readonly) BOOL isValid;
-@property (nonatomic, readonly, copy, nullable) NSData *key;
-@property (nonatomic, readonly, copy, nullable) NSData *value;
+@property (nonatomic, readonly, copy) NSData * __nullable key;
+@property (nonatomic, readonly, copy) NSData * __nullable value;
 
 - (void)step;
 - (NSArray *)nextObject;

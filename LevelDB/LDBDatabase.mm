@@ -222,7 +222,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
                                         leveldb_objc::to_Slice(interval.end)));
     }
     NSAssert(ranges.size() == sizes.size(), @"");
-    _db->GetApproximateSizes(&ranges[0], sizes.size(), &sizes[0]);
+    _db->GetApproximateSizes(&ranges[0], static_cast<int>(sizes.size()), &sizes[0]);
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:sizes.size()];
     for (auto n : sizes) {
         [result addObject:@(n)];
@@ -230,7 +230,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     return [result copy];
 }
 
-- (void)compactKeyInterval:(LDBInterval *)interval
+- (void)compactInterval:(LDBInterval *)interval
 {
     if (leveldb_objc::compare(interval.start, interval.end) >= 0) return;
     

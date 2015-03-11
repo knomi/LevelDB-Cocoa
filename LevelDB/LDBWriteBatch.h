@@ -6,17 +6,18 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
 @interface LDBWriteBatch : NSObject
 
-- (nullable NSData *)objectForKeyedSubscript:(NSData *)key;
-- (void)setObject:(nullable NSData *)data forKeyedSubscript:(NSData *)key;
-- (void)setData:(nullable NSData *)data forKey:(NSData *)key;
+- (__nullable NSData *)objectForKeyedSubscript:(NSData *)key;
+- (void)setObject:(__nullable NSData *)data forKeyedSubscript:(NSData *)key;
+- (void)setData:(__nullable NSData *)data forKey:(NSData *)key;
 - (void)removeDataForKey:(NSData *)key;
 
-- (void)enumerate:(__attribute__((noescape)) void (^)(NSData *key, __nullable NSData *data))block;
+- (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, __nullable NSData *data))block;
 
 @end
 

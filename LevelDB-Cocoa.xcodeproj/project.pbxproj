@@ -148,6 +148,8 @@
 		E0E82A221A952389004A08F4 /* LDBLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A1F1A952388004A08F4 /* LDBLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E82A231A952389004A08F4 /* LDBLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A201A952388004A08F4 /* LDBLogger.mm */; };
 		E0E82A241A952389004A08F4 /* LDBLogger.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A201A952388004A08F4 /* LDBLogger.mm */; };
+		E0F2BC371AB07FEB007566A3 /* LDBCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F2BC361AB07FEB007566A3 /* LDBCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E0F2BC381AB07FEB007566A3 /* LDBCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F2BC361AB07FEB007566A3 /* LDBCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -378,6 +380,7 @@
 		E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBPrivate.mm; sourceTree = "<group>"; };
 		E0E82A1F1A952388004A08F4 /* LDBLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBLogger.h; sourceTree = "<group>"; };
 		E0E82A201A952388004A08F4 /* LDBLogger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBLogger.mm; sourceTree = "<group>"; };
+		E0F2BC361AB07FEB007566A3 /* LDBCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBCompatibility.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -471,6 +474,7 @@
 			isa = PBXGroup;
 			children = (
 				E0B0527B1A80209E00DCE453 /* version.bash */,
+				E0F2BC361AB07FEB007566A3 /* LDBCompatibility.h */,
 				E0E829FB1A947D79004A08F4 /* LDBDatabase.h */,
 				E021E8271A95DB5800A865E7 /* LDBEnumerator.h */,
 				E0E82A0D1A949404004A08F4 /* LDBError.h */,
@@ -773,6 +777,7 @@
 				E0BFF4DF1AA0B7DE00ED5230 /* LDBInterval.h in Headers */,
 				E0E82A0A1A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
 				E021E82A1A95DB5800A865E7 /* LDBEnumerator.h in Headers */,
+				E0F2BC381AB07FEB007566A3 /* LDBCompatibility.h in Headers */,
 				E021E83F1A97215400A865E7 /* NSData+LDB.h in Headers */,
 				E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A041A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
@@ -790,6 +795,7 @@
 				E0BFF4DE1AA0B7DE00ED5230 /* LDBInterval.h in Headers */,
 				E0E82A091A947DEE004A08F4 /* LDBWriteBatch.h in Headers */,
 				E021E8291A95DB5800A865E7 /* LDBEnumerator.h in Headers */,
+				E0F2BC371AB07FEB007566A3 /* LDBCompatibility.h in Headers */,
 				E021E83E1A97215400A865E7 /* NSData+LDB.h in Headers */,
 				E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A031A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
