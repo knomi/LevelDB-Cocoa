@@ -160,48 +160,48 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     public typealias Value = V
     public typealias Element = (key: Key, value: Value)
     
-    private let _object: LDBDatabase?
-    public var object: LDBDatabase {
-        return _object!
+    private let _raw: LDBDatabase?
+    public var raw: LDBDatabase {
+        return _raw!
     }
     
     public init() {
-        self._object = LDBDatabase()
+        _raw = LDBDatabase()
     }
     
     public init?(_ path: String) {
-        self._object = LDBDatabase(path)
-        if _object == nil {
+        _raw = LDBDatabase(path)
+        if _raw == nil {
             return nil
         }
     }
     
     public init(_ database: LDBDatabase) {
-        self._object = database
+        _raw = database
     }
     
     public subscript(key: Key) -> Value? {
         get {
-            if let data = object[key.serializedData] {
+            if let data = raw[key.serializedData] {
                 return Value(serializedData: data)
             } else {
                 return nil
             }
         }
         set {
-            object[key.serializedData] = newValue?.serializedData
+            raw[key.serializedData] = newValue?.serializedData
         }
     }
     
     public func snapshot() -> Snapshot<Key, Value> {
-        return Snapshot(object.snapshot())
+        return Snapshot(raw.snapshot())
     }
     
     public func write(batch: WriteBatch<Key, Value>,
                       sync: Bool,
-                      inout error: NSError?) -> Bool
+                      error: NSErrorPointer) -> Bool
     {
-        return object.write(batch.object, sync: sync, error: &error)
+        return raw.write(batch.raw, sync: sync, error: error)
     }
     
     public func approximateSizes(intervals: [(Key?, Key?)]) -> [UInt64] {
@@ -209,7 +209,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
             LDBInterval(start: start?.serializedData,
                         end: end?.serializedData)
         }
-        return object.approximateSizesForIntervals(dataIntervals).map {n in
+        return raw.approximateSizesForIntervals(dataIntervals).map {n in
             // FIXME: Swift 1.1 compatible cast. Replace with `as!` once in 1.2.
             (n as? NSNumber)!.unsignedLongLongValue
         }
@@ -220,8 +220,8 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     }
 
     public func compactInterval(start: Key?, _ end: Key?) {
-        object.compactInterval(LDBInterval(start: start?.serializedData,
-                                           end:   end?.serializedData))
+        raw.compactInterval(LDBInterval(start: start?.serializedData,
+                                        end:   end?.serializedData))
     }
 }
 
@@ -232,46 +232,46 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     public typealias Value = V
     public typealias Element = (key: Key, value: Value)
     
-    public let object: LDBSnapshot
+    public let raw: LDBSnapshot
     
     public init(_ snapshot: LDBSnapshot) {
-        self.object = snapshot
+        self.raw = snapshot
     }
     
-    public var noncaching:  Snapshot { return Snapshot(object.noncaching) }
-    public var checksummed: Snapshot { return Snapshot(object.checksummed) }
-    public var reversed:    Snapshot { return Snapshot(object.reversed) }
+    public var noncaching:  Snapshot { return Snapshot(raw.noncaching) }
+    public var checksummed: Snapshot { return Snapshot(raw.checksummed) }
+    public var reversed:    Snapshot { return Snapshot(raw.reversed) }
     
-    public var isNoncaching:  Bool { return object.isNoncaching }
-    public var isChecksummed: Bool { return object.isChecksummed }
-    public var isReversed:    Bool { return object.isReversed }
+    public var isNoncaching:  Bool { return raw.isNoncaching }
+    public var isChecksummed: Bool { return raw.isChecksummed }
+    public var isReversed:    Bool { return raw.isReversed }
     
     public func prefix(prefixKey: Key) -> Snapshot {
-        return Snapshot(object.prefix(prefixKey.serializedData))
+        return Snapshot(raw.prefix(prefixKey.serializedData))
     }
     
     public func clamp(#from: Key?, to: Key?) -> Snapshot {
-        return Snapshot(object.clamp(from: from?.serializedData,
-                                     to:   to?.serializedData))
+        return Snapshot(raw.clamp(from: from?.serializedData,
+                                  to:   to?.serializedData))
     }
     
     public func clamp(#from: Key?, through: Key?) -> Snapshot {
-        return Snapshot(object.clamp(from:    from?.serializedData,
-                                     through: through?.serializedData))
+        return Snapshot(raw.clamp(from:    from?.serializedData,
+                                  through: through?.serializedData))
     }
     
     public func clamp(#after: Key?, to: Key?) -> Snapshot {
-        return Snapshot(object.clamp(after: after?.serializedData,
-                                     to:    to?.serializedData))
+        return Snapshot(raw.clamp(after: after?.serializedData,
+                                  to:    to?.serializedData))
     }
     
     public func clamp(#after: Key?, through: Key?) -> Snapshot {
-        return Snapshot(object.clamp(after:   after?.serializedData,
-                                     through: through?.serializedData))
+        return Snapshot(raw.clamp(after:   after?.serializedData,
+                                  through: through?.serializedData))
     }
     
     public subscript(key: Key) -> Value? {
-        if let data = object[key.serializedData] {
+        if let data = raw[key.serializedData] {
             return Value(serializedData: data)
         } else {
             return nil
@@ -298,7 +298,7 @@ public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
     private let enumerator: LDBEnumerator
     
     internal init(snapshot: Snapshot<K, V>) {
-        self.enumerator = snapshot.object.enumerator()
+        self.enumerator = snapshot.raw.enumerator()
     }
     
     public func next() -> Element? {
@@ -352,25 +352,25 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
     public typealias Value = V
     public typealias Element = (key: Key, value: Value)
 
-    public let object: LDBWriteBatch
+    public let raw: LDBWriteBatch
     
     public init() {
-        self.object = LDBWriteBatch()
+        self.raw = LDBWriteBatch()
     }
     
     public init(_ batch: LDBWriteBatch) {
-        self.object = batch
+        self.raw = batch
     }
     
     public subscript(key: Key) -> Value? {
         get { return nil }
         set {
-            object[key.serializedData] = newValue?.serializedData
+            raw[key.serializedData] = newValue?.serializedData
         }
     }
     
     public func enumerate(block: (Key, Value?) -> ()) {
-        object.enumerate {k, v in
+        raw.enumerate {k, v in
             if let key = Key(serializedData: k) {
                 if let data = v {
                     if let value = Value(serializedData: data) {

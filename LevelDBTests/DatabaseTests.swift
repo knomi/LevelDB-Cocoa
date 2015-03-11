@@ -57,7 +57,7 @@ class DatabaseTests : XCTestCase {
         
         db["foo"] = "bar"
         
-        let rawDb = db.object
+        let rawDb = db.raw
 
         XCTAssertEqual(db["foo"],         Optional("bar"))
         XCTAssertEqual(rawDb["foo".UTF8], Optional("bar".UTF8))
