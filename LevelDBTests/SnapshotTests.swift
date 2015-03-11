@@ -118,6 +118,52 @@ class SnapshotTests : XCTestCase {
         
     }
     
+    func testClamping() {
+        let db = Database<String, String>(path)!
+        let keys = map(0 ..< 100) {i in "\(i / 10)\(i % 10)"}
+        let batch = WriteBatch<String, String>()
+        for k in keys {
+            batch[k] = ""
+        }
+        XCTAssert(db.write(batch, sync: false, error: nil))
+        
+        let snap = db.snapshot()
+
+        XCTAssertEqual(snap.keys.array,                                   keys)
+
+        XCTAssertEqual(snap["20" ..< "33"].keys.array,                    Array(keys[20 ..< 33]))
+        XCTAssertEqual(snap["10" ... "20"].keys.array,                    Array(keys[10 ... 20]))
+
+        XCTAssertEqual(snap.clamp(to:      "3"  ).keys.array,             Array(keys[ 0 ... 29]))
+        XCTAssertEqual(snap.clamp(to:      "31" ).keys.array,             Array(keys[ 0 ... 30]))
+        XCTAssertEqual(snap.clamp(through: "3"  ).keys.array,             Array(keys[ 0 ... 29]))
+        XCTAssertEqual(snap.clamp(through: "31" ).keys.array,             Array(keys[ 0 ... 31]))
+        XCTAssertEqual(snap.clamp(from:    "31" ).keys.array,             Array(keys[31 ... 99]))
+        XCTAssertEqual(snap.clamp(from:    "311").keys.array,             Array(keys[32 ... 99]))
+        XCTAssertEqual(snap.clamp(after:   "5"  ).keys.array,             Array(keys[50 ... 99]))
+        XCTAssertEqual(snap.clamp(after:   "50" ).keys.array,             Array(keys[51 ... 99]))
+
+        XCTAssertEqual(snap.clamp(from:  "50", to:      "55").keys.array, Array(keys[50 ... 54]))
+        XCTAssertEqual(snap.clamp(from:  "50", through: "55").keys.array, Array(keys[50 ... 55]))
+        XCTAssertEqual(snap.clamp(after: "50", to:      "55").keys.array, Array(keys[51 ... 54]))
+        XCTAssertEqual(snap.clamp(after: "50", through: "55").keys.array, Array(keys[51 ... 55]))
+
+        XCTAssertEqual(snap.clamp(from:   nil, to:      "55").keys.array, Array(keys[ 0 ... 54]))
+        XCTAssertEqual(snap.clamp(from:   nil, through: "55").keys.array, Array(keys[ 0 ... 55]))
+        XCTAssertEqual(snap.clamp(after:  nil, to:      "55").keys.array, Array(keys[ 0 ... 54]))
+        XCTAssertEqual(snap.clamp(after:  nil, through: "55").keys.array, Array(keys[ 0 ... 55]))
+
+        XCTAssertEqual(snap.clamp(from:  "50", to:       nil).keys.array, Array(keys[50 ... 99]))
+        XCTAssertEqual(snap.clamp(from:  "50", through:  nil).keys.array, Array(keys[50 ... 99]))
+        XCTAssertEqual(snap.clamp(after: "50", to:       nil).keys.array, Array(keys[51 ... 99]))
+        XCTAssertEqual(snap.clamp(after: "50", through:  nil).keys.array, Array(keys[51 ... 99]))
+
+        XCTAssertEqual(snap.clamp(from:   nil, to:       nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(from:   nil, through:  nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(after:  nil, to:       nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(after:  nil, through:  nil).keys.array, keys)
+    }
+    
     func testReadOptions() {
         let db = Database<String, String>(path)!
         

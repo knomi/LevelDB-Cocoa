@@ -80,6 +80,22 @@ extension LDBSnapshot {
 
     public typealias Element = (key: NSData, value: NSData)
     
+    public func clamp(#from: NSData) -> LDBSnapshot {
+        return clampStart(from, end: nil)
+    }
+    
+    public func clamp(#after: NSData) -> LDBSnapshot {
+        return clampStart(after.ldb_lexicographicalFirstChild(), end: nil)
+    }
+    
+    public func clamp(#to: NSData) -> LDBSnapshot {
+        return clampStart(NSData(), end: to)
+    }
+    
+    public func clamp(#through: NSData) -> LDBSnapshot {
+        return clampStart(nil, end: through.ldb_lexicographicalFirstChild())
+    }
+    
     public func clamp(#from: NSData?, to: NSData?) -> LDBSnapshot {
         return clampStart(from, end: to)
     }
@@ -250,6 +266,22 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
         return Snapshot(raw.prefix(prefixKey.serializedData))
     }
     
+    public func clamp(#from: Key) -> Snapshot {
+        return Snapshot(raw.clamp(from: from.serializedData))
+    }
+    
+    public func clamp(#after: Key) -> Snapshot {
+        return Snapshot(raw.clamp(after: after.serializedData))
+    }
+    
+    public func clamp(#to: Key) -> Snapshot {
+        return Snapshot(raw.clamp(to: to.serializedData))
+    }
+    
+    public func clamp(#through: Key) -> Snapshot {
+        return Snapshot(raw.clamp(through: through.serializedData))
+    }
+
     public func clamp(#from: Key?, to: Key?) -> Snapshot {
         return Snapshot(raw.clamp(from: from?.serializedData,
                                   to:   to?.serializedData))
