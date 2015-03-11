@@ -27,7 +27,8 @@
         _start = [start copy];
         _end   = [end copy];
     } else {
-        NSAssert(NO, @"LDBInterval: `start` must not compare greater than `end`");
+        _start = nil;
+        _end = nil;
     }
     return self;
 }
