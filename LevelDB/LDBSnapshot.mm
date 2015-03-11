@@ -119,7 +119,10 @@ private:
 
 - (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey
 {
-    if (!startKey || leveldb_objc::compare(startKey, endKey) > 0) {
+    if (startKey == nil) {
+        startKey = [NSData data];
+    }
+    if (leveldb_objc::compare(startKey, endKey) > 0) {
         return [[LDBSnapshot alloc]
             initWithImpl: _impl
             startKey:     nil
@@ -147,7 +150,17 @@ private:
 
 - (LDBSnapshot *)clampToInterval:(LDBInterval *)interval
 {
-    return [self clampStart:interval.start end:interval.end];
+    if (interval.start == nil) {
+        return [[LDBSnapshot alloc]
+            initWithImpl: _impl
+            startKey:     nil
+            endKey:       nil
+            reversed:     self.isReversed
+            noncaching:   self.isNoncaching
+            checksummed:  self.isChecksummed];
+    } else {
+        return [self clampStart:interval.start end:interval.end];
+    }
 }
 
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey
