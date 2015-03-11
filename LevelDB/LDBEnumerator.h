@@ -1,5 +1,5 @@
 //
-//  LDBIterator.h
+//  LDBEnumerator.h
 //  LevelDB
 //
 //  Copyright (c) 2015 Pyry Jahkola. All rights reserved.
@@ -12,7 +12,7 @@
 @class LDBDatabase;
 @class LDBSnapshot;
 
-@interface LDBIterator : NSObject
+@interface LDBEnumerator : NSEnumerator
 
 - (instancetype)init __attribute__((unavailable("init not available")));
 - (instancetype)initWithSnapshot:(LDBSnapshot *)snapshot;
@@ -23,6 +23,7 @@
 @property (nonatomic, readonly, copy, nullable) NSData *value;
 
 - (void)step;
+- (NSArray *)nextObject;
 
 @end
 

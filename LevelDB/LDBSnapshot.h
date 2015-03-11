@@ -10,7 +10,8 @@
 #pragma clang assume_nonnull begin
 
 @class LDBDatabase;
-@class LDBIterator;
+@class LDBEnumerator;
+@class LDBInterval;
 
 @interface LDBSnapshot : NSObject
 
@@ -27,6 +28,7 @@
 @property (nonatomic, readonly) BOOL isReversed;
 
 - (LDBSnapshot *)clampStart:(nullable NSData *)startKey end:(nullable NSData *)endKey;
+- (LDBSnapshot *)clampToInterval:(LDBInterval *)interval;
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
 - (LDBSnapshot *)prefix:(NSData *)keyPrefix;
 
@@ -35,7 +37,7 @@
 
 - (void)enumerate:(__attribute__((noescape)) void (^)(NSData *key, NSData *data, BOOL *stop))block;
 
-- (LDBIterator *)iterate;
+- (LDBEnumerator *)enumerator;
 
 @end
 

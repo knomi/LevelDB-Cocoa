@@ -7,6 +7,7 @@
 
 #import "LDBDatabase.h"
 
+#import "LDBInterval.h"
 #import "LDBSnapshot.h"
 #import "LDBWriteBatch.h"
 #import "LDBPrivate.hpp"
@@ -196,6 +197,50 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     writeOptions.sync = sync;
     auto status = _db->Write(writeOptions, batch.private_batch);
     return leveldb_objc::objc_result(status, error);
+}
+
+
+- (NSString *)propertyNamed:(NSString *)name
+{
+    std::string value;
+    NSData *property = [name dataUsingEncoding:NSUTF8StringEncoding];
+    if (_db->GetProperty(leveldb_objc::to_Slice(property), &value)) {
+        return [NSString stringWithUTF8String:value.c_str()];
+    } else {
+        return nil;
+    }
+}
+
+- (NSArray *)approximateSizesForIntervals:(NSArray *)intervals
+{
+    std::vector<leveldb::Range> ranges;
+    std::vector<uint64_t> sizes(intervals.count);
+    ranges.reserve(intervals.count);
+    for (LDBInterval *interval in intervals) {
+        NSParameterAssert([interval isKindOfClass:LDBInterval.class]);
+        ranges.push_back(leveldb::Range(leveldb_objc::to_Slice(interval.start),
+                                        leveldb_objc::to_Slice(interval.end)));
+    }
+    NSAssert(ranges.size() == sizes.size(), @"");
+    _db->GetApproximateSizes(&ranges[0], sizes.size(), &sizes[0]);
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:sizes.size()];
+    for (auto n : sizes) {
+        [result addObject:@(n)];
+    }
+    return [result copy];
+}
+
+- (void)compactKeyInterval:(LDBInterval *)interval
+{
+    if (leveldb_objc::compare(interval.start, interval.end) >= 0) return;
+    
+    auto const start = leveldb_objc::to_Slice(interval.start);
+    if (interval.end) {
+        auto const end = leveldb_objc::to_Slice(interval.end);
+        _db->CompactRange(&start, &end);
+    } else {
+        _db->CompactRange(&start, nullptr);
+    }
 }
 
 // -----------------------------------------------------------------------------

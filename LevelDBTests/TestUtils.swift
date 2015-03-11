@@ -15,24 +15,46 @@ extension String {
     }
 }
 
-//extension WriteBatch {
-//    
-//    var diff: [(Key, Value?)] {
-//        var diffs: [(Key, Value?)] = []
-//        enumerate {key, value in
-//            let (lower, upper) = forkEqualRange(indices(diffs)) {i in
-//                return diffs[i].0 <=> key
-//            }
-//            if lower.startIndex != upper.endIndex {
-//                diffs[lower.endIndex] = (key, value)
-//            } else {
-//                diffs.insert((key, value), atIndex: lower.endIndex)
-//            }
-//        }
-//        return diffs
-//    }
-//    
-//}
+internal func midIndex<Ix : RandomAccessIndexType>(start: Ix, end: Ix) -> Ix {
+    return start.advancedBy(start.distanceTo(end) / 2)
+}
+
+internal func forkEqualRange<Ix : RandomAccessIndexType>
+    (range: Range<Ix>, ord: Ix -> NSComparisonResult) -> (lower: Range<Ix>,
+                                                          upper: Range<Ix>)
+{
+    var (lo, hi) = (range.startIndex, range.endIndex)
+    while lo < hi {
+        let m = midIndex(lo, hi)
+        switch ord(m) {
+        case .OrderedAscending:  lo = m.successor()
+        case .OrderedSame:       return (lo ..< m, m ..< hi)
+        case .OrderedDescending: hi = m
+        }
+    }
+    return (lo ..< lo, lo ..< lo)
+}
+
+extension WriteBatch {
+    
+    var diff: [(key: Key, value: Value?)] {
+        var diffs: [(key: Key, value: Value?)] = []
+        enumerate {key, value in
+            let (lower, upper) = forkEqualRange(indices(diffs)) {i in
+                return diffs[i].0 < key  ? .OrderedAscending
+                     : diffs[i].0 == key ? .OrderedSame
+                                         : .OrderedDescending
+            }
+            if lower.startIndex != upper.endIndex {
+                diffs[lower.endIndex] = (key, value)
+            } else {
+                diffs.insert((key, value), atIndex: lower.endIndex)
+            }
+        }
+        return diffs
+    }
+    
+}
 
 extension NSData {
     var UTF8String: String {
@@ -71,6 +93,14 @@ func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], ys: [(A, B)], _ 
 }
 
 func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], ys: [(A, B?)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
+    for (x, y) in Zip2(xs, ys) {
+        XCTAssertEqual(x.0, y.0, message, file: file, line: line)
+        XCTAssertEqual(x.1, y.1, message, file: file, line: line)
+    }
+}
+
+func XCTAssertEqual<A : Equatable, B : Equatable>(xs: [(key: A, value: B?)], ys: [(key: A, value: B?)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
     for (x, y) in Zip2(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)

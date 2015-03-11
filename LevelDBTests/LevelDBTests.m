@@ -8,6 +8,20 @@
 #import <XCTest/XCTest.h>
 #import <LevelDB/LevelDB.h>
 
+@implementation NSString (LevelDBTests)
+- (NSData *)ldb_UTF8Data
+{
+    return [self dataUsingEncoding:NSUTF8StringEncoding];
+}
+@end
+
+@implementation NSData (LevelDBTests)
+- (NSString *)ldb_UTF8String
+{
+    return [[NSString alloc] initWithData:self encoding:NSUTF8StringEncoding];
+}
+@end
+
 @interface LevelDBTests : XCTestCase
 @property NSString *path;
 @end
@@ -32,36 +46,30 @@
     
     if (YES) {
         LDBSnapshot *empty = [db snapshot];
-        for (LDBIterator *it = empty.iterate; it.isValid; [it step]) {
-            XCTFail(@"expected empty snapshot, got (%@, %@)", it.key, it.value);
+        for (LDBEnumerator *e = empty.enumerator; e.isValid; [e step]) {
+            XCTFail(@"expected empty snapshot, got (%@, %@)", e.key, e.value);
         }
     }
     
     if (YES) {
-        db[[@"b" dataUsingEncoding:NSUTF8StringEncoding]] = [@"B" dataUsingEncoding:NSUTF8StringEncoding];
-        db[[@"d" dataUsingEncoding:NSUTF8StringEncoding]] = [@"D" dataUsingEncoding:NSUTF8StringEncoding];
-        db[[@"e" dataUsingEncoding:NSUTF8StringEncoding]] = [@"E" dataUsingEncoding:NSUTF8StringEncoding];
-        db[[@"d" dataUsingEncoding:NSUTF8StringEncoding]] = nil;
+        db[@"b".ldb_UTF8Data] = @"B".ldb_UTF8Data;
+        db[@"d".ldb_UTF8Data] = @"D".ldb_UTF8Data;
+        db[@"e".ldb_UTF8Data] = @"E".ldb_UTF8Data;
+        db[@"d".ldb_UTF8Data] = nil;
 
         LDBSnapshot *snap = [db snapshot];
-        LDBIterator *it = snap.iterate;
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   [@"b" dataUsingEncoding:NSUTF8StringEncoding]);
-        XCTAssertEqualObjects(it.value, [@"B" dataUsingEncoding:NSUTF8StringEncoding]);
-        [it step];
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   [@"e" dataUsingEncoding:NSUTF8StringEncoding]);
-        XCTAssertEqualObjects(it.value, [@"E" dataUsingEncoding:NSUTF8StringEncoding]);
-        [it step];
-        XCTAssertFalse(it.isValid);
+        XCTAssertEqualObjects(snap.enumerator.allObjects, (@[
+            @[@"b".ldb_UTF8Data, @"B".ldb_UTF8Data],
+            @[@"e".ldb_UTF8Data, @"E".ldb_UTF8Data],
+        ]));
     }
         
     if (YES) {
         LDBWriteBatch *batch = [LDBWriteBatch new];
-        batch[[@"b" dataUsingEncoding:NSUTF8StringEncoding]] = [@"!" dataUsingEncoding:NSUTF8StringEncoding];
-        batch[[@"a" dataUsingEncoding:NSUTF8StringEncoding]] = [@"A" dataUsingEncoding:NSUTF8StringEncoding];
-        batch[[@"e" dataUsingEncoding:NSUTF8StringEncoding]] = nil;
-        batch[[@"c" dataUsingEncoding:NSUTF8StringEncoding]] = [@"C" dataUsingEncoding:NSUTF8StringEncoding];
+        batch[@"b".ldb_UTF8Data] = @"!".ldb_UTF8Data;
+        batch[@"a".ldb_UTF8Data] = @"A".ldb_UTF8Data;
+        batch[@"e".ldb_UTF8Data] = nil;
+        batch[@"c".ldb_UTF8Data] = @"C".ldb_UTF8Data;
         NSError *error;
         BOOL ok = [db write:batch sync:NO error:&error];
         XCTAssert(ok);
@@ -70,20 +78,11 @@
     
     if (YES) {
         LDBSnapshot *snap = [db snapshot];
-        LDBIterator *it = snap.iterate;
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   [@"a" dataUsingEncoding:NSUTF8StringEncoding]);
-        XCTAssertEqualObjects(it.value, [@"A" dataUsingEncoding:NSUTF8StringEncoding]);
-        [it step];
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   [@"b" dataUsingEncoding:NSUTF8StringEncoding]);
-        XCTAssertEqualObjects(it.value, [@"!" dataUsingEncoding:NSUTF8StringEncoding]);
-        [it step];
-        XCTAssert(it.isValid);
-        XCTAssertEqualObjects(it.key,   [@"c" dataUsingEncoding:NSUTF8StringEncoding]);
-        XCTAssertEqualObjects(it.value, [@"C" dataUsingEncoding:NSUTF8StringEncoding]);
-        [it step];
-        XCTAssertFalse(it.isValid);
+        XCTAssertEqualObjects(snap.enumerator.allObjects, (@[
+            @[@"a".ldb_UTF8Data, @"A".ldb_UTF8Data],
+            @[@"b".ldb_UTF8Data, @"!".ldb_UTF8Data],
+            @[@"c".ldb_UTF8Data, @"C".ldb_UTF8Data],
+        ]));
     }
 }
 
@@ -91,16 +90,16 @@
 {
     LDBDatabase *database = [[LDBDatabase alloc] initWithPath:self.path];
 
-    NSData *key1 = [@"foo" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *val1 = [@"FOO" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *key1 = @"foo".ldb_UTF8Data;
+    NSData *val1 = @"FOO".ldb_UTF8Data;
     database[key1] = val1;
 
     NSCAssert([database[key1] isEqual:val1], @"");
 
     LDBWriteBatch *batch = [LDBWriteBatch new];
     for (NSString *k in @[@"aha", @"bar", @"baz", @"boo", @"xyz"]) {
-        batch[[k dataUsingEncoding:NSUTF8StringEncoding]] =
-            [[k uppercaseString] dataUsingEncoding:NSUTF8StringEncoding];
+        batch[k.ldb_UTF8Data] =
+            [k uppercaseString].ldb_UTF8Data;
     }
     NSError *error;
     if (![database write:batch sync:NO error:&error]) {
@@ -109,29 +108,27 @@
         LDBSnapshot *snapshot = database.snapshot;
 
         NSLog(@"snapshot contents:");
-        for (LDBIterator *it = snapshot.iterate; it.isValid; [it step]) {
-            NSLog(@"  - %@: %@",
-                [[NSString alloc] initWithData:it.key encoding:NSUTF8StringEncoding],
-                [[NSString alloc] initWithData:it.value encoding:NSUTF8StringEncoding]);
+        for (LDBEnumerator *e = snapshot.enumerator; e.isValid; [e step]) {
+            NSLog(@"  - %@: %@", e.key.ldb_UTF8String, e.value.ldb_UTF8String);
         }
-        // snapshot contents:
-        //   - aha: AHA
-        //   - bar: BAR
-        //   - baz: BAZ
-        //   - boo: BOO
-        //   - foo: FOO
-        //   - xyz: XYZ
+        XCTAssertEqualObjects(snapshot.enumerator.allObjects, (@[
+            @[@"aha".ldb_UTF8Data, @"AHA".ldb_UTF8Data],
+            @[@"bar".ldb_UTF8Data, @"BAR".ldb_UTF8Data],
+            @[@"baz".ldb_UTF8Data, @"BAZ".ldb_UTF8Data],
+            @[@"boo".ldb_UTF8Data, @"BOO".ldb_UTF8Data],
+            @[@"foo".ldb_UTF8Data, @"FOO".ldb_UTF8Data],
+            @[@"xyz".ldb_UTF8Data, @"XYZ".ldb_UTF8Data],
+        ]));
 
-        LDBSnapshot *clamped = [snapshot prefix:[@"ba" dataUsingEncoding:NSUTF8StringEncoding]];
+        LDBSnapshot *clamped = [snapshot prefix:@"ba".ldb_UTF8Data];
         NSLog(@"clamped snapshot contents:");
-        for (LDBIterator *it = clamped.iterate; it.isValid; [it step]) {
-            NSLog(@"  - %@: %@",
-                [[NSString alloc] initWithData:it.key encoding:NSUTF8StringEncoding],
-                [[NSString alloc] initWithData:it.value encoding:NSUTF8StringEncoding]);
+        for (NSArray *pair in clamped.enumerator) {
+            NSLog(@"  - %@: %@", [pair[0] ldb_UTF8String], [pair[1] ldb_UTF8String]);
         }
-        // clamped snapshot contents:
-        //   - bar: BAR
-        //   - baz: BAZ
+        XCTAssertEqualObjects(clamped.enumerator.allObjects, (@[
+            @[@"bar".ldb_UTF8Data, @"BAR".ldb_UTF8Data],
+            @[@"baz".ldb_UTF8Data, @"BAZ".ldb_UTF8Data],
+        ]));
     }
 }
 
