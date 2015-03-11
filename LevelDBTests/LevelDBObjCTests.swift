@@ -35,9 +35,7 @@ class LevelDBObjCTests: XCTestCase {
         super.tearDown()
     }
     
-    func testInMemory() {
-        let db = LDBDatabase()
-        
+    func useDatabase(db: LDBDatabase) {
         if true {
             db["a".utf8Data] = "A".utf8Data
         
@@ -130,6 +128,29 @@ class LevelDBObjCTests: XCTestCase {
             XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["empty", "?", "Z", "ZZZ"])
         }
         
+    }
+
+    func testInMemory() {
+        let db = LDBDatabase()
+        useDatabase(db)
+    }
+
+    func testOnDisk() {
+        var logMessages = [String]()
+        var error: NSError?
+        let maybeDb = LDBDatabase(
+            path: path,
+            error: &error,
+            createIfMissing: true,
+            infoLog: logMessages.append
+        )
+        if let db = maybeDb {
+            useDatabase(db)
+            NSLog("LevelDB log contents:\n%@",
+                "\n".join(logMessages.map {m in ">>> \(m)"}))
+        } else {
+            XCTFail(error!.description)
+        }
     }
 
 }

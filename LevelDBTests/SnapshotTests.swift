@@ -78,7 +78,7 @@ class SnapshotTests : XCTestCase {
             (k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }
-        println(clampRevPairs)
+        NSLog("%@", clampRevPairs.description)
         XCTAssertEqual(clampRevPairs, [("a",  "foo"),
                                        ("1",  "one")])
 

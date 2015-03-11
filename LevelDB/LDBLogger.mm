@@ -57,9 +57,13 @@ struct block_logger_t : leveldb::Logger {
     return _impl.block;
 }
 
-- (leveldb::Logger *)impl
+@end // LDBLogger
+
+@implementation LDBLogger (Private)
+
+- (leveldb::Logger *)private_logger
 {
     return &_impl;
 }
 
-@end // LDBLogger
+@end
