@@ -28,13 +28,13 @@
 @property (nonatomic, readonly) BOOL isChecksummed;
 @property (nonatomic, readonly) BOOL isReversed;
 
-- (LDBSnapshot *)clampStart:(__nullable NSData *)startKey end:(__nullable NSData *)endKey;
+- (LDBSnapshot *)clampStart:(NSData * __nullable)startKey end:(NSData * __nullable)endKey;
 - (LDBSnapshot *)clampToInterval:(LDBInterval *)interval;
 - (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
 - (LDBSnapshot *)prefix:(NSData *)keyPrefix;
 
-- (__nullable NSData *)dataForKey:(NSData *)key;
-- (__nullable NSData *)objectForKeyedSubscript:(NSData *)key;
+- (NSData * __nullable)dataForKey:(NSData *)key;
+- (NSData * __nullable)objectForKeyedSubscript:(NSData *)key;
 
 - (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, NSData *data, BOOL *stop))block;
 

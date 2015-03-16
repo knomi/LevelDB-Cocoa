@@ -12,12 +12,12 @@
 
 @interface LDBWriteBatch : NSObject
 
-- (__nullable NSData *)objectForKeyedSubscript:(NSData *)key;
-- (void)setObject:(__nullable NSData *)data forKeyedSubscript:(NSData *)key;
-- (void)setData:(__nullable NSData *)data forKey:(NSData *)key;
+- (NSData * __nullable)objectForKeyedSubscript:(NSData *)key;
+- (void)setObject:(NSData * __nullable)data forKeyedSubscript:(NSData *)key;
+- (void)setData:(NSData * __nullable)data forKey:(NSData *)key;
 - (void)removeDataForKey:(NSData *)key;
 
-- (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, __nullable NSData *data))block;
+- (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, NSData * __nullable data))block;
 
 @end
 

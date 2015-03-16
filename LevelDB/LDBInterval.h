@@ -12,12 +12,12 @@
 
 @interface LDBInterval : NSObject
 
-+ (instancetype)intervalWithStart:(__nullable NSData *)start end:(__nullable NSData *)end;
++ (instancetype)intervalWithStart:(NSData * __nullable)start end:(NSData * __nullable)end;
 
 /// The interval from the empty byte sequence `[NSData data]` to `nil`.
 + (instancetype)everything;
 
-- (instancetype)initWithStart:(__nullable NSData *)start end:(__nullable NSData *)end;
+- (instancetype)initWithStart:(NSData * __nullable)start end:(NSData * __nullable)end;
 
 @property (nonatomic, readonly, copy) NSData * __nullable start;
 @property (nonatomic, readonly, copy) NSData * __nullable end;

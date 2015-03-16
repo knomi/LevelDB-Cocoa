@@ -120,13 +120,13 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// ```
 ///
 /// **See also:** `snapshot`
-- (__nullable NSData *)dataForKey:(NSData *)key;
+- (NSData * __nullable)dataForKey:(NSData *)key;
 
 
 /// Return the `NSData` stored at `key` or `nil` if not found.
 ///
 /// **See also:** `-[LDBDatabase snapshot]`
-- (__nullable NSData *)objectForKeyedSubscript:(NSData *)key;
+- (NSData * __nullable)objectForKeyedSubscript:(NSData *)key;
 
 
 /// Take an immutable snapshot of `self` for performing multiple reads
@@ -153,7 +153,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setData:(__nullable NSData *)data forKey:(NSData *)key;
+- (BOOL)setData:(NSData * __nullable)data forKey:(NSData *)key;
 
 
 /// Set the `NSData` at `key` to `data` if `data` is not `nil`. Otherwise,
@@ -169,7 +169,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// using a write batch.
 ///
 /// **See also:** `-[LDBDatabase write:sync:error:]`
-- (BOOL)setObject:(__nullable NSData *)data forKeyedSubscript:(NSData *)key;
+- (BOOL)setObject:(NSData * __nullable)data forKeyedSubscript:(NSData *)key;
 
 
 /// Remove the `NSData` stored at `key`.
