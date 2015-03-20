@@ -83,7 +83,7 @@ BOOL objc_result(leveldb::Status const &status,
 /// Convert the `status` into an `NSError` with `domain` equal to
 /// `LDBErrorDomain`, `code` one of `LDBError`, and `userInfo` filled with
 /// `LDBErrorMessageKey` as reported by `status.ToString()`.
-NSError * to_NSError(leveldb::Status const &status);
+NSError *to_NSError(leveldb::Status const &status);
 
 /// Copy the bytes of `slice` into an immutable `NSData`.
 NSData *to_NSData(leveldb::Slice const &slice);
@@ -97,5 +97,9 @@ NSData *max(NSData *left, NSData *right);
 
 NSData *lexicographicalNextSibling(NSData *data);
 NSData *lexicographicalFirstChild(NSData *data);
+
+NSData *dropLength(NSUInteger length, NSData *data);
+NSData *cutPrefix(NSData *prefix, NSData *data);
+NSData *concat(NSData *left, NSData *right);
 
 } // namespace leveldb_objc

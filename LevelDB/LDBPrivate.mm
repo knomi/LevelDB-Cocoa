@@ -134,3 +134,37 @@ NSData *leveldb_objc::lexicographicalFirstChild(NSData *data)
     [result appendBytes:&zero length:1];
     return [result copy];
 }
+
+NSData *leveldb_objc::dropLength(NSUInteger length, NSData *data)
+{
+    if (!length) {
+        return data;
+    } else if (data.length <= length) {
+        return data ? [NSData data] : nil;
+    } else {
+        return [data subdataWithRange:NSMakeRange(length, data.length - length)];
+    }
+}
+
+NSData *leveldb_objc::cutPrefix(NSData *prefix, NSData *data)
+{
+    namespace ldb = leveldb_objc;
+    if (ldb::compare(data, prefix) <= 0) {
+        return [NSData data]; // before prefix
+    }
+    auto stop = ldb::lexicographicalNextSibling(prefix);
+    if (ldb::compare(data, stop) < 0) {
+        return ldb::dropLength(prefix.length, data); // within prefix
+    }
+    return nil; // past the end
+}
+
+NSData *leveldb_objc::concat(NSData *left, NSData *right)
+{
+    if (!left.length) return right;
+    if (!right.length) return left;
+    auto data = [[NSMutableData alloc] initWithCapacity:left.length + right.length];
+    [data appendData:left];
+    [data appendData:right];
+    return [data copy];
+}

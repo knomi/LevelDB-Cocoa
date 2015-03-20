@@ -262,8 +262,8 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     public var isChecksummed: Bool { return raw.isChecksummed }
     public var isReversed:    Bool { return raw.isReversed }
     
-    public func prefix(prefixKey: Key) -> Snapshot {
-        return Snapshot(raw.prefix(prefixKey.serializedData))
+    public func prefixed(prefix: Key) -> Snapshot {
+        return Snapshot(raw.prefixed(prefix.serializedData))
     }
     
     public func clamp(#from: Key) -> Snapshot {

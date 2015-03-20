@@ -16,6 +16,9 @@
 
 @interface LDBEnumerator () {
     std::unique_ptr<leveldb::Iterator> _impl;
+    NSUInteger _prefixLength;
+    NSData *_start;
+    NSData *_end;
     NSData *_value;
 }
 @end
@@ -32,26 +35,29 @@
 
 - (instancetype)initWithSnapshot:(LDBSnapshot *)snapshot
 {
+    namespace ldb = leveldb_objc;
     if (!(self = [super init]) || !snapshot) {
         return nil;
     }
     
     _snapshot = snapshot;
     _impl = std::unique_ptr<leveldb::Iterator>(snapshot.private_db.private_database->NewIterator(snapshot.private_readOptions));
+    _prefixLength = snapshot.prefix.length;
+    _start = ldb::concat(snapshot.prefix, snapshot.start);
+    _end   = snapshot.end ? ldb::concat(snapshot.prefix, snapshot.end)
+                          : ldb::lexicographicalNextSibling(snapshot.prefix);
 
     if (!snapshot.isReversed) {
-        NSData *startKey = self.snapshot.startKey;
-        if (startKey.length) {
-            _impl->Seek(leveldb_objc::to_Slice(startKey));
-        } else if (startKey) {
+        if (_start.length) {
+            _impl->Seek(ldb::to_Slice(_start));
+        } else if (_start) {
             _impl->SeekToFirst();
         }
     } else {
-        NSData *endKey = self.snapshot.endKey;
-        if (!endKey) {
+        if (!_end) {
             _impl->SeekToLast();
-        } else if (endKey.length) {
-            _impl->Seek(leveldb_objc::to_Slice(endKey));
+        } else if (_end.length) {
+            _impl->Seek(ldb::to_Slice(_end));
             if (_impl->Valid()) {
                 _impl->Prev();
             } else {
@@ -99,41 +105,42 @@
 
 - (void)private_stepForward
 {
+    namespace ldb = leveldb_objc;
     if (!self.isValid) return;
     _impl->Next();
     _key = nil;
     _value = nil;
     if (!_impl->Valid()) return;
-    NSData *key = leveldb_objc::to_NSData(_impl->key());
-    if (leveldb_objc::compare(key, self.snapshot.endKey) < 0) {
-        _key = key;
+    NSData *key = ldb::to_NSData(_impl->key());
+    if (ldb::compare(key, _end) < 0) {
+        _key = ldb::dropLength(_prefixLength, key);
     }
 }
 
 - (void)private_stepBackward
 {
+    namespace ldb = leveldb_objc;
     if (!self.isValid) return;
     _impl->Prev();
     _key = nil;
     _value = nil;
     if (!_impl->Valid()) return;
-    NSData *key = leveldb_objc::to_NSData(_impl->key());
-    if (leveldb_objc::compare(self.snapshot.startKey, key) <= 0) {
-        _key = key;
+    NSData *key = ldb::to_NSData(_impl->key());
+    if (ldb::compare(_start, key) <= 0) {
+        _key = ldb::dropLength(_prefixLength, key);
     }
 }
 
 - (void)private_update
 {
+    namespace ldb = leveldb_objc;
     _key = nil;
     _value = nil;
     if (!_impl->Valid()) return;
     
-    NSData *key = leveldb_objc::to_NSData(_impl->key());
-    if (leveldb_objc::compare(self.snapshot.startKey, key) <= 0 &&
-        leveldb_objc::compare(key, self.snapshot.endKey) < 0)
-    {
-        _key = key;
+    NSData *key = ldb::to_NSData(_impl->key());
+    if (ldb::compare(_start, key) <= 0 && ldb::compare(key, _end) < 0) {
+        _key = ldb::dropLength(_prefixLength, key);
     }
 }
 

@@ -89,16 +89,16 @@ class LevelDBObjCTests: XCTestCase {
         }
         
         if true {
-            let snap = db.snapshot().prefix("z".utf8Data)
+            let snap = db.snapshot().prefixed("z".utf8Data)
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["z", "zzz"])
+            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "zz"])
             XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["Z", "ZZZ"])
         }
         
         if true {
-            let snap = db.snapshot().prefix("z".utf8Data).reversed
+            let snap = db.snapshot().prefixed("z".utf8Data).reversed
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["zzz", "z"])
+            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["zz", ""])
             XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["ZZZ", "Z"])
         }
         

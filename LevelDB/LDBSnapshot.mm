@@ -11,6 +11,7 @@
 #import "LDBEnumerator.h"
 #import "LDBInterval.h"
 #import "LDBPrivate.hpp"
+#import "NSData+LDB.h"
 
 #include "leveldb/db.h"
 
@@ -57,15 +58,17 @@ private:
     }
     
     _impl = std::make_shared<leveldb_objc::snapshot_t const>(database);
-    _startKey = [NSData data];
+    _prefix = [NSData data];
+    _start = [NSData data];
     
     return self;
 }
 
 - (instancetype)
     initWithImpl:(std::shared_ptr<leveldb_objc::snapshot_t const>)impl
-    startKey:(NSData *)startKey
-    endKey:(NSData *)endKey
+    prefix:(NSData *)prefix
+    start:(NSData *)start
+    end:(NSData *)end
     reversed:(BOOL)isReversed
     noncaching:(BOOL)isNoncaching
     checksummed:(BOOL)isChecksummed
@@ -75,8 +78,9 @@ private:
     }
     
     _impl          = impl;
-    _startKey      = [startKey copy];
-    _endKey        = [endKey copy];
+    _prefix        = [prefix copy];
+    _start         = [start copy];
+    _end           = [end copy];
     _isReversed    = isReversed;
     _isNoncaching  = isNoncaching;
     _isChecksummed = isChecksummed;
@@ -88,8 +92,9 @@ private:
 {
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
-        startKey:     self.startKey
-        endKey:       self.endKey
+        prefix:       self.prefix
+        start:        self.start
+        end:          self.end
         reversed:     self.isReversed
         noncaching:   YES
         checksummed:  self.isChecksummed];
@@ -99,8 +104,9 @@ private:
 {
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
-        startKey:     self.startKey
-        endKey:       self.endKey
+        prefix:       self.prefix
+        start:        self.start
+        end:          self.end
         reversed:     self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  YES];
@@ -110,30 +116,33 @@ private:
 {
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
-        startKey:     self.startKey
-        endKey:       self.endKey
+        prefix:       self.prefix
+        start:        self.start
+        end:          self.end
         reversed:     !self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  self.isChecksummed];
 }
 
-- (LDBSnapshot *)clampStart:(NSData *)startKey end:(NSData *)endKey
+- (LDBSnapshot *)clampStart:(NSData *)start end:(NSData *)end
 {
-    if (startKey == nil) {
-        startKey = [NSData data];
+    namespace ldb = leveldb_objc;
+    if (start == nil) {
+        start = [NSData data];
     }
-    if (leveldb_objc::compare(startKey, endKey) > 0) {
+    if (ldb::compare(start, end) > 0) {
         return [[LDBSnapshot alloc]
             initWithImpl: _impl
-            startKey:     nil
-            endKey:       nil
+            prefix:       self.prefix
+            start:        nil
+            end:          nil
             reversed:     self.isReversed
             noncaching:   self.isNoncaching
             checksummed:  self.isChecksummed];
     }
     
-    BOOL clampsStart = leveldb_objc::compare(self.startKey, startKey) < 0;
-    BOOL clampsEnd   = leveldb_objc::compare(endKey, self.endKey) < 0;
+    BOOL clampsStart = ldb::compare(self.start, start) < 0;
+    BOOL clampsEnd   = ldb::compare(end, self.end) < 0;
     
     if (!clampsStart && !clampsEnd) {
         return self;
@@ -141,8 +150,9 @@ private:
     
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
-        startKey:     clampsStart ? startKey : self.startKey
-        endKey:       clampsEnd ? endKey : self.endKey
+        prefix:       self.prefix
+        start:        clampsStart ? start : self.start
+        end:          clampsEnd ? end : self.end
         reversed:     self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  self.isChecksummed];
@@ -153,8 +163,9 @@ private:
     if (interval.start == nil) {
         return [[LDBSnapshot alloc]
             initWithImpl: _impl
-            startKey:     nil
-            endKey:       nil
+            prefix:       self.prefix
+            start:        nil
+            end:          nil
             reversed:     self.isReversed
             noncaching:   self.isNoncaching
             checksummed:  self.isChecksummed];
@@ -163,21 +174,33 @@ private:
     }
 }
 
-- (LDBSnapshot *)after:(NSData *)exclusiveStartKey
+- (LDBSnapshot *)after:(NSData *)exclusiveStart
 {
-    auto startKey = leveldb_objc::lexicographicalFirstChild(exclusiveStartKey);
-    return [self clampStart:startKey end:self.endKey];
+    auto start = leveldb_objc::lexicographicalFirstChild(exclusiveStart);
+    return [self clampStart:start end:self.end];
 }
 
-- (LDBSnapshot *)prefix:(NSData *)keyPrefix
+- (LDBSnapshot *)prefixed:(NSData *)prefix
 {
-    auto startKey = keyPrefix;
-    NSData *endKey = leveldb_objc::lexicographicalNextSibling(keyPrefix);
-    return [self clampStart:startKey end:endKey];
+    namespace ldb = leveldb_objc;
+    if (prefix == nil) {
+        return self;
+    }
+    auto start = ldb::cutPrefix(prefix, self.start);
+    auto end   = ldb::cutPrefix(prefix, self.end);
+    return [[LDBSnapshot alloc]
+        initWithImpl: _impl
+        prefix:       ldb::concat(self.prefix, prefix)
+        start:        start
+        end:          end
+        reversed:     self.isReversed
+        noncaching:   self.isNoncaching
+        checksummed:  self.isChecksummed];
 }
 
 - (NSData *)dataForKey:(NSData *)key
 {
+    namespace ldb = leveldb_objc;
     if (!key) {
         return nil;
     }
@@ -185,7 +208,7 @@ private:
     std::string value;
     auto db = self.private_db.private_database;
     auto status = db->Get(self.private_readOptions,
-                          leveldb_objc::to_Slice(key),
+                          ldb::to_Slice(ldb::concat(self.prefix, key)),
                           &value);
     if (status.ok()) {
         return [NSData dataWithBytes:value.data() length:value.size()];

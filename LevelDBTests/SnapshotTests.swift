@@ -87,34 +87,43 @@ class SnapshotTests : XCTestCase {
     func testPrefix() {
         let db = Database<String, String>(path)!
         
-        db["/z"]          = "end"
-        db["/people/foo"] = "foo"
-        db["/people/bar"] = "bar"
-        db["/pets/cat"]   = "meow"
-        db["/pets/dog"]   = "barf"
-        db["/other"]      = "other"
+        db["/z"]          = "End"
+        db["/people/foo"] = "Foo"
+        db["/people/bar"] = "Bar"
+        db["/pets/cat"]   = "Meow"
+        db["/pets/dog"]   = "Barf"
+        db["/other"]      = "Other"
 
         let snapshot = db.snapshot()
         
-        XCTAssertEqual(snapshot.values.array, ["other", "bar", "foo", "meow", "barf", "end"])
+        XCTAssertEqual(snapshot.values.array, ["Other", "Bar", "Foo", "Meow", "Barf", "End"])
         
-        let people = snapshot.prefix("/people/")
-        let pets   = snapshot.prefix("/pets/")
-        let peh    = snapshot.prefix("/pe")
+        let people = snapshot.prefixed("/people/")
+        let pets   = snapshot.prefixed("/pets/")
+        let peh    = snapshot.prefixed("/pe")
+
+        XCTAssertEqual(people.keys.array, ["bar", "foo"])
+        XCTAssertEqual(pets.keys.array, ["cat", "dog"])
+        XCTAssertEqual(peh.keys.array, ["ople/bar", "ople/foo", "ts/cat", "ts/dog"])
+
+        XCTAssertEqual(people.values.array, ["Bar", "Foo"])
+        XCTAssertEqual(pets.values.array, ["Meow", "Barf"])
+        XCTAssertEqual(peh.values.array, ["Bar", "Foo", "Meow", "Barf"])
+        
+        XCTAssertEqual(peh.clamp(from: "ople/e", to: "ts/d").values.array, ["Foo", "Meow"])
+        XCTAssertEqual(peh.reversed.clamp(from: "ople/e", to: "ts/d").values.array, ["Meow", "Foo"])
+        
         let dehcat0 = snapshot["/people/deh" ..< "/pets/cat"]
         let dehcat1 = snapshot["/people/deh" ..< "/pets/cat "]
         let dehcat2 = snapshot["/people/deh" ... "/pets/cat"]
         let dehdog  = snapshot["/people/deh" ... "/pets/dog"]
         let postcat = snapshot.clamp(after: "/pets/cat", to: nil)
         
-        XCTAssertEqual(people.values.array, ["bar", "foo"])
-        XCTAssertEqual(pets.values.array, ["meow", "barf"])
-        XCTAssertEqual(peh.values.array, ["bar", "foo", "meow", "barf"])
-        XCTAssertEqual(dehcat0.values.array, ["foo"])
-        XCTAssertEqual(dehcat1.values.array, ["foo", "meow"])
-        XCTAssertEqual(dehcat2.values.array, ["foo", "meow"])
-        XCTAssertEqual(dehdog.values.array, ["foo", "meow", "barf"])
-        XCTAssertEqual(postcat.values.array, ["barf", "end"])
+        XCTAssertEqual(dehcat0.values.array, ["Foo"])
+        XCTAssertEqual(dehcat1.values.array, ["Foo", "Meow"])
+        XCTAssertEqual(dehcat2.values.array, ["Foo", "Meow"])
+        XCTAssertEqual(dehdog.values.array, ["Foo", "Meow", "Barf"])
+        XCTAssertEqual(postcat.values.array, ["Barf", "End"])
         
     }
     

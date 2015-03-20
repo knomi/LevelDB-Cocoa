@@ -22,16 +22,17 @@
 @property (nonatomic, readonly) LDBSnapshot *noncaching;
 @property (nonatomic, readonly) LDBSnapshot *checksummed;
 @property (nonatomic, readonly) LDBSnapshot *reversed;
-@property (nonatomic, readonly) NSData * __nullable startKey;
-@property (nonatomic, readonly) NSData * __nullable endKey;
+@property (nonatomic, readonly) NSData * __nullable prefix;
+@property (nonatomic, readonly) NSData * __nullable start;
+@property (nonatomic, readonly) NSData * __nullable end;
 @property (nonatomic, readonly) BOOL isNoncaching;
 @property (nonatomic, readonly) BOOL isChecksummed;
 @property (nonatomic, readonly) BOOL isReversed;
 
-- (LDBSnapshot *)clampStart:(NSData * __nullable)startKey end:(NSData * __nullable)endKey;
+- (LDBSnapshot *)clampStart:(NSData * __nullable)start end:(NSData * __nullable)end;
 - (LDBSnapshot *)clampToInterval:(LDBInterval *)interval;
-- (LDBSnapshot *)after:(NSData *)exclusiveStartKey;
-- (LDBSnapshot *)prefix:(NSData *)keyPrefix;
+- (LDBSnapshot *)after:(NSData *)exclusiveStart;
+- (LDBSnapshot *)prefixed:(NSData *)prefix;
 
 - (NSData * __nullable)dataForKey:(NSData *)key;
 - (NSData * __nullable)objectForKeyedSubscript:(NSData *)key;

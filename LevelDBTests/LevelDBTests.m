@@ -120,14 +120,14 @@
             @[@"xyz".ldb_UTF8Data, @"XYZ".ldb_UTF8Data],
         ]));
 
-        LDBSnapshot *clamped = [snapshot prefix:@"ba".ldb_UTF8Data];
+        LDBSnapshot *clamped = [snapshot prefixed:@"ba".ldb_UTF8Data];
         NSLog(@"clamped snapshot contents:");
         for (NSArray *pair in clamped.enumerator) {
             NSLog(@"  - %@: %@", [pair[0] ldb_UTF8String], [pair[1] ldb_UTF8String]);
         }
         XCTAssertEqualObjects(clamped.enumerator.allObjects, (@[
-            @[@"bar".ldb_UTF8Data, @"BAR".ldb_UTF8Data],
-            @[@"baz".ldb_UTF8Data, @"BAZ".ldb_UTF8Data],
+            @[@"r".ldb_UTF8Data, @"BAR".ldb_UTF8Data],
+            @[@"z".ldb_UTF8Data, @"BAZ".ldb_UTF8Data],
         ]));
     }
 }
