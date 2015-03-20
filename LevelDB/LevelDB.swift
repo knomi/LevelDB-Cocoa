@@ -390,8 +390,16 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
         self.raw = LDBWriteBatch()
     }
     
+    public init(prefix: K) {
+        self.raw = LDBWriteBatch(prefix: prefix.serializedData)
+    }
+    
     public init(_ batch: LDBWriteBatch) {
         self.raw = batch
+    }
+    
+    public func prefixed(prefix: K) -> WriteBatch {
+        return WriteBatch(raw.prefixed(prefix.serializedData))
     }
     
     public subscript(key: Key) -> Value? {

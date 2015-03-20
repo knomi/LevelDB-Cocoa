@@ -118,14 +118,23 @@ class LevelDBObjCTests: XCTestCase {
             batch["c".utf8Data] = "!".utf8Data
             batch["a".utf8Data] = "?".utf8Data
             batch["c".utf8Data] = nil
+            
+            let root = batch.prefixed("/".utf8Data)
+            root[".".utf8Data] = "..".utf8Data
+            root["a".utf8Data] = "A".utf8Data
+            
+            let ahs = root.prefixed("a/".utf8Data)
+            ahs["a".utf8Data] = "aa".utf8Data
+            ahs["b".utf8Data] = "bb".utf8Data
+            
             var error: NSError?
             let ok = db.write(batch, sync: false, error: &error)
 
             let snap = db.snapshot()
             
             XCTAssert(ok, "\(error?.description)")
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["",      "a", "z", "zzz"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["empty", "?", "Z", "ZZZ"])
+            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array,   ["",      "/.", "/a", "/a/a", "/a/b", "a", "z", "zzz"])
+            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["empty", "..", "A",  "aa",   "bb",   "?", "Z", "ZZZ"])
         }
         
     }

@@ -10,12 +10,38 @@
 #include "leveldb/write_batch.h"
 
 @interface LDBWriteBatch () {
-    leveldb::WriteBatch _impl;
+    std::shared_ptr<leveldb::WriteBatch> _impl;
     unsigned long _mutations;
 }
 @end
 
 @implementation LDBWriteBatch
+
+- (instancetype)init
+{
+    return [self initWithPrefix:[NSData data]];
+}
+
+- (instancetype)initWithPrefix:(NSData *)prefix
+{
+    if (!(self = [super init])) return nil;
+    _impl = std::make_shared<leveldb::WriteBatch>();
+    _prefix = [prefix copy];
+    return self;
+}
+
+- (instancetype)initWithImpl:(std::shared_ptr<leveldb::WriteBatch> const &)impl prefix:(NSData *)prefix
+{
+    if (!(self = [super init])) return nil;
+    _impl = impl;
+    _prefix = [prefix copy];
+    return self;
+}
+
+- (LDBWriteBatch *)prefixed:(NSData *)prefix
+{
+    return [[LDBWriteBatch alloc] initWithImpl:_impl prefix:leveldb_objc::concat(self.prefix, prefix)];
+}
 
 - (NSData *)objectForKeyedSubscript:(NSData *)key
 {
@@ -29,15 +55,16 @@
 
 - (void)setData:(NSData *)data forKey:(NSData *)key
 {
+    namespace ldb = leveldb_objc;
     if (!key) {
         return;
     }
     
     if (data) {
-        _impl.Put(leveldb_objc::to_Slice(key),
-                  leveldb_objc::to_Slice(data));
+        _impl->Put(ldb::to_Slice(ldb::concat(self.prefix, key)),
+                   ldb::to_Slice(data));
     } else {
-        _impl.Delete(leveldb_objc::to_Slice(key));
+        _impl->Delete(ldb::to_Slice(ldb::concat(self.prefix, key)));
     }
     
     _mutations++;
@@ -65,7 +92,7 @@
     };
     enumerator_t it;
     it.block = block;
-    auto status = _impl.Iterate(&it);
+    auto status = _impl->Iterate(&it);
     if (!status.ok()) {
         // It seems like iteration errors may only happen because of a bug
         // inside the LevelDB C++ implementation. Thus only reporting the error
@@ -100,6 +127,6 @@
 @implementation LDBWriteBatch (Private)
 - (leveldb::WriteBatch *)private_batch
 {
-    return &_impl;
+    return _impl.get();
 }
 @end
