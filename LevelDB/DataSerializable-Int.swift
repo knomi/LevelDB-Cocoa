@@ -8,11 +8,9 @@
 import Foundation.NSData
 
 extension Int : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u = UInt(serializedData: data) {
-            self.init(bitPattern: offsetSign(u))
-        } else {
-            return nil
+    public static func fromSerializedData(data: NSData) -> Int? {
+        return UInt.fromSerializedData(data).map {u in
+            Int(bitPattern: offsetSign(u))
         }
     }
     
@@ -22,11 +20,9 @@ extension Int : DataSerializable {
 }
 
 extension Int8 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u = UInt8(serializedData: data) {
-            self.init(bitPattern: offsetSign(u))
-        } else {
-            return nil
+    public static func fromSerializedData(data: NSData) -> Int8? {
+        return UInt8.fromSerializedData(data).map {u in
+            Int8(bitPattern: offsetSign(u))
         }
     }
     
@@ -36,11 +32,9 @@ extension Int8 : DataSerializable {
 }
 
 extension Int16 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u = UInt16(serializedData: data) {
-            self.init(bitPattern: offsetSign(u))
-        } else {
-            return nil
+    public static func fromSerializedData(data: NSData) -> Int16? {
+        return UInt16.fromSerializedData(data).map {u in
+            Int16(bitPattern: offsetSign(u))
         }
     }
     
@@ -50,11 +44,9 @@ extension Int16 : DataSerializable {
 }
 
 extension Int32 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u = UInt32(serializedData: data) {
-            self.init(bitPattern: offsetSign(u))
-        } else {
-            return nil
+    public static func fromSerializedData(data: NSData) -> Int32? {
+        return UInt32.fromSerializedData(data).map {u in
+            Int32(bitPattern: offsetSign(u))
         }
     }
     
@@ -64,11 +56,9 @@ extension Int32 : DataSerializable {
 }
 
 extension Int64 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u = UInt64(serializedData: data) {
-            self.init(bitPattern: offsetSign(u))
-        } else {
-            return nil
+    public static func fromSerializedData(data: NSData) -> Int64? {
+        return UInt64.fromSerializedData(data).map {u in
+            Int64(bitPattern: offsetSign(u))
         }
     }
     

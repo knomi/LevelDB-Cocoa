@@ -84,11 +84,10 @@ NSComparisonResult leveldb_objc::compare(NSData *left, NSData *right)
     if (!left && !right) return NSOrderedSame;
     if (!right) return NSOrderedAscending;
     if (!left) return NSOrderedDescending;
-    if (!right) return NSOrderedAscending;
     auto a = left.length;
     auto b = right.length;
-    auto c = strncmp(static_cast<char const *>(left.bytes),
-                     static_cast<char const *>(right.bytes), MIN(a, b));
+    auto c = memcmp(static_cast<char const *>(left.bytes),
+                    static_cast<char const *>(right.bytes), MIN(a, b));
     return c < 0 ? NSOrderedAscending
          : c > 0 ? NSOrderedDescending
          : a < b ? NSOrderedAscending

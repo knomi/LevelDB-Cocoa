@@ -31,14 +31,14 @@
 		E021E8491A973C7700A865E7 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */; };
 		E021E84C1A976C9F00A865E7 /* LevelDBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E021E84B1A976C9F00A865E7 /* LevelDBTests.m */; };
 		E021E84D1A976C9F00A865E7 /* LevelDBTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E021E84B1A976C9F00A865E7 /* LevelDBTests.m */; };
+		E02BD24A1ABFEE3700F379FA /* DataSerializable-NSData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BD2491ABFEE3700F379FA /* DataSerializable-NSData.swift */; };
+		E02BD24B1ABFEE3700F379FA /* DataSerializable-NSData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02BD2491ABFEE3700F379FA /* DataSerializable-NSData.swift */; };
 		E035EE881AB9581800A1FE0D /* DataSerializable-UInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = E035EE871AB9581800A1FE0D /* DataSerializable-UInt.swift */; };
 		E035EE891AB9581800A1FE0D /* DataSerializable-UInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = E035EE871AB9581800A1FE0D /* DataSerializable-UInt.swift */; };
 		E035EE8B1AB9589B00A1FE0D /* DataSerializable-String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E035EE8A1AB9589B00A1FE0D /* DataSerializable-String.swift */; };
 		E035EE8C1AB9589B00A1FE0D /* DataSerializable-String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E035EE8A1AB9589B00A1FE0D /* DataSerializable-String.swift */; };
 		E035EE8E1AB958BD00A1FE0D /* DataSerializable-Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = E035EE8D1AB958BD00A1FE0D /* DataSerializable-Int.swift */; };
 		E035EE8F1AB958BD00A1FE0D /* DataSerializable-Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = E035EE8D1AB958BD00A1FE0D /* DataSerializable-Int.swift */; };
-		E099B8131AB9643500D8CE0F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = E099B8121AB9643500D8CE0F /* Data.swift */; };
-		E099B8141AB9643500D8CE0F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = E099B8121AB9643500D8CE0F /* Data.swift */; };
 		E099B8161AB9648400D8CE0F /* DataSerializable-Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = E099B8151AB9648400D8CE0F /* DataSerializable-Double.swift */; };
 		E099B8171AB9648400D8CE0F /* DataSerializable-Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = E099B8151AB9648400D8CE0F /* DataSerializable-Double.swift */; };
 		E099B8191AB965E500D8CE0F /* DataSerializableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E099B8181AB965E500D8CE0F /* DataSerializableTests.swift */; };
@@ -219,11 +219,11 @@
 		E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		E02379F11A8B47470088DF41 /* NSDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataTests.swift; sourceTree = "<group>"; };
 		E02379F41A8B476D0088DF41 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
+		E02BD2491ABFEE3700F379FA /* DataSerializable-NSData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSerializable-NSData.swift"; sourceTree = "<group>"; };
 		E02C25111A89F7CB0059C28C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E035EE871AB9581800A1FE0D /* DataSerializable-UInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSerializable-UInt.swift"; sourceTree = "<group>"; };
 		E035EE8A1AB9589B00A1FE0D /* DataSerializable-String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSerializable-String.swift"; sourceTree = "<group>"; };
 		E035EE8D1AB958BD00A1FE0D /* DataSerializable-Int.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSerializable-Int.swift"; sourceTree = "<group>"; };
-		E099B8121AB9643500D8CE0F /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		E099B8151AB9648400D8CE0F /* DataSerializable-Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataSerializable-Double.swift"; sourceTree = "<group>"; };
 		E099B8181AB965E500D8CE0F /* DataSerializableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSerializableTests.swift; sourceTree = "<group>"; };
 		E0B0524D1A7FF50A00DCE453 /* LevelDBDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LevelDBDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -513,9 +513,9 @@
 				E0E82A081A947DEE004A08F4 /* LDBWriteBatch.mm */,
 				E021E83D1A97215400A865E7 /* NSData+LDB.mm */,
 				E0BF378E1A7674E400FC96E0 /* Info.plist */,
-				E099B8121AB9643500D8CE0F /* Data.swift */,
 				E099B8151AB9648400D8CE0F /* DataSerializable-Double.swift */,
 				E035EE8D1AB958BD00A1FE0D /* DataSerializable-Int.swift */,
+				E02BD2491ABFEE3700F379FA /* DataSerializable-NSData.swift */,
 				E035EE8A1AB9589B00A1FE0D /* DataSerializable-String.swift */,
 				E035EE871AB9581800A1FE0D /* DataSerializable-UInt.swift */,
 				E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */,
@@ -1087,8 +1087,8 @@
 				E0E82A121A949404004A08F4 /* LDBError.mm in Sources */,
 				E0BF38DA1A76D0AD00FC96E0 /* table_cache.cc in Sources */,
 				E0BF38E91A76D10800FC96E0 /* cache.cc in Sources */,
-				E099B8141AB9643500D8CE0F /* Data.swift in Sources */,
 				E021E8351A9630BE00A865E7 /* LevelDB.swift in Sources */,
+				E02BD24B1ABFEE3700F379FA /* DataSerializable-NSData.swift in Sources */,
 				E0BF38D71A76D0AD00FC96E0 /* log_writer.cc in Sources */,
 				E035EE891AB9581800A1FE0D /* DataSerializable-UInt.swift in Sources */,
 				E0BF38DE1A76D0D200FC96E0 /* block.cc in Sources */,
@@ -1163,8 +1163,8 @@
 				E0E82A111A949404004A08F4 /* LDBError.mm in Sources */,
 				E0BF391D1A76D55300FC96E0 /* port_posix.cc in Sources */,
 				E0BF39341A76D55300FC96E0 /* version_edit.cc in Sources */,
-				E099B8131AB9643500D8CE0F /* Data.swift in Sources */,
 				E021E8341A9630BD00A865E7 /* LevelDB.swift in Sources */,
+				E02BD24A1ABFEE3700F379FA /* DataSerializable-NSData.swift in Sources */,
 				E0BF39371A76D55300FC96E0 /* env_posix.cc in Sources */,
 				E035EE881AB9581800A1FE0D /* DataSerializable-UInt.swift in Sources */,
 				E0BF392A1A76D55300FC96E0 /* table_builder.cc in Sources */,

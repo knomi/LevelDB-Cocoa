@@ -151,9 +151,9 @@ extension LDBWriteBatch {
     public func enumerate<K : DataSerializable,
                           V : DataSerializable>(block: (K, V?) -> ()) {
         enumerate {k, v in
-            if let key = K(serializedData: k) {
+            if let key = K.fromSerializedData(k) {
                 if let data = v {
-                    if let value = V(serializedData: data) {
+                    if let value = V.fromSerializedData(data) {
                         block(key, value)
                     } else {
                         // skipped
@@ -199,7 +199,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     public subscript(key: Key) -> Value? {
         get {
             if let data = raw[key.serializedData] {
-                return Value(serializedData: data)
+                return Value.fromSerializedData(data)
             } else {
                 return nil
             }
@@ -304,7 +304,7 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     
     public subscript(key: Key) -> Value? {
         if let data = raw[key.serializedData] {
-            return Value(serializedData: data)
+            return Value.fromSerializedData(data)
         } else {
             return nil
         }
@@ -335,8 +335,8 @@ public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
     
     public func next() -> Element? {
         while let (k, v) = enumerator.next() {
-            if let key = Key(serializedData: k) {
-                if let value = Value(serializedData: v) {
+            if let key = Key.fromSerializedData(k) {
+                if let value = Value.fromSerializedData(v) {
                     return (key: key, value: value)
                 }
             }
@@ -411,9 +411,9 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
     
     public func enumerate(block: (Key, Value?) -> ()) {
         raw.enumerate {k, v in
-            if let key = Key(serializedData: k) {
+            if let key = Key.fromSerializedData(k) {
                 if let data = v {
-                    if let value = Value(serializedData: data) {
+                    if let value = Value.fromSerializedData(data) {
                         block(key, value)
                     }
                 } else {

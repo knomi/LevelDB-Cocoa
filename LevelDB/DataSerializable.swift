@@ -15,7 +15,7 @@ import Foundation.NSData
 public protocol DataSerializable {
 
     /// TODO
-    init?(serializedData: NSData)
+    class func fromSerializedData(data: NSData) -> Self?
     
     /// TODO
     var serializedData: NSData { get }

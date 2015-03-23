@@ -8,11 +8,9 @@
 import Foundation
 
 extension Double : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let value = OrderPreservingValue(serializedData: data) {
-            self.init(orderPreservingValue: value)
-        } else {
-            return nil
+    public static func fromSerializedData(data: NSData) -> Double? {
+        return OrderPreservingValue.fromSerializedData(data).map {value in
+            Double(orderPreservingValue: value)
         }
     }
 

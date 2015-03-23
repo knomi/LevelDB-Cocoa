@@ -57,10 +57,25 @@ extension WriteBatch {
 }
 
 extension NSData {
+    convenience init(bytes: [UInt8]) {
+        let (address, length) = bytes.withUnsafeBufferPointer {buffer in
+            (buffer.baseAddress, buffer.count)
+        }
+        self.init(bytes: address, length: length)
+    }
+    convenience init(bytes: UInt8...) {
+        self.init(bytes: bytes)
+    }
+
     var UTF8String: String {
         return NSString(data: self, encoding: NSUTF8StringEncoding)! as String
     }
 }
+
+extension NSData : Comparable {}
+
+public func == (a: NSData, b: NSData) -> Bool { return a.isEqualToData(b) }
+public func < (a: NSData, b: NSData) -> Bool { return NSData.ldb_compareLeft(a, right: b).rawValue < 0 }
 
 func tempDbPath() -> String {
     let unique = NSProcessInfo.processInfo().globallyUniqueString

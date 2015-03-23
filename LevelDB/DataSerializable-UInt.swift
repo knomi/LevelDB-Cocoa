@@ -8,23 +8,23 @@
 import Foundation.NSData
 
 extension UInt : DataSerializable {
-    public init?(serializedData data: NSData) {
+    public static func fromSerializedData(data: NSData) -> UInt? {
         if let u: UInt64 = fromData(data) {
             if u <= UInt64(UInt.max) {
-                self = UInt(u)
+                return UInt(u)
             }
         }
         return nil
     }
     
     public var serializedData: NSData {
-        return toData(UInt64(self))
+        return UInt64(self).serializedData
     }
 }
 
 extension UInt8 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u: UInt8 = fromData(data) { self = u } else { return nil }
+    public static func fromSerializedData(data: NSData) -> UInt8? {
+        return fromData(data)
     }
     
     public var serializedData: NSData {
@@ -33,32 +33,43 @@ extension UInt8 : DataSerializable {
 }
 
 extension UInt16 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u: UInt16 = fromData(data) { self = u } else { return nil }
+    public static func fromSerializedData(data: NSData) -> UInt16? {
+        return fromData(data)
     }
     
     public var serializedData: NSData {
-        return toData(bigEndian)
+        return toData(UInt8(self >> 8 & 0xff),
+                      UInt8(self >> 0 & 0xff))
     }
 }
 
 extension UInt32 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u: UInt32 = fromData(data) { self = u } else { return nil }
+    public static func fromSerializedData(data: NSData) -> UInt32? {
+        return fromData(data)
     }
     
     public var serializedData: NSData {
-        return toData(bigEndian)
+        return toData(UInt8(self >> 24 & 0xff),
+                      UInt8(self >> 16 & 0xff),
+                      UInt8(self >>  8 & 0xff),
+                      UInt8(self >>  0 & 0xff))
     }
 }
 
 extension UInt64 : DataSerializable {
-    public init?(serializedData data: NSData) {
-        if let u: UInt64 = fromData(data) { self = u } else { return nil }
+    public static func fromSerializedData(data: NSData) -> UInt64? {
+        return fromData(data)
     }
     
     public var serializedData: NSData {
-        return toData(bigEndian)
+        return toData(UInt8(self >> 56 & 0xff),
+                      UInt8(self >> 48 & 0xff),
+                      UInt8(self >> 40 & 0xff),
+                      UInt8(self >> 32 & 0xff),
+                      UInt8(self >> 24 & 0xff),
+                      UInt8(self >> 16 & 0xff),
+                      UInt8(self >>  8 & 0xff),
+                      UInt8(self >>  0 & 0xff))
     }
 }
 
@@ -73,6 +84,8 @@ private func fromData<T : UnsignedIntegerType>(data: NSData) -> T? {
     }
 }
 
-private func toData<T>(var value: T) -> NSData {
-    return NSData(bytes: &value, length: sizeof(T))
+private func toData(bytes: UInt8...) -> NSData {
+    return bytes.withUnsafeBufferPointer {ptr in
+        return NSData(bytes: ptr.baseAddress, length: ptr.count)
+    }
 }
