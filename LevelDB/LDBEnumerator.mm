@@ -15,7 +15,7 @@
 #include <memory>
 
 @interface LDBEnumerator () {
-    std::unique_ptr<leveldb::Iterator> _impl;
+    std::unique_ptr<leveldb::Iterator> _impl; // To be freed before `_snapshot`.
     NSUInteger _prefixLength;
     NSData *_start;
     NSData *_end;
@@ -68,6 +68,12 @@
     [self private_update];
     
     return self;
+}
+
+- (void)dealloc
+{
+    // Careful here; `_snapshot` has to outlive the iterator `_impl`.
+    _impl.reset();
 }
 
 - (BOOL)isValid
