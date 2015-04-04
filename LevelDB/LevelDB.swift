@@ -140,41 +140,6 @@ extension LDBSnapshot {
     
 }
 
-extension LDBWriteBatch {
-
-    /// TODO
-    public func put<K : DataSerializable,
-                    V : DataSerializable>(key: K, _ value: V)
-    {
-        self[key.serializedData] = value.serializedData
-    }
-    
-    /// TODO
-    public func delete<K : DataSerializable>(key: K) {
-        self[key.serializedData] = nil
-    }
-
-    public func enumerate<K : DataSerializable,
-                          V : DataSerializable>(block: (K, V?) -> ()) {
-        enumerate {k, v in
-            if let key = K.fromSerializedData(k) {
-                if let data = v {
-                    if let value = V.fromSerializedData(data) {
-                        block(key, value)
-                    } else {
-                        // skipped
-                    }
-                } else {
-                    block(key, nil)
-                }
-            } else {
-                // skipped
-            }
-        }
-    }
-
-}
-
 public final class Database<K : protocol<DataSerializable, Comparable>,
                             V : DataSerializable>
 {
@@ -267,6 +232,7 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     public var isNoncaching:  Bool { return raw.isNoncaching }
     public var isChecksummed: Bool { return raw.isChecksummed }
     public var isReversed:    Bool { return raw.isReversed }
+    public var isClamped:     Bool { return raw.isClamped }
     
     public func prefixed(prefix: Key) -> Snapshot {
         return Snapshot(raw.prefixed(prefix.serializedData))
