@@ -13,13 +13,16 @@
 @interface NSData (LDB)
 
 /// Compare `left` to `right` lexicographically. This method accepts `nil` as
-/// inputs to denote "infinity", or the infinite sequence of `0xff` bytes.
+/// inputs to denote "infinity", or the infinite sequence of `0xff` bytes which
+/// compares greater than any non-`nil` argument.
 ///
 /// For any valid inputs, the following identity always holds:
 /// ```objc
 /// [ldb_compareLeft:left right:right] == -[ldb_compareLeft:right right:left]
 /// ```
-+ (NSComparisonResult)ldb_compareLeft:(NSData *)left right:(NSData *)right;
++ (NSComparisonResult)
+    ldb_compareLeft:(NSData * __nullable)left
+    right:          (NSData * __nullable)right;
 
 /// Calculate the byte sequence with equal length to `self` that is "one
 /// greater", or the unique lexicographical successor to `self`. If no such
