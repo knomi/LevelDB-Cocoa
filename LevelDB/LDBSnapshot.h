@@ -22,12 +22,14 @@
 @property (nonatomic, readonly) LDBSnapshot *noncaching;
 @property (nonatomic, readonly) LDBSnapshot *checksummed;
 @property (nonatomic, readonly) LDBSnapshot *reversed;
-@property (nonatomic, readonly) NSData * __nullable prefix;
+@property (nonatomic, readonly) NSData * prefix;
+@property (nonatomic, readonly) LDBInterval * interval;
 @property (nonatomic, readonly) NSData * __nullable start;
 @property (nonatomic, readonly) NSData * __nullable end;
 @property (nonatomic, readonly) BOOL isNoncaching;
 @property (nonatomic, readonly) BOOL isChecksummed;
 @property (nonatomic, readonly) BOOL isReversed;
+@property (nonatomic, readonly) BOOL isClamped;
 
 - (LDBSnapshot *)clampStart:(NSData * __nullable)start end:(NSData * __nullable)end;
 - (LDBSnapshot *)clampToInterval:(LDBInterval *)interval;

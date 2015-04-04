@@ -59,7 +59,7 @@ private:
     
     _impl = std::make_shared<leveldb_objc::snapshot_t const>(database);
     _prefix = [NSData data];
-    _start = [NSData data];
+    _interval = [LDBInterval everything];
     
     return self;
 }
@@ -67,8 +67,7 @@ private:
 - (instancetype)
     initWithImpl:(std::shared_ptr<leveldb_objc::snapshot_t const>)impl
     prefix:(NSData *)prefix
-    start:(NSData *)start
-    end:(NSData *)end
+    interval:(LDBInterval *)interval
     reversed:(BOOL)isReversed
     noncaching:(BOOL)isNoncaching
     checksummed:(BOOL)isChecksummed
@@ -79,8 +78,7 @@ private:
     
     _impl          = impl;
     _prefix        = [prefix copy];
-    _start         = [start copy];
-    _end           = [end copy];
+    _interval      = interval;
     _isReversed    = isReversed;
     _isNoncaching  = isNoncaching;
     _isChecksummed = isChecksummed;
@@ -93,8 +91,7 @@ private:
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
         prefix:       self.prefix
-        start:        self.start
-        end:          self.end
+        interval:     self.interval
         reversed:     self.isReversed
         noncaching:   YES
         checksummed:  self.isChecksummed];
@@ -105,8 +102,7 @@ private:
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
         prefix:       self.prefix
-        start:        self.start
-        end:          self.end
+        interval:     self.interval
         reversed:     self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  YES];
@@ -117,61 +113,43 @@ private:
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
         prefix:       self.prefix
-        start:        self.start
-        end:          self.end
+        interval:     self.interval
         reversed:     !self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  self.isChecksummed];
 }
 
+- (NSData *)start
+{
+    return self.interval.start;
+}
+
+- (NSData *)end
+{
+    return self.interval.end;
+}
+
+- (BOOL)isClamped
+{
+    return ![self.interval isEqual:[LDBInterval everything]];
+}
+
 - (LDBSnapshot *)clampStart:(NSData *)start end:(NSData *)end
 {
-    namespace ldb = leveldb_objc;
-    if (start == nil) {
-        start = [NSData data];
-    }
-    if (ldb::compare(start, end) > 0) {
-        return [[LDBSnapshot alloc]
-            initWithImpl: _impl
-            prefix:       self.prefix
-            start:        nil
-            end:          nil
-            reversed:     self.isReversed
-            noncaching:   self.isNoncaching
-            checksummed:  self.isChecksummed];
-    }
-    
-    BOOL clampsStart = ldb::compare(self.start, start) < 0;
-    BOOL clampsEnd   = ldb::compare(end, self.end) < 0;
-    
-    if (!clampsStart && !clampsEnd) {
-        return self;
-    }
-    
-    return [[LDBSnapshot alloc]
-        initWithImpl: _impl
-        prefix:       self.prefix
-        start:        clampsStart ? start : self.start
-        end:          clampsEnd ? end : self.end
-        reversed:     self.isReversed
-        noncaching:   self.isNoncaching
-        checksummed:  self.isChecksummed];
+    return [self clampToInterval:[LDBInterval
+        intervalWithStart:start ?: self.start
+        end:end]];
 }
 
 - (LDBSnapshot *)clampToInterval:(LDBInterval *)interval
 {
-    if (interval.start == nil) {
-        return [[LDBSnapshot alloc]
-            initWithImpl: _impl
-            prefix:       self.prefix
-            start:        nil
-            end:          nil
-            reversed:     self.isReversed
-            noncaching:   self.isNoncaching
-            checksummed:  self.isChecksummed];
-    } else {
-        return [self clampStart:interval.start end:interval.end];
-    }
+    return [[LDBSnapshot alloc]
+        initWithImpl: _impl
+        prefix:       self.prefix
+        interval:     [interval clamp:self.interval]
+        reversed:     self.isReversed
+        noncaching:   self.isNoncaching
+        checksummed:  self.isChecksummed];
 }
 
 - (LDBSnapshot *)after:(NSData *)exclusiveStart
@@ -191,8 +169,7 @@ private:
     return [[LDBSnapshot alloc]
         initWithImpl: _impl
         prefix:       ldb::concat(self.prefix, prefix)
-        start:        start
-        end:          end
+        interval:     [[LDBInterval alloc] initWithUncheckedStart:start end:end]
         reversed:     self.isReversed
         noncaching:   self.isNoncaching
         checksummed:  self.isChecksummed];
