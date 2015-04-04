@@ -189,6 +189,38 @@ class SnapshotTests : XCTestCase {
         XCTAssertEqual(snap.clamp(after:  nil, through:  nil).keys.array, keys)
     }
     
+    func testRounding() {
+        let db = Database<String, String>(path)!
+        let keys = map(0 ..< 100) {i in "\(i / 10)\(i % 10)"}
+        let batch = WriteBatch<String, String>()
+        for k in keys {
+            batch[k] = ""
+        }
+        XCTAssert(db.write(batch, sync: false, error: nil))
+        
+        let snap = db.snapshot()
+        
+        XCTAssertEqual(snap.raw.floorKey("0".utf8Data),   "".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey("00".utf8Data),  "00".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey("3".utf8Data),   "29".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey("30".utf8Data),  "30".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey("300".utf8Data), "30".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey("31a".utf8Data), "31".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey("99".utf8Data),  "99".utf8Data)
+        XCTAssertEqual(snap.raw.floorKey(nil),            "99".utf8Data)
+
+        XCTAssertEqual(snap.raw.ceilKey("".utf8Data),    "00".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("0".utf8Data),   "00".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("00".utf8Data),  "00".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("000".utf8Data), "01".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("30".utf8Data),  "30".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("300".utf8Data), "31".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("31a".utf8Data), "32".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("99".utf8Data),  "99".utf8Data)
+        XCTAssertEqual(snap.raw.ceilKey("999".utf8Data), nil)
+        XCTAssertEqual(snap.raw.ceilKey(nil),            nil)
+    }
+    
     func testReadOptions() {
         let db = Database<String, String>(path)!
         

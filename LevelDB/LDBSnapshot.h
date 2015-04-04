@@ -81,6 +81,14 @@
 /// Get the value at the given `key` if it exists, otherwise `nil`.
 - (NSData * __nullable)objectForKeyedSubscript:(NSData *)key;
 
+/// Find the greatest key less than or equal to `key`, or return `self.start` if
+/// none.
+- (NSData * __nullable)floorKey:(NSData * __nullable)key;
+
+/// Find the least key greater than or equal to `key`, or return `self.end` if
+/// none.
+- (NSData * __nullable)ceilKey:(NSData * __nullable)key;
+
 /// Iterate in order the key-value pairs within the bounds of the snapshot.
 /// To break out of the iteration early, set `*stop = YES` in the `block`.
 - (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, NSData *data, BOOL *stop))block;

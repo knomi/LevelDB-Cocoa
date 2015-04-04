@@ -199,6 +199,21 @@ private:
     return [self dataForKey:key];
 }
 
+- (NSData *)floorKey:(NSData *)key
+{
+    LDBSnapshot *reversed = (self.isReversed) ? self : self.reversed;
+    auto afterKey = key.ldb_lexicographicalFirstChild;
+    auto throughKey = [LDBInterval intervalWithStart:[NSData data] end:afterKey];
+    return [[reversed clampToInterval:throughKey] enumerator].key ?: self.start;
+}
+
+- (NSData *)ceilKey:(NSData *)key
+{
+    LDBSnapshot *straight = (self.isReversed) ? self.reversed : self;
+    auto fromKey = [LDBInterval intervalWithStart:key end:nil];
+    return [[straight clampToInterval:fromKey] enumerator].key ?: self.end;
+}
+
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block
 {
     auto enumerator = [self enumerator];
