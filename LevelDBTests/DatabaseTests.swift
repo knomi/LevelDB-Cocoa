@@ -77,7 +77,7 @@ class DatabaseTests : XCTestCase {
         
         XCTAssertEqual(batch.diff, [("foo", nil)])
 
-        batch["qux"] = "abc"
+        batch["qux"] = "abcd"
         batch["def"] = nil
         batch["bar"] = nil
         batch["foo"] = "def"
@@ -85,7 +85,7 @@ class DatabaseTests : XCTestCase {
         XCTAssertEqual(batch.diff, [("bar", nil),
                                     ("def", nil),
                                     ("foo", "def"),
-                                    ("qux", "abc")])
+                                    ("qux", "abcd")])
     
         let db1 = Database<String, String>()
         
@@ -105,7 +105,7 @@ class DatabaseTests : XCTestCase {
         XCTAssertEqual(db1["baz"], "jkl")
         XCTAssertEqual(db1["def"], nil)
         XCTAssertEqual(db1["foo"], "def")
-        XCTAssertEqual(db1["qux"], "abc")
+        XCTAssertEqual(db1["qux"], "abcd")
 
         let db2 = Database<String, String>(path)!
         
@@ -125,7 +125,7 @@ class DatabaseTests : XCTestCase {
         XCTAssertEqual(db2["baz"], "jkl")
         XCTAssertEqual(db2["def"], nil)
         XCTAssertEqual(db2["foo"], "def")
-        XCTAssertEqual(db2["qux"], "abc")
+        XCTAssertEqual(db2["qux"], "abcd")
         
     }
     

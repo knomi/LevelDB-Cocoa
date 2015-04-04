@@ -82,8 +82,8 @@
         virtual void Put(const leveldb::Slice &key,
                          const leveldb::Slice &value) override
         {
-            block([NSData dataWithBytes:key.data() length:key.size()],
-                  [NSData dataWithBytes:value.data() length:key.size()]);
+            block([NSData dataWithBytes:key.data()   length:key.size()],
+                  [NSData dataWithBytes:value.data() length:value.size()]);
         }
         virtual void Delete(const leveldb::Slice &key) override
         {
