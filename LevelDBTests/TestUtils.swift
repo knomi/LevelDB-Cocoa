@@ -9,6 +9,10 @@ import Foundation
 import XCTest
 import LevelDB
 
+infix operator |> { associativity left precedence 95 }
+
+func |> <A, B>(a: A, f: A -> B) -> B { return f(a) }
+
 extension String {
     var UTF8: NSData {
         return dataUsingEncoding(NSUTF8StringEncoding)!

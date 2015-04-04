@@ -8,10 +8,6 @@
 import XCTest
 import LevelDB
 
-infix operator |> { associativity left precedence 95 }
-
-func |> <A, B>(a: A, f: A -> B) -> B { return f(a) }
-
 class SnapshotTests : XCTestCase {
 
     var path = ""
@@ -98,6 +94,19 @@ class SnapshotTests : XCTestCase {
         
         XCTAssertEqual(snapshot.values.array, ["Other", "Bar", "Foo", "Meow", "Barf", "End"])
         
+        let bardogs = snapshot["/people/bar" ... "/pets/dog"]
+        
+        XCTAssertEqual(bardogs.values.array, ["Bar", "Foo", "Meow", "Barf"])
+        XCTAssertEqual(bardogs.raw.start,              "/people/bar".utf8Data)
+        XCTAssertEqual(bardogs.prefixed("/pe").raw.start, "ople/bar".utf8Data)
+        XCTAssertEqual(bardogs.prefixed("/people").raw.start, "/bar".utf8Data)
+        XCTAssertEqual(bardogs.prefixed("/people/bar").raw.start, "".utf8Data)
+        XCTAssertEqual(bardogs.prefixed("/people/bart").raw.start, "".utf8Data)
+        XCTAssertEqual(bardogs.prefixed("/pets").raw.start,        "".utf8Data)
+        XCTAssertEqual(bardogs.raw.end,                 "/pets/dog".utf8Data.ldb_lexicographicalFirstChild())
+        XCTAssertEqual(bardogs.prefixed("/pets").raw.end,    "/dog".utf8Data.ldb_lexicographicalFirstChild())
+        XCTAssertEqual(bardogs.prefixed("/people").raw.end,        nil)
+        
         let people = snapshot.prefixed("/people/")
         let pets   = snapshot.prefixed("/pets/")
         let peh    = snapshot.prefixed("/pe")
@@ -139,6 +148,13 @@ class SnapshotTests : XCTestCase {
         let snap = db.snapshot()
 
         XCTAssertEqual(snap.keys.array,                                   keys)
+        
+        XCTAssertEqual(snap["20" ..< "33"]["10" ..< "15"].raw.start, "20".utf8Data)
+        XCTAssertEqual(snap["20" ..< "33"]["10" ..< "15"].raw.end,   "20".utf8Data)
+        XCTAssertEqual(snap["20" ..< "33"].raw.start,                "20".utf8Data)
+        XCTAssertEqual(snap["20" ..< "33"].raw.end,                  "33".utf8Data)
+        XCTAssertEqual(snap["20" ..< "33"]["40" ..< "45"].raw.start, "33".utf8Data)
+        XCTAssertEqual(snap["20" ..< "33"]["40" ..< "45"].raw.end,   "33".utf8Data)
 
         XCTAssertEqual(snap["20" ..< "33"].keys.array,                    Array(keys[20 ..< 33]))
         XCTAssertEqual(snap["10" ... "20"].keys.array,                    Array(keys[10 ... 20]))
