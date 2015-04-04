@@ -51,6 +51,12 @@ public extension LDBDatabase {
     
 }
 
+extension LDBInterval : Hashable {}
+
+public func == (a: LDBInterval, b: LDBInterval) -> Bool {
+    return a.isEqual(b)
+}
+
 extension LDBEnumerator : GeneratorType {
 
     public typealias Element = LDBDatabase.Element
@@ -93,7 +99,7 @@ extension LDBSnapshot {
     }
     
     public func clamp(#through: NSData) -> LDBSnapshot {
-        return clampStart(nil, end: through.ldb_lexicographicalFirstChild())
+        return clampStart(NSData(), end: through.ldb_lexicographicalFirstChild())
     }
     
     public func clamp(#from: NSData?, to: NSData?) -> LDBSnapshot {

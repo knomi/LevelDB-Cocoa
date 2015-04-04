@@ -136,6 +136,8 @@
 		E0BFF4DF1AA0B7DE00ED5230 /* LDBInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BFF4DC1AA0B7DE00ED5230 /* LDBInterval.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0BFF4E01AA0B7DE00ED5230 /* LDBInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */; };
 		E0BFF4E11AA0B7DE00ED5230 /* LDBInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */; };
+		E0E4298E1ACFCEB900BD6079 /* IntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E4298D1ACFCEB900BD6079 /* IntervalTests.swift */; };
+		E0E4298F1ACFCEB900BD6079 /* IntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E4298D1ACFCEB900BD6079 /* IntervalTests.swift */; };
 		E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E829FB1A947D79004A08F4 /* LDBDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E829FF1A947D79004A08F4 /* LDBDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */; };
@@ -386,6 +388,7 @@
 		E0BF39721A777CBC00FC96E0 /* DataSerializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSerializable.swift; sourceTree = "<group>"; };
 		E0BFF4DC1AA0B7DE00ED5230 /* LDBInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBInterval.h; sourceTree = "<group>"; };
 		E0BFF4DD1AA0B7DE00ED5230 /* LDBInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LDBInterval.m; sourceTree = "<group>"; };
+		E0E4298D1ACFCEB900BD6079 /* IntervalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalTests.swift; sourceTree = "<group>"; };
 		E0E829FB1A947D79004A08F4 /* LDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBDatabase.h; sourceTree = "<group>"; };
 		E0E829FC1A947D79004A08F4 /* LDBDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LDBDatabase.mm; sourceTree = "<group>"; };
 		E0E82A011A947DAF004A08F4 /* LDBSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LDBSnapshot.h; sourceTree = "<group>"; };
@@ -536,6 +539,7 @@
 				E02379F11A8B47470088DF41 /* NSDataTests.swift */,
 				E02379EE1A8B46E70088DF41 /* SnapshotTests.swift */,
 				E02379F41A8B476D0088DF41 /* TestUtils.swift */,
+				E0E4298D1ACFCEB900BD6079 /* IntervalTests.swift */,
 			);
 			path = LevelDBTests;
 			sourceTree = "<group>";
@@ -1130,6 +1134,7 @@
 				E099B81A1AB965E500D8CE0F /* DataSerializableTests.swift in Sources */,
 				E021E8471A97288100A865E7 /* DatabaseTests.swift in Sources */,
 				E021E84D1A976C9F00A865E7 /* LevelDBTests.m in Sources */,
+				E0E4298F1ACFCEB900BD6079 /* IntervalTests.swift in Sources */,
 				E021E82F1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1206,6 +1211,7 @@
 				E099B8191AB965E500D8CE0F /* DataSerializableTests.swift in Sources */,
 				E021E8461A97288000A865E7 /* DatabaseTests.swift in Sources */,
 				E021E84C1A976C9F00A865E7 /* LevelDBTests.m in Sources */,
+				E0E4298E1ACFCEB900BD6079 /* IntervalTests.swift in Sources */,
 				E021E82E1A95FAEA00A865E7 /* LevelDBObjCTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
