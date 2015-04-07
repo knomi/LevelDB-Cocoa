@@ -137,7 +137,7 @@ private:
 - (LDBSnapshot *)clampStart:(NSData *)start end:(NSData *)end
 {
     return [self clampToInterval:[LDBInterval
-        intervalWithStart:start ?: self.start
+        intervalWithStart:start
         end:end]];
 }
 

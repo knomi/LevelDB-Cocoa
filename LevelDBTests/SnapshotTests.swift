@@ -173,20 +173,20 @@ class SnapshotTests : XCTestCase {
         XCTAssertEqual(snap.clamp(after: "50", to:      "55").keys.array, Array(keys[51 ... 54]))
         XCTAssertEqual(snap.clamp(after: "50", through: "55").keys.array, Array(keys[51 ... 55]))
 
-        XCTAssertEqual(snap.clamp(from:   nil, to:      "55").keys.array, Array(keys[ 0 ... 54]))
-        XCTAssertEqual(snap.clamp(from:   nil, through: "55").keys.array, Array(keys[ 0 ... 55]))
-        XCTAssertEqual(snap.clamp(after:  nil, to:      "55").keys.array, Array(keys[ 0 ... 54]))
-        XCTAssertEqual(snap.clamp(after:  nil, through: "55").keys.array, Array(keys[ 0 ... 55]))
+        XCTAssertEqual(snap.clamp(from:   "" , to:      "55").keys.array, Array(keys[ 0 ... 54]))
+        XCTAssertEqual(snap.clamp(from:   "" , through: "55").keys.array, Array(keys[ 0 ... 55]))
+        XCTAssertEqual(snap.clamp(after:  "" , to:      "55").keys.array, Array(keys[ 0 ... 54]))
+        XCTAssertEqual(snap.clamp(after:  "" , through: "55").keys.array, Array(keys[ 0 ... 55]))
 
         XCTAssertEqual(snap.clamp(from:  "50", to:       nil).keys.array, Array(keys[50 ... 99]))
         XCTAssertEqual(snap.clamp(from:  "50", through:  nil).keys.array, Array(keys[50 ... 99]))
         XCTAssertEqual(snap.clamp(after: "50", to:       nil).keys.array, Array(keys[51 ... 99]))
         XCTAssertEqual(snap.clamp(after: "50", through:  nil).keys.array, Array(keys[51 ... 99]))
 
-        XCTAssertEqual(snap.clamp(from:   nil, to:       nil).keys.array, keys)
-        XCTAssertEqual(snap.clamp(from:   nil, through:  nil).keys.array, keys)
-        XCTAssertEqual(snap.clamp(after:  nil, to:       nil).keys.array, keys)
-        XCTAssertEqual(snap.clamp(after:  nil, through:  nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(from:   "" , to:       nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(from:   "" , through:  nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(after:  "" , to:       nil).keys.array, keys)
+        XCTAssertEqual(snap.clamp(after:  "" , through:  nil).keys.array, keys)
     }
     
     func testRounding() {

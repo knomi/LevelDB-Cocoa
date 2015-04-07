@@ -51,7 +51,58 @@ public extension LDBDatabase {
     
 }
 
-extension LDBInterval : Hashable {}
+extension LDBInterval : Hashable {
+    public convenience init(from: NSData?) {
+        self.init(uncheckedStart: from, end: nil)
+    }
+
+    public convenience init(after: NSData?) {
+        self.init(uncheckedStart: after?.ldb_lexicographicalFirstChild(), end: nil)
+    }
+
+    public convenience init(to: NSData?) {
+        self.init(uncheckedStart: NSData(), end: to)
+    }
+
+    public convenience init(through: NSData?) {
+        self.init(uncheckedStart: NSData(), end: through?.ldb_lexicographicalFirstChild())
+    }
+
+    public convenience init(from: NSData?, to: NSData?) {
+        if NSData.ldb_compareLeft(from, right: to).rawValue <= 0 {
+            self.init(uncheckedStart: from, end: to)
+        } else {
+            self.init(uncheckedStart: nil, end: nil)
+        }
+    }
+
+    public convenience init(from: NSData?, through: NSData?) {
+        if NSData.ldb_compareLeft(from, right: through).rawValue <= 0 {
+            self.init(uncheckedStart: from,
+                      end: through?.ldb_lexicographicalFirstChild())
+        } else {
+            self.init(uncheckedStart: nil, end: nil)
+        }
+    }
+
+    public convenience init(after: NSData?, to: NSData?) {
+        if NSData.ldb_compareLeft(after, right: to).rawValue <= 0 {
+            self.init(uncheckedStart: after?.ldb_lexicographicalFirstChild(),
+                      end: to)
+        } else {
+            self.init(uncheckedStart: nil, end: nil)
+        }
+    }
+
+    public convenience init(after: NSData?, through: NSData?) {
+        if NSData.ldb_compareLeft(after, right: through).rawValue <= 0 {
+            self.init(uncheckedStart: after?.ldb_lexicographicalFirstChild(),
+                      end: through?.ldb_lexicographicalFirstChild())
+        } else {
+            self.init(uncheckedStart: nil, end: nil)
+        }
+    }
+}
 
 public func == (a: LDBInterval, b: LDBInterval) -> Bool {
     return a.isEqual(b)
@@ -86,37 +137,36 @@ extension LDBSnapshot {
 
     public typealias Element = (key: NSData, value: NSData)
     
-    public func clamp(#from: NSData) -> LDBSnapshot {
-        return clampStart(from, end: nil)
+    public func clamp(#from: NSData?) -> LDBSnapshot {
+        return clampToInterval(LDBInterval(from: from))
     }
     
-    public func clamp(#after: NSData) -> LDBSnapshot {
-        return clampStart(after.ldb_lexicographicalFirstChild(), end: nil)
+    public func clamp(#after: NSData?) -> LDBSnapshot {
+        return clampToInterval(LDBInterval(after: after))
     }
     
-    public func clamp(#to: NSData) -> LDBSnapshot {
-        return clampStart(NSData(), end: to)
+    public func clamp(#to: NSData?) -> LDBSnapshot {
+        return clampToInterval(LDBInterval(to: to))
     }
     
-    public func clamp(#through: NSData) -> LDBSnapshot {
-        return clampStart(NSData(), end: through.ldb_lexicographicalFirstChild())
+    public func clamp(#through: NSData?) -> LDBSnapshot {
+        return clampToInterval(LDBInterval(through: through))
     }
     
     public func clamp(#from: NSData?, to: NSData?) -> LDBSnapshot {
-        return clampStart(from, end: to)
+        return clampToInterval(LDBInterval(from: from, to: to))
     }
 
     public func clamp(#from: NSData?, through: NSData?) -> LDBSnapshot {
-        return clampStart(from, end: through?.ldb_lexicographicalFirstChild())
+        return clampToInterval(LDBInterval(from: from, through: through))
     }
     
     public func clamp(#after: NSData?, to: NSData?) -> LDBSnapshot {
-        return clampStart(after?.ldb_lexicographicalFirstChild(), end: to)
+        return clampToInterval(LDBInterval(after: after, to: to))
     }
     
     public func clamp(#after: NSData?, through: NSData?) -> LDBSnapshot {
-        return clampStart(after?.ldb_lexicographicalFirstChild(),
-                          end: through?.ldb_lexicographicalFirstChild())
+        return clampToInterval(LDBInterval(after: after, through: through))
     }
     
     public var keys: LazySequence<MapSequenceView<LDBSnapshot, NSData>> {
@@ -202,7 +252,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
         }
     }
 
-    public func approximateSize(start: Key?, _ end: Key?) -> UInt64 {
+    public func approximateSize(from start: Key?, to end: Key?) -> UInt64 {
         return approximateSizes([(start, end)])[0]
     }
 
@@ -238,20 +288,20 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
         return Snapshot(raw.prefixed(prefix.serializedData))
     }
     
-    public func clamp(#from: Key) -> Snapshot {
-        return Snapshot(raw.clamp(from: from.serializedData))
+    public func clamp(#from: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(from: from?.serializedData))
     }
     
-    public func clamp(#after: Key) -> Snapshot {
-        return Snapshot(raw.clamp(after: after.serializedData))
+    public func clamp(#after: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(after: after?.serializedData))
     }
     
-    public func clamp(#to: Key) -> Snapshot {
-        return Snapshot(raw.clamp(to: to.serializedData))
+    public func clamp(#to: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(to: to?.serializedData))
     }
     
-    public func clamp(#through: Key) -> Snapshot {
-        return Snapshot(raw.clamp(through: through.serializedData))
+    public func clamp(#through: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(through: through?.serializedData))
     }
 
     public func clamp(#from: Key?, to: Key?) -> Snapshot {
@@ -375,7 +425,9 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
     }
     
     public subscript(key: Key) -> Value? {
-        get { return nil }
+        get {
+            return nil
+        }
         set {
             raw[key.serializedData] = newValue?.serializedData
         }
