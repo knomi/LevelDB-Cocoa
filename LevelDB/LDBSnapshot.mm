@@ -137,7 +137,7 @@ private:
 - (LDBSnapshot *)clampStart:(NSData *)start end:(NSData *)end
 {
     return [self clampToInterval:[LDBInterval
-        intervalWithStart:start ?: self.start
+        intervalWithStart:start
         end:end]];
 }
 
@@ -197,6 +197,21 @@ private:
 - (NSData *)objectForKeyedSubscript:(NSData *)key
 {
     return [self dataForKey:key];
+}
+
+- (NSData *)floorKey:(NSData *)key
+{
+    LDBSnapshot *reversed = (self.isReversed) ? self : self.reversed;
+    auto afterKey = key.ldb_lexicographicalFirstChild;
+    auto throughKey = [LDBInterval intervalWithStart:[NSData data] end:afterKey];
+    return [[reversed clampToInterval:throughKey] enumerator].key ?: self.start;
+}
+
+- (NSData *)ceilKey:(NSData *)key
+{
+    LDBSnapshot *straight = (self.isReversed) ? self.reversed : self;
+    auto fromKey = [LDBInterval intervalWithStart:key end:nil];
+    return [[straight clampToInterval:fromKey] enumerator].key ?: self.end;
 }
 
 - (void)enumerate:(void (^)(NSData *key, NSData *data, BOOL *stop))block

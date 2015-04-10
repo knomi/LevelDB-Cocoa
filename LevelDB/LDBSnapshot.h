@@ -31,18 +31,16 @@
 @property (nonatomic, readonly) BOOL isReversed;
 @property (nonatomic, readonly) BOOL isClamped;
 
-/// Optionally clamp the start or the end (or both) of the snapshot's interval.
+/// Create a clamped snapshot with `self.interval` clamped by the interval from
+/// `start` to `end`, `nil` comparing greater than any other value.
 ///
-/// - If `start` is not `nil`, the resulting snapshot starts at
-///   `lexmin(lexmax(self.start, start), self.end)` where `lexmin` and `lexmax`
-///   are the min and max as defined by `+[NSData ldb_compareLeft:right:]`.
-/// - If `end` is not `nil`, the resulting snapshot ends at
-///   `laxmax(self.start, lexmin(end, self.end))`.
+/// The resulting snapshot contains the key-value pairs of `self` which have a
+/// key greater than or equal to `start` and less than `end`, as compared by
+/// `+[NSData ldb_compareLeft:right:]`.
 ///
-/// Otherwise, `start` and `end` are defaulted to `self.start` and `self.end`.
-///
-/// Remark: Note that this function treats `start` differently than
-/// `LDBInterval`, in that `start == nil` is **not** treated as "infinity".
+/// Remark: Unlike in the C++ API of LevelDB, `[snap clampStart:nil end:nil]`
+/// always returns an empty snapshot at "infinity". To "ignore" the `start`
+/// parameter, pass `[NSData data]` instead.
 - (LDBSnapshot *)clampStart:(NSData * __nullable)start end:(NSData * __nullable)end;
 
 /// Create a clamped snapshot with `self.interval` clamped by `interval` as
@@ -80,6 +78,14 @@
 
 /// Get the value at the given `key` if it exists, otherwise `nil`.
 - (NSData * __nullable)objectForKeyedSubscript:(NSData *)key;
+
+/// Find the greatest key less than or equal to `key`, or return `self.start` if
+/// none.
+- (NSData * __nullable)floorKey:(NSData * __nullable)key;
+
+/// Find the least key greater than or equal to `key`, or return `self.end` if
+/// none.
+- (NSData * __nullable)ceilKey:(NSData * __nullable)key;
 
 /// Iterate in order the key-value pairs within the bounds of the snapshot.
 /// To break out of the iteration early, set `*stop = YES` in the `block`.
