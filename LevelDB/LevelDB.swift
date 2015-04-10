@@ -11,15 +11,17 @@ import LevelDB
 
 public extension LDBDatabase {
 
-    /// TODO
     public typealias Element = (key: NSData, value: NSData)
     
-    /// TODO
+    /// Convenience constructor for creating a default database in the given
+    /// `path`, with `createIfMissing: true` and a default Bloom filter set.
     public convenience init?(_ path: String) {
         self.init(path: path)
     }
     
-    /// TODO
+    /// Convenience constructor for creating a custom database in the given
+    /// `path`. If the database doesn't exist, you should at least use
+    /// `createIfMissing: true` to not fail.
     public convenience init?(path:                 String,
                              inout error:          NSError?,
                              createIfMissing:      Bool?           = nil,
@@ -113,13 +115,14 @@ extension LDBEnumerator : GeneratorType {
     public typealias Element = LDBDatabase.Element
     
     public func next() -> Element? {
-        if let k = key {
-            if let v = value {
-                self.step()
-                return (k, v)
-            }
+        if let k = key,
+           let v = value
+        {
+            self.step()
+            return (k, v)
+        } else {
+            return nil
         }
-        return nil
     }
 
 }
@@ -219,11 +222,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     
     public subscript(key: Key) -> Value? {
         get {
-            if let data = raw[key.serializedData] {
-                return Value.fromSerializedData(data)
-            } else {
-                return nil
-            }
+            return raw[key.serializedData].flatMap(Value.fromSerializedData)
         }
         set {
             raw[key.serializedData] = newValue?.serializedData
@@ -247,8 +246,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
                         end: end?.serializedData)
         }
         return raw.approximateSizesForIntervals(dataIntervals).map {n in
-            // FIXME: Swift 1.1 compatible cast. Replace with `as!` once in 1.2.
-            (n as? NSNumber)!.unsignedLongLongValue
+            (n as! NSNumber).unsignedLongLongValue
         }
     }
 
@@ -325,11 +323,7 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     }
     
     public subscript(key: Key) -> Value? {
-        if let data = raw[key.serializedData] {
-            return Value.fromSerializedData(data)
-        } else {
-            return nil
-        }
+        return raw[key.serializedData].flatMap(Value.fromSerializedData)
     }
     
     public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
@@ -357,10 +351,10 @@ public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
     
     public func next() -> Element? {
         while let (k, v) = enumerator.next() {
-            if let key = Key.fromSerializedData(k) {
-                if let value = Value.fromSerializedData(v) {
-                    return (key: key, value: value)
-                }
+            if let key = Key.fromSerializedData(k),
+               let value = Value.fromSerializedData(v)
+            {
+                return (key: key, value: value)
             }
         }
         return nil
@@ -436,13 +430,13 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
     public func enumerate(block: (Key, Value?) -> ()) {
         raw.enumerate {k, v in
             if let key = Key.fromSerializedData(k) {
-                if let data = v {
-                    if let value = Value.fromSerializedData(data) {
-                        block(key, value)
-                    }
-                } else {
-                    block(key, nil)
-                }
+                // Using flatMap here may turn an insert into a delete when the
+                // deserialization fails. That, however, is how it also looks
+                // like when reading the resulting database snapshot of type
+                // `Snapshot<K, V>`, since a key with an unreadable value is
+                // considered missing. So it's okay to transform `v` to `nil` in
+                // that case.
+                block(key, v.flatMap(Value.fromSerializedData))
             }
         }
     }

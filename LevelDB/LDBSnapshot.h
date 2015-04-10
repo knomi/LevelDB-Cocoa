@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
@@ -89,7 +88,7 @@
 
 /// Iterate in order the key-value pairs within the bounds of the snapshot.
 /// To break out of the iteration early, set `*stop = YES` in the `block`.
-- (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, NSData *data, BOOL *stop))block;
+- (void)enumerate:(__attribute__((noescape)) void (^)(NSData *key, NSData *data, BOOL *stop))block;
 
 /// Create the `NSEnumerator`-style enumerator over the ordered key-value pairs
 /// of the snapshot.

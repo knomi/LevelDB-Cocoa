@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 

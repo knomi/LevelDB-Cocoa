@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
@@ -83,7 +82,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Also sets up the database using the 10-bit Bloom filter.
 ///
 /// **See also:** `-[LDBDatabase initWithPath:options:error:]`
-- (LDB_NULLABLE_INSTANCETYPE)initWithPath:(NSString *)path;
+- (nullable instancetype)initWithPath:(NSString *)path;
 
 
 /// Create or open the database with the given `options`. Iff there is an
@@ -106,7 +105,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 ///
 /// Iff there is an error, returns `NO` and sets the `error` pointer with
 /// `LDBErrorMessageKey` set in the `userInfo`.
-- (LDB_NULLABLE_INSTANCETYPE)
+- (nullable instancetype)
     initWithPath:(NSString *)path
     options:(NSDictionary *)options
     error:(NSError * __autoreleasing *)error;
