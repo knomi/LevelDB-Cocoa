@@ -6,7 +6,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LevelDB/LDBCompatibility.h>
 
 #pragma clang assume_nonnull begin
 
@@ -46,7 +45,7 @@
 /// Iterate over the write batch. This function is probably mainly useful for
 /// debugging purposes. Where `[self removeDataForKey:key]` has been called, the
 /// block is called with `(key, nil)`, respectively.
-- (void)enumerate:(LDB_NOESCAPE void (^)(NSData *key, NSData * __nullable data))block;
+- (void)enumerate:(__attribute__((noescape)) void (^)(NSData *key, NSData * __nullable data))block;
 
 @end
 

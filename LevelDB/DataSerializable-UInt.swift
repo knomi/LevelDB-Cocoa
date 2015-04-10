@@ -9,12 +9,11 @@ import Foundation.NSData
 
 extension UInt : DataSerializable {
     public static func fromSerializedData(data: NSData) -> UInt? {
-        if let u: UInt64 = fromData(data) {
-            if u <= UInt64(UInt.max) {
-                return UInt(u)
-            }
+        if let u: UInt64 = fromData(data) where u <= UInt64(UInt.max) {
+            return UInt(u)
+        } else {
+            return nil
         }
-        return nil
     }
     
     public var serializedData: NSData {
