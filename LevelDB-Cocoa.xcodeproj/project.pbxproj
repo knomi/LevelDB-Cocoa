@@ -154,8 +154,6 @@
 		E0E82A101A949404004A08F4 /* LDBError.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A0D1A949404004A08F4 /* LDBError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0E82A111A949404004A08F4 /* LDBError.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A0E1A949404004A08F4 /* LDBError.mm */; };
 		E0E82A121A949404004A08F4 /* LDBError.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A0E1A949404004A08F4 /* LDBError.mm */; };
-		E0E82A151A9496DC004A08F4 /* LDBPrivate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */; };
-		E0E82A161A9496DC004A08F4 /* LDBPrivate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A131A9496DC004A08F4 /* LDBPrivate.hpp */; };
 		E0E82A171A9496DC004A08F4 /* LDBPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */; };
 		E0E82A181A9496DC004A08F4 /* LDBPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E0E82A141A9496DC004A08F4 /* LDBPrivate.mm */; };
 		E0E82A211A952388004A08F4 /* LDBLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E82A1F1A952388004A08F4 /* LDBLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -805,7 +803,6 @@
 				E0E829FE1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A041A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
 				E0E82A221A952389004A08F4 /* LDBLogger.h in Headers */,
-				E0E82A161A9496DC004A08F4 /* LDBPrivate.hpp in Headers */,
 				E0E82A101A949404004A08F4 /* LDBError.h in Headers */,
 				E0BF37901A7674E400FC96E0 /* LevelDB.h in Headers */,
 			);
@@ -822,7 +819,6 @@
 				E0E829FD1A947D79004A08F4 /* LDBDatabase.h in Headers */,
 				E0E82A031A947DAF004A08F4 /* LDBSnapshot.h in Headers */,
 				E0E82A211A952388004A08F4 /* LDBLogger.h in Headers */,
-				E0E82A151A9496DC004A08F4 /* LDBPrivate.hpp in Headers */,
 				E0E82A0F1A949404004A08F4 /* LDBError.h in Headers */,
 				E0B052191A7FF38D00DCE453 /* LevelDB.h in Headers */,
 			);
