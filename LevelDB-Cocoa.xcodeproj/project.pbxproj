@@ -1025,6 +1025,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "source LevelDB/version.bash\n";
+			showEnvVarsInLog = 0;
 		};
 		E0B0527D1A80212E00DCE453 /* Set Version Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1039,6 +1040,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "source LevelDB/version.bash\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 

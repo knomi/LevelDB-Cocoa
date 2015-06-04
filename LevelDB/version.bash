@@ -70,7 +70,7 @@ then
 
 else
 
-    echo "warning: Building outside Git. Leaving version number untouched."
+    echo "Building outside Git. Leaving version number untouched."
 
 fi
 
