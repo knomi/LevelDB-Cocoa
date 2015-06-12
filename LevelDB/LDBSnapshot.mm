@@ -134,6 +134,11 @@ private:
     return ![self.interval isEqual:[LDBInterval everything]];
 }
 
+- (BOOL)isPrefixed
+{
+    return self.prefix.length > 0;
+}
+
 - (LDBSnapshot *)clampStart:(NSData *)start end:(NSData *)end
 {
     return [self clampToInterval:[LDBInterval

@@ -11,7 +11,7 @@
 
 @interface LDBWriteBatch : NSObject
 
-/// Create a new write batch with an empty prefix.
+/// Create a new write batch with an empty `prefix`.
 - (instancetype)init;
 
 /// Create a new write batch with the given `prefix`. Any keys set or deleted

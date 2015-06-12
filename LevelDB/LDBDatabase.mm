@@ -199,6 +199,12 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     return leveldb_objc::objc_result(status, error);
 }
 
+- (NSError * __nullable)write:(LDBWriteBatch * __nonnull)batch sync:(BOOL)sync
+{
+    NSError *error;
+    [self write:batch sync:sync error:&error];
+    return error;
+}
 
 - (NSString *)propertyNamed:(NSString *)name
 {

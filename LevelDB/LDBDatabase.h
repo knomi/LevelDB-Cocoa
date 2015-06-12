@@ -47,41 +47,45 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 
 @interface LDBDatabase : NSObject
 
-/// Destroy the contents of the database in the given `path` on disk. Be very
-/// careful using this method.
+/// @brief Destroy the contents of the database in the given @p path on disk. Be
+/// very careful using this method.
 ///
-/// Iff there is an error, returns `NO` and sets the `error` pointer with
-/// `LDBErrorMessageKey` set in the `userInfo`.
+/// Iff there is an error, returns @c NO and sets the @p error pointer with
+/// @c LDBErrorMessageKey set to an @c NSString value in its @c userInfo.
 + (BOOL)
     destroyDatabaseAtPath:(NSString *)path
     error:(NSError * __autoreleasing *)error;
 
 
-/// Try to repair the database in the given `path` on disk.
+/// @brief Try to repair the database in the given @p path on disk.
 ///
 /// If a DB cannot be opened, you may attempt to call this method to resurrect
 /// as much of the contents of the database as possible. Some data may be lost,
 /// so be careful when calling this function on a database that contains
 /// important information.
 ///
-/// Iff there is an error, returns `NO` and sets the `error` pointer with
-/// `LDBErrorMessageKey` set in the `userInfo`.
+/// Iff there is an error, returns @c NO and sets the @p error pointer with
+/// @c LDBErrorMessageKey set to an @c NSString value in its @c userInfo.
 + (BOOL)
     repairDatabaseAtPath:(NSString *)path
     error:(NSError * __autoreleasing *)error;
 
 
-/// Create an in-memory database that is not persisted on disk.
+/// @brief Create an in-memory database that is not persisted on disk.
 - (instancetype)init;
 
 
-/// Open the database in the given `path` on disk. If the directory doesn't
-/// exist a blank database is created. Iff there is an error, returns `nil` and
-/// sets the `error` pointer with `LDBErrorMessageKey` set in the `userInfo`.
+/// @brief Open the database in the given @p path on disk. If the directory
+/// doesn't exist a blank database is created.
 ///
-/// Also sets up the database using the 10-bit Bloom filter.
+/// Iff there is an error, returns @c nil and sets the @p error pointer with
+/// @c LDBErrorMessageKey set to an @NSString value in its @c userInfo.
 ///
-/// **See also:** `-[LDBDatabase initWithPath:options:error:]`
+/// @note Also configures database to use the 10-bit Bloom filter.
+///
+/// @link //apple_ref/occ/instm/LDBDatabase/initWithPath: foobar! /@link
+///
+/// @see -[LDBDatabase initWithPath:options:error:]
 - (nullable instancetype)initWithPath:(NSString *)path;
 
 
@@ -186,44 +190,73 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 - (BOOL)removeDataForKey:(NSData *)key;
 
 
-/// Perform a `batch` of put and delete writes to the database. If `sync` is
-/// `YES`, the writes are flushed to disk (similarly to `fsync()`, see
-/// `man 2 fsync`) before the method returns.
+/// @brief Perform the @p batch of put and delete writes to the database.
 ///
-/// Iff there is an error, returns `NO` and sets the `error` pointer with
-/// `LDBErrorMessageKey` set in the `userInfo`.
+/// @param batch sequence of put and delete writes to perform.
+///
+/// @param sync whether writes are flushed to disk before the method
+/// returns (similarly to @c fsync, see "man 2 fsync").
+///
+/// @param error Iff the write was unsuccessful and @p error is not nil, sets
+/// the @p *error pointer with the @c LDBErrorMessageKey set to an @c NSString
+/// in its @c userInfo.
+///
+/// @returns whether the write was successful.
 - (BOOL)
     write:(LDBWriteBatch *)batch
     sync:(BOOL)sync
     error:(NSError * __autoreleasing *)error;
 
-/// DB implementations may export properties about their state. If `name` is a
+/// @brief Perform the @p batch of put and delete writes to the database.
+///
+/// @param batch sequence of put and delete writes to perform.
+///
+/// @param sync whether writes are flushed to disk before the method
+/// returns (similarly to @c fsync, see "man 2 fsync").
+///
+/// @returns @c nil if the write was successful, otherwise an @c NSError with
+/// the @c LDBErrorMessageKey set to an @c NSString in its @c userInfo.
+- (NSError * __nullable)write:(LDBWriteBatch *)batch sync:(BOOL)sync;
+
+/// @brief Get the value of a database implementation specific property @p name.
+///
+/// DB implementations may export properties about their state. If @p name is a
 /// valid property understood by this DB implementation, returns its value.
-/// Otherwise returns `nil`.
+/// Otherwise returns @c nil.
 ///
 /// Valid property names include:
 ///
-/// - `"leveldb.num-files-at-level<N>"` -- return the number of files at level
-///   `<N>`, where `<N>` is an ASCII representation of a level number (e.g.
-///   `"0"`).
-/// - `"leveldb.stats"` -- returns a multi-line string that describes statistics
+/// - @c "leveldb.num-files-at-level<N>" — return the number of files at level
+///   @c <N>, where @c <N> is the ASCII representation of a level number, e.g.
+///   @c "0"
+///
+/// - @c "leveldb.stats" — return a multi-line string that describes statistics
 ///   about the internal operation of the DB.
-/// - `"leveldb.sstables"` -- returns a multi-line string that describes all
-///   of the sstables that make up the db contents.
-- (NSString *)propertyNamed:(NSString *)name;
+///
+/// - @c "leveldb.sstables" — return a multi-line string that describes all
+///   of the sstables that make up the DB contents.
+- (NSString * __nullable)propertyNamed:(NSString *)name;
 
-/// Retrieve as an `NSArray` of `NSNumber`s the approximate file system space
-/// used by the keys `intervals[i].start ..< intervals[i].end` where `intervals`
-/// is an array of `LDBInterval`s.
+/// @brief Approximate the file system space (in bytes) used by the given key
+/// @p intervals.
+///
+/// @param intervals the @p NSArray of @p LDBInterval values to look up.
+///
+/// @return as @c NSArray of @c NSNumber values the approximate file system
+/// space used by the keys from @c intervals[i].start to @c intervals[i].end
 - (NSArray *)approximateSizesForIntervals:(NSArray *)intervals;
 
-/// Compact the underlying storage for the key range `interval`. In particular,
-/// deleted and overwritten versions are discarded, and the data is rearranged
-/// to reduce the cost of operations needed to access the data. This operation
-/// should typically only be invoked by users who understand the underlying
-/// implementation.
+/// @brief Compact the underlying storage for the key range @p interval.
 ///
-/// To compact the entire database, pass `[LDBInterval everything]` as interval.
+/// In particular, deleted and overwritten versions are discarded, and the data
+/// is rearranged to reduce the cost of operations needed to access the data.
+/// This operation should typically only be invoked by users who understand the
+/// underlying implementation.
+///
+/// To compact the entire database, call:
+/// @code
+/// [database compactInterval:[LDBInterval everything]];
+/// @endcode
 - (void)compactInterval:(LDBInterval *)interval;
 
 @end
