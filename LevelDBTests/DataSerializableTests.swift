@@ -76,9 +76,9 @@ class DataSerializableTests : XCTestCase {
         XCTAssertEqual(x, x1 ?? x, "serialized values of \(a) and \(a1) don't match")
         XCTAssertEqual(y, y1 ?? y, "serialized values of \(b) and \(b1) don't match")
         
-        XCTAssertEqual(equal(a, b), x == y, "\(a) and \(b) compare differently from \(x) and \(y)")
-        XCTAssertEqual(less(a, b), x < y, "\(a) and \(b) compare differently from \(x) and \(y)")
-        XCTAssertEqual(less(b, a), y < x, "\(b) and \(a) compare differently from \(y) and \(x)")
+        XCTAssertEqual(equal(a, b), x == y, "\(a) and \(b) equate differently from \(x) and \(y)")
+        XCTAssertEqual(less(a, b), x < y, "\(a) and \(b) less-than compare differently from \(x) and \(y)")
+        XCTAssertEqual(less(b, a), y < x, "\(b) and \(a) less-than compare differently from \(y) and \(x)")
     }
     
     private func check<T : protocol<DataSerializable, Comparable>>(a: T, _ b: T) {
@@ -103,6 +103,12 @@ class DataSerializableTests : XCTestCase {
             "~ ~~~",
             "~a~~~",
             "~~~~",
+            "E",
+            "Ë",
+            "EE",
+            "EË",
+            "ËE",
+            "ËË",
         ]
         for a in values {
             for b in values {

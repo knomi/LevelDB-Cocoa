@@ -83,8 +83,6 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 ///
 /// @note Also configures database to use the 10-bit Bloom filter.
 ///
-/// @link //apple_ref/occ/instm/LDBDatabase/initWithPath: foobar! /@link
-///
 /// @see -[LDBDatabase initWithPath:options:error:]
 - (nullable instancetype)initWithPath:(NSString *)path;
 
