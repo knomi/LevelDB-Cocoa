@@ -10,7 +10,7 @@ import Foundation
 
 extension NSData : DataSerializable {
     public class func fromSerializedData(data: NSData) -> Self? {
-        return self(data: data)
+        return self.init(data: data)
     }
     
     public var serializedData: NSData {

@@ -33,11 +33,13 @@ class DatabaseTests : XCTestCase {
     }
     
     func testOnDisk() {
-        let maybeDb: LDBDatabase? = LDBDatabase(path)
-        XCTAssertNotNil(maybeDb)
+        let db: LDBDatabase
+        do {
+            db = try LDBDatabase(path: path)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
         
-        if maybeDb == nil { return }
-        let db = maybeDb!
         XCTAssertNil(db[NSData()])
         
         db[NSData()] = NSData()
@@ -75,17 +77,17 @@ class DatabaseTests : XCTestCase {
         batch["foo"] = "bar"
         batch["foo"] = nil
         
-        XCTAssertEqual(batch.diff, [("foo", nil)])
+        AssertEqual(batch.diff, [("foo", nil)])
 
         batch["qux"] = "abcd"
         batch["def"] = nil
         batch["bar"] = nil
         batch["foo"] = "def"
 
-        XCTAssertEqual(batch.diff, [("bar", nil),
-                                    ("def", nil),
-                                    ("foo", "def"),
-                                    ("qux", "abcd")])
+        AssertEqual(batch.diff, [("bar", nil),
+                                 ("def", nil),
+                                 ("foo", "def"),
+                                 ("qux", "abcd")])
     
         let db1 = Database<String, String>()
         
@@ -95,10 +97,10 @@ class DatabaseTests : XCTestCase {
         XCTAssertEqual(db1["bar"], "ghi")
         XCTAssertEqual(db1["baz"], "jkl")
         
-        if true {
-            var error: NSError?
-            XCTAssert(db1.write(batch, sync: false, error: &error))
-            XCTAssertNil(error)
+        do {
+            try db1.write(batch, sync: false)
+        } catch let e as NSError {
+            XCTFail(e.description)
         }
         
         XCTAssertEqual(db1["bar"], nil)
@@ -107,7 +109,7 @@ class DatabaseTests : XCTestCase {
         XCTAssertEqual(db1["foo"], "def")
         XCTAssertEqual(db1["qux"], "abcd")
 
-        let db2 = Database<String, String>(path)!
+        let db2 = try! Database<String, String>(path: path)
         
         db2["def"] = "ghi"
         db2["baz"] = "jkl"
@@ -115,10 +117,10 @@ class DatabaseTests : XCTestCase {
         XCTAssertEqual(db2["def"], "ghi")
         XCTAssertEqual(db2["baz"], "jkl")
         
-        if true {
-            var error: NSError?
-            XCTAssert(db2.write(batch, sync: false, error: &error))
-            XCTAssertNil(error)
+        do {
+            try db2.write(batch, sync: false)
+        } catch let e as NSError {
+            XCTFail(e.description)
         }
         
         XCTAssertEqual(db2["bar"], nil)
@@ -130,33 +132,30 @@ class DatabaseTests : XCTestCase {
     }
     
     func testOpenFailures() {
-        if true {
-            var error: NSError?
-            XCTAssertNil(LDBDatabase(path: path, error: &error))
-            XCTAssertNotNil(error, "should fail with `createIfMissing: false`")
+        do {
+            let _ = try LDBDatabase(path: path, options: LDBDatabase.options(createIfMissing: false))
+            XCTFail("should fail with `createIfMissing: false`")
+        } catch {}
+        do {
+            let _ = try LDBDatabase(path: path, options: LDBDatabase.options(createIfMissing: true))
+        } catch {
+            XCTFail("should succeed with `createIfMissing: true`")
         }
-        if true {
-            var error: NSError?
-            XCTAssertNotNil(LDBDatabase(path: path, error: &error, createIfMissing: true))
-            XCTAssertNil(error, "should succeed with `createIfMissing: true`")
-        }
-        if true {
-            var error: NSError?
-            XCTAssertNil(LDBDatabase(path: path, error: &error, errorIfExists: true))
-            XCTAssertNotNil(error, "should fail with `errorIfExists: true`")
-        }
+        do {
+            let _ = try LDBDatabase(path: path, options: LDBDatabase.options(errorIfExists: true))
+            XCTFail("should fail with `errorIfExists: true`")
+        } catch {}
     }
     
     func testFilterPolicyOption() {
-        var error: NSError?
-        let maybeDb = LDBDatabase(path: path, error: &error,
-            createIfMissing: true,
-            bloomFilterBits: 10)
-        if let error = error {
-            XCTFail("Database.open failed with error: \(error)")
-            return
+        let db: LDBDatabase
+        do {
+            db = try LDBDatabase(path: path, options: LDBDatabase.options(
+                createIfMissing: true,
+                bloomFilterBits: 10))
+        } catch let error as NSError {
+            return XCTFail("Database.open failed with error: \(error)")
         }
-        let db = maybeDb!
         
         db["foo".UTF8] = "bar".UTF8
         
@@ -164,15 +163,14 @@ class DatabaseTests : XCTestCase {
     }
     
     func testCacheOption() {
-        var error: NSError?
-        let maybeDb = LDBDatabase(path: path, error: &error,
-            createIfMissing: true,
-            cacheCapacity: 2 << 20)
-        if let error = error {
-            XCTFail("Database.open failed with error: \(error)")
-            return
+        let db: LDBDatabase
+        do {
+            db = try LDBDatabase(path: path, options: LDBDatabase.options(
+                createIfMissing: true,
+                cacheCapacity: 2 << 20))
+        } catch let error as NSError {
+            return XCTFail("Database.open failed with error: \(error)")
         }
-        let db = maybeDb!
         
         db["foo".UTF8] = "bar".UTF8
         

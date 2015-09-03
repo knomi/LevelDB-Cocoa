@@ -82,7 +82,8 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Also sets up the database using the 10-bit Bloom filter.
 ///
 /// **See also:** `-[LDBDatabase initWithPath:options:error:]`
-- (nullable instancetype)initWithPath:(NSString *)path;
+- (nullable instancetype)initWithPath:(NSString *)path
+    error:(NSError * __autoreleasing *)error;
 
 
 /// Create or open the database with the given `options`. Iff there is an

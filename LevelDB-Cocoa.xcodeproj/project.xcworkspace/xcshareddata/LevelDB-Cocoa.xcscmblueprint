@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "7A922B8ED37E97697F25A8FDCCA098DF2263AB6C",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "BDF394AD00F0672C031FDA5A297CD80086AC8A54" : 0,
+    "7A922B8ED37E97697F25A8FDCCA098DF2263AB6C" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "64F07094-C0F7-4991-B915-4CB4A172A800",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "BDF394AD00F0672C031FDA5A297CD80086AC8A54" : "LevelDB-Cocoa\/Vendor\/LevelDB\/",
+    "7A922B8ED37E97697F25A8FDCCA098DF2263AB6C" : "LevelDB-Cocoa\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "LevelDB-Cocoa",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "LevelDB-Cocoa.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:knomi\/LevelDB-Cocoa.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "7A922B8ED37E97697F25A8FDCCA098DF2263AB6C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/google\/leveldb.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "BDF394AD00F0672C031FDA5A297CD80086AC8A54"
+    }
+  ]
+}

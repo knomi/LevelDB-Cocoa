@@ -88,7 +88,7 @@
 
 - (void)testDemo
 {
-    LDBDatabase *database = [[LDBDatabase alloc] initWithPath:self.path];
+    LDBDatabase *database = [[LDBDatabase alloc] initWithPath:self.path error:NULL];
 
     NSData *key1 = @"foo".ldb_UTF8Data;
     NSData *val1 = @"FOO".ldb_UTF8Data;

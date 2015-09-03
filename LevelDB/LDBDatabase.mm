@@ -99,13 +99,15 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     return self;
 }
 
-- (instancetype)initWithPath:(NSString *)path
+- (instancetype)
+    initWithPath:(NSString *)path
+    error:(NSError * __autoreleasing *)error
 {
     auto options = @{
         LDBOptionCreateIfMissing: @YES,
         LDBOptionBloomFilterBits: @10
     };
-    return [self initWithPath:path options:options error:NULL];
+    return [self initWithPath:path options:options error:error];
 }
 
 - (instancetype)
