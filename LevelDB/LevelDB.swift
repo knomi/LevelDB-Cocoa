@@ -230,7 +230,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
                         end: end?.serializedData)
         }
         return raw.approximateSizesForIntervals(dataIntervals).map {n in
-            (n as! NSNumber).unsignedLongLongValue
+            n.unsignedLongLongValue
         }
     }
 

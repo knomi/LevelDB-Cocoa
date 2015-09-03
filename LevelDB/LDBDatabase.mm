@@ -213,7 +213,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     }
 }
 
-- (NSArray *)approximateSizesForIntervals:(NSArray *)intervals
+- (NSArray <NSNumber *> *)approximateSizesForIntervals:(NSArray <LDBInterval *> *)intervals
 {
     std::vector<leveldb::Range> ranges;
     std::vector<uint64_t> sizes(intervals.count);

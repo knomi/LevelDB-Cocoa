@@ -122,7 +122,7 @@
 
         LDBSnapshot *clamped = [snapshot prefixed:@"ba".ldb_UTF8Data];
         NSLog(@"clamped snapshot contents:");
-        for (NSArray *pair in clamped.enumerator) {
+        for (NSArray <NSData *> *pair in clamped.enumerator) {
             NSLog(@"  - %@: %@", [pair[0] ldb_UTF8String], [pair[1] ldb_UTF8String]);
         }
         XCTAssertEqualObjects(clamped.enumerator.allObjects, (@[

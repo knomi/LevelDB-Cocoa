@@ -216,7 +216,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// Retrieve as an `NSArray` of `NSNumber`s the approximate file system space
 /// used by the keys `intervals[i].start ..< intervals[i].end` where `intervals`
 /// is an array of `LDBInterval`s.
-- (NSArray *)approximateSizesForIntervals:(NSArray *)intervals;
+- (NSArray <NSNumber *> *)approximateSizesForIntervals:(NSArray <LDBInterval *> *)intervals;
 
 /// Compact the underlying storage for the key range `interval`. In particular,
 /// deleted and overwritten versions are discarded, and the data is rearranged
