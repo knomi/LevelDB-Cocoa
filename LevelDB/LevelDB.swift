@@ -42,6 +42,15 @@ public extension LDBDatabase {
         if let x = bloomFilterBits { opts[LDBOptionBloomFilterBits] = x }
         return opts
     }
+
+    /// Convenience function to write the batch as set in `block`.
+    public func write(sync sync: Bool = true,
+                      block: LDBWriteBatch throws -> ()) throws
+    {
+        let batch = LDBWriteBatch()
+        try block(batch)
+        try write(batch, sync: sync)
+    }
 }
 
 extension LDBInterval {
@@ -220,6 +229,15 @@ public final class Database<Key : protocol<DataSerializable, Comparable>,
                       sync: Bool) throws
     {
         try raw.write(batch.raw, sync: sync)
+    }
+    
+    /// Convenience function to write the batch as set in `block`.
+    public func write(sync sync: Bool = true,
+                      block: WriteBatch<Key, Value> throws -> ()) throws
+    {
+        let batch = WriteBatch<Key, Value>()
+        try block(batch)
+        try write(batch, sync: sync)
     }
     
     public func approximateSizes(intervals: [(Key?, Key?)]) -> [UInt64] {
