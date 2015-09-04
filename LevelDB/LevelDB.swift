@@ -125,7 +125,7 @@ extension LDBSnapshot : SequenceType {
 
 extension LDBSnapshot {
 
-    public typealias Element = (key: NSData, value: NSData)
+    public typealias Element = LDBDatabase.Element
     
     public func clampFrom(from: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(from: from))
@@ -180,11 +180,9 @@ extension LDBSnapshot {
     
 }
 
-public final class Database<K : protocol<DataSerializable, Comparable>,
-                            V : DataSerializable>
+public final class Database<Key : protocol<DataSerializable, Comparable>,
+                            Value : DataSerializable>
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
     
     private var _raw: LDBDatabase?
@@ -244,11 +242,9 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     }
 }
 
-public struct Snapshot<K : protocol<DataSerializable, Comparable>,
-                       V : DataSerializable>
+public struct Snapshot<Key : protocol<DataSerializable, Comparable>,
+                       Value : DataSerializable>
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
     
     public let raw: LDBSnapshot
@@ -320,16 +316,14 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     
 }
 
-public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
-                                V : DataSerializable> : GeneratorType
+public struct SnapshotGenerator<Key : protocol<DataSerializable, Comparable>,
+                                Value : DataSerializable> : GeneratorType
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
 
     private let enumerator: LDBEnumerator
     
-    internal init(snapshot: Snapshot<K, V>) {
+    internal init(snapshot: Snapshot<Key, Value>) {
         self.enumerator = snapshot.raw.enumerator()
     }
     
@@ -347,7 +341,7 @@ public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
 
 extension Snapshot : SequenceType {
 
-    public typealias Generator = SnapshotGenerator<K, V>
+    public typealias Generator = SnapshotGenerator<Key, Value>
 
     public func generate() -> Generator {
         return Generator(snapshot: self)
@@ -377,11 +371,9 @@ extension Snapshot {
     
 }
 
-public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
-                              V : DataSerializable>
+public final class WriteBatch<Key : protocol<DataSerializable, Comparable>,
+                              Value : DataSerializable>
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
 
     public let raw: LDBWriteBatch
@@ -390,7 +382,7 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
         self.raw = LDBWriteBatch()
     }
     
-    public init(prefix: K) {
+    public init(prefix: Key) {
         self.raw = LDBWriteBatch(prefix: prefix.serializedData)
     }
     
@@ -398,7 +390,7 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
         self.raw = batch
     }
     
-    public func prefixed(prefix: K) -> WriteBatch {
+    public func prefixed(prefix: Key) -> WriteBatch {
         return WriteBatch(raw.prefixed(prefix.serializedData))
     }
     
