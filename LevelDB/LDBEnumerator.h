@@ -42,7 +42,7 @@
 /// If the enumerator is still valid, return the current key-value pair as an
 /// `NSArray` of two `NSData` objects and step to the next position (possibly
 /// invalidating the enumerator). Otherwise, return `nil`.
-- (NSArray *)nextObject;
+- (NSArray <NSData *> *)nextObject;
 
 @end
 

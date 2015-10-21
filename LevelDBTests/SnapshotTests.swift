@@ -23,9 +23,14 @@ class SnapshotTests : XCTestCase {
     }
     
     func testSnapshot() {
-        let db = LDBDatabase(path)!
+        let db: LDBDatabase
+        do {
+            db = try LDBDatabase(path: path)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
         for (k, v) in db.snapshot() {
-            XCTFail("Expected empty database")
+            XCTFail("Expected empty database, found \(k): \(v)")
         }
         
         db[NSData()]  = NSData()
@@ -41,11 +46,11 @@ class SnapshotTests : XCTestCase {
             return (k.UTF8String, v.UTF8String)
         }
 
-        XCTAssertEqual(pairs, [("",  ""),
-                               ("1",  "one"),
-                               ("a",  "foo"),
-                               ("ab", "qux"),
-                               ("b",  "bar")])
+        AssertEqual(pairs, [("",  ""),
+                            ("1",  "one"),
+                            ("a",  "foo"),
+                            ("ab", "qux"),
+                            ("b",  "bar")])
         
         if true {
             XCTAssertEqual(snapshot["".UTF8], "".UTF8)
@@ -56,32 +61,37 @@ class SnapshotTests : XCTestCase {
         let revPairs = Array(snapshot.reversed).map {(k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }
-        XCTAssertEqual(revPairs, [("b",  "bar"),
-                                  ("ab", "qux"),
-                                  ("a",  "foo"),
-                                  ("1",  "one"),
-                                  ("",  "")])
+        AssertEqual(revPairs, [("b",  "bar"),
+                               ("ab", "qux"),
+                               ("a",  "foo"),
+                               ("1",  "one"),
+                               ("",  "")])
         
-        let clampPairs = Array(snapshot.clamp(from: "aa".UTF8, to: "c".UTF8)).map {
+        let clampPairs = Array(snapshot.clampFrom("aa".UTF8, to: "c".UTF8)).map {
             (k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }
 
-        XCTAssertEqual(clampPairs, [("ab", "qux"),
-                                    ("b",  "bar")])
+        AssertEqual(clampPairs, [("ab", "qux"),
+                                 ("b",  "bar")])
 
-        let clampRevPairs = Array(snapshot.reversed.clamp(from: "1".UTF8, to: "a ".UTF8)).map {
+        let clampRevPairs = Array(snapshot.reversed.clampFrom("1".UTF8, to: "a ".UTF8)).map {
             (k, v) -> (String, String) in
             return (k.UTF8String, v.UTF8String)
         }
         NSLog("%@", clampRevPairs.description)
-        XCTAssertEqual(clampRevPairs, [("a",  "foo"),
-                                       ("1",  "one")])
+        AssertEqual(clampRevPairs, [("a",  "foo"),
+                                    ("1",  "one")])
 
     }
 
     func testPrefix() {
-        let db = Database<String, String>(path)!
+        let db: Database<String, String>
+        do {
+            db = try Database<String, String>(path: path)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
         
         db["/z"]          = "End"
         db["/people/foo"] = "Foo"
@@ -92,11 +102,11 @@ class SnapshotTests : XCTestCase {
 
         let snapshot = db.snapshot()
         
-        XCTAssertEqual(snapshot.values.array, ["Other", "Bar", "Foo", "Meow", "Barf", "End"])
+        XCTAssertEqual(Array(snapshot.values), ["Other", "Bar", "Foo", "Meow", "Barf", "End"])
         
         let bardogs = snapshot["/people/bar" ... "/pets/dog"]
         
-        XCTAssertEqual(bardogs.values.array, ["Bar", "Foo", "Meow", "Barf"])
+        XCTAssertEqual(Array(bardogs.values), ["Bar", "Foo", "Meow", "Barf"])
         XCTAssertEqual(bardogs.raw.start,              "/people/bar".utf8Data)
         XCTAssertEqual(bardogs.prefixed("/pe").raw.start, "ople/bar".utf8Data)
         XCTAssertEqual(bardogs.prefixed("/people").raw.start, "/bar".utf8Data)
@@ -111,43 +121,52 @@ class SnapshotTests : XCTestCase {
         let pets   = snapshot.prefixed("/pets/")
         let peh    = snapshot.prefixed("/pe")
 
-        XCTAssertEqual(people.keys.array, ["bar", "foo"])
-        XCTAssertEqual(pets.keys.array, ["cat", "dog"])
-        XCTAssertEqual(peh.keys.array, ["ople/bar", "ople/foo", "ts/cat", "ts/dog"])
+        XCTAssertEqual(Array(people.keys), ["bar", "foo"])
+        XCTAssertEqual(Array(pets.keys), ["cat", "dog"])
+        XCTAssertEqual(Array(peh.keys), ["ople/bar", "ople/foo", "ts/cat", "ts/dog"])
 
-        XCTAssertEqual(people.values.array, ["Bar", "Foo"])
-        XCTAssertEqual(pets.values.array, ["Meow", "Barf"])
-        XCTAssertEqual(peh.values.array, ["Bar", "Foo", "Meow", "Barf"])
+        XCTAssertEqual(Array(people.values), ["Bar", "Foo"])
+        XCTAssertEqual(Array(pets.values), ["Meow", "Barf"])
+        XCTAssertEqual(Array(peh.values), ["Bar", "Foo", "Meow", "Barf"])
         
-        XCTAssertEqual(peh.clamp(from: "ople/e", to: "ts/d").values.array, ["Foo", "Meow"])
-        XCTAssertEqual(peh.reversed.clamp(from: "ople/e", to: "ts/d").values.array, ["Meow", "Foo"])
+        XCTAssertEqual(Array(peh.clampFrom("ople/e", to: "ts/d").values), ["Foo", "Meow"])
+        XCTAssertEqual(Array(peh.reversed.clampFrom("ople/e", to: "ts/d").values), ["Meow", "Foo"])
         
         let dehcat0 = snapshot["/people/deh" ..< "/pets/cat"]
         let dehcat1 = snapshot["/people/deh" ..< "/pets/cat "]
         let dehcat2 = snapshot["/people/deh" ... "/pets/cat"]
         let dehdog  = snapshot["/people/deh" ... "/pets/dog"]
-        let postcat = snapshot.clamp(after: "/pets/cat", to: nil)
+        let postcat = snapshot.clampAfter("/pets/cat", to: nil)
         
-        XCTAssertEqual(dehcat0.values.array, ["Foo"])
-        XCTAssertEqual(dehcat1.values.array, ["Foo", "Meow"])
-        XCTAssertEqual(dehcat2.values.array, ["Foo", "Meow"])
-        XCTAssertEqual(dehdog.values.array, ["Foo", "Meow", "Barf"])
-        XCTAssertEqual(postcat.values.array, ["Barf", "End"])
+        XCTAssertEqual(Array(dehcat0.values), ["Foo"])
+        XCTAssertEqual(Array(dehcat1.values), ["Foo", "Meow"])
+        XCTAssertEqual(Array(dehcat2.values), ["Foo", "Meow"])
+        XCTAssertEqual(Array(dehdog.values), ["Foo", "Meow", "Barf"])
+        XCTAssertEqual(Array(postcat.values), ["Barf", "End"])
         
     }
     
     func testClamping() {
-        let db = Database<String, String>(path)!
-        let keys = map(0 ..< 100) {i in "\(i / 10)\(i % 10)"}
+        let db: Database<String, String>
+        do {
+            db = try Database<String, String>(path: path)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
+        let keys = (0 ..< 100).map {i in "\(i / 10)\(i % 10)"}
         let batch = WriteBatch<String, String>()
         for k in keys {
             batch[k] = ""
         }
-        XCTAssert(db.write(batch, sync: false, error: nil))
+        do {
+            try db.write(batch, sync: false)
+        } catch let error as NSError {
+            XCTFail(error.description)
+        }
         
         let snap = db.snapshot()
 
-        XCTAssertEqual(snap.keys.array,                                   keys)
+        XCTAssertEqual(Array(snap.keys),                                   keys)
         
         XCTAssertEqual(snap["20" ..< "33"]["10" ..< "15"].raw.start, "20".utf8Data)
         XCTAssertEqual(snap["20" ..< "33"]["10" ..< "15"].raw.end,   "20".utf8Data)
@@ -156,47 +175,56 @@ class SnapshotTests : XCTestCase {
         XCTAssertEqual(snap["20" ..< "33"]["40" ..< "45"].raw.start, "33".utf8Data)
         XCTAssertEqual(snap["20" ..< "33"]["40" ..< "45"].raw.end,   "33".utf8Data)
 
-        XCTAssertEqual(snap["20" ..< "33"].keys.array,                    Array(keys[20 ..< 33]))
-        XCTAssertEqual(snap["10" ... "20"].keys.array,                    Array(keys[10 ... 20]))
+        XCTAssertEqual(Array(snap["20" ..< "33"].keys),                    Array(keys[20 ..< 33]))
+        XCTAssertEqual(Array(snap["10" ... "20"].keys),                    Array(keys[10 ... 20]))
 
-        XCTAssertEqual(snap.clamp(to:      "3"  ).keys.array,             Array(keys[ 0 ... 29]))
-        XCTAssertEqual(snap.clamp(to:      "31" ).keys.array,             Array(keys[ 0 ... 30]))
-        XCTAssertEqual(snap.clamp(through: "3"  ).keys.array,             Array(keys[ 0 ... 29]))
-        XCTAssertEqual(snap.clamp(through: "31" ).keys.array,             Array(keys[ 0 ... 31]))
-        XCTAssertEqual(snap.clamp(from:    "31" ).keys.array,             Array(keys[31 ... 99]))
-        XCTAssertEqual(snap.clamp(from:    "311").keys.array,             Array(keys[32 ... 99]))
-        XCTAssertEqual(snap.clamp(after:   "5"  ).keys.array,             Array(keys[50 ... 99]))
-        XCTAssertEqual(snap.clamp(after:   "50" ).keys.array,             Array(keys[51 ... 99]))
+        XCTAssertEqual(Array(snap.clampTo(      "3"  ).keys),             Array(keys[ 0 ... 29]))
+        XCTAssertEqual(Array(snap.clampTo(      "31" ).keys),             Array(keys[ 0 ... 30]))
+        XCTAssertEqual(Array(snap.clampThrough( "3"  ).keys),             Array(keys[ 0 ... 29]))
+        XCTAssertEqual(Array(snap.clampThrough( "31" ).keys),             Array(keys[ 0 ... 31]))
+        XCTAssertEqual(Array(snap.clampFrom(    "31" ).keys),             Array(keys[31 ... 99]))
+        XCTAssertEqual(Array(snap.clampFrom(    "311").keys),             Array(keys[32 ... 99]))
+        XCTAssertEqual(Array(snap.clampAfter(   "5"  ).keys),             Array(keys[50 ... 99]))
+        XCTAssertEqual(Array(snap.clampAfter(   "50" ).keys),             Array(keys[51 ... 99]))
 
-        XCTAssertEqual(snap.clamp(from:  "50", to:      "55").keys.array, Array(keys[50 ... 54]))
-        XCTAssertEqual(snap.clamp(from:  "50", through: "55").keys.array, Array(keys[50 ... 55]))
-        XCTAssertEqual(snap.clamp(after: "50", to:      "55").keys.array, Array(keys[51 ... 54]))
-        XCTAssertEqual(snap.clamp(after: "50", through: "55").keys.array, Array(keys[51 ... 55]))
+        XCTAssertEqual(Array(snap.clampFrom(  "50", to:      "55").keys), Array(keys[50 ... 54]))
+        XCTAssertEqual(Array(snap.clampFrom(  "50", through: "55").keys), Array(keys[50 ... 55]))
+        XCTAssertEqual(Array(snap.clampAfter( "50", to:      "55").keys), Array(keys[51 ... 54]))
+        XCTAssertEqual(Array(snap.clampAfter( "50", through: "55").keys), Array(keys[51 ... 55]))
 
-        XCTAssertEqual(snap.clamp(from:   "" , to:      "55").keys.array, Array(keys[ 0 ... 54]))
-        XCTAssertEqual(snap.clamp(from:   "" , through: "55").keys.array, Array(keys[ 0 ... 55]))
-        XCTAssertEqual(snap.clamp(after:  "" , to:      "55").keys.array, Array(keys[ 0 ... 54]))
-        XCTAssertEqual(snap.clamp(after:  "" , through: "55").keys.array, Array(keys[ 0 ... 55]))
+        XCTAssertEqual(Array(snap.clampFrom(   "" , to:      "55").keys), Array(keys[ 0 ... 54]))
+        XCTAssertEqual(Array(snap.clampFrom(   "" , through: "55").keys), Array(keys[ 0 ... 55]))
+        XCTAssertEqual(Array(snap.clampAfter(  "" , to:      "55").keys), Array(keys[ 0 ... 54]))
+        XCTAssertEqual(Array(snap.clampAfter(  "" , through: "55").keys), Array(keys[ 0 ... 55]))
 
-        XCTAssertEqual(snap.clamp(from:  "50", to:       nil).keys.array, Array(keys[50 ... 99]))
-        XCTAssertEqual(snap.clamp(from:  "50", through:  nil).keys.array, Array(keys[50 ... 99]))
-        XCTAssertEqual(snap.clamp(after: "50", to:       nil).keys.array, Array(keys[51 ... 99]))
-        XCTAssertEqual(snap.clamp(after: "50", through:  nil).keys.array, Array(keys[51 ... 99]))
+        XCTAssertEqual(Array(snap.clampFrom(  "50", to:       nil).keys), Array(keys[50 ... 99]))
+        XCTAssertEqual(Array(snap.clampFrom(  "50", through:  nil).keys), Array(keys[50 ... 99]))
+        XCTAssertEqual(Array(snap.clampAfter( "50", to:       nil).keys), Array(keys[51 ... 99]))
+        XCTAssertEqual(Array(snap.clampAfter( "50", through:  nil).keys), Array(keys[51 ... 99]))
 
-        XCTAssertEqual(snap.clamp(from:   "" , to:       nil).keys.array, keys)
-        XCTAssertEqual(snap.clamp(from:   "" , through:  nil).keys.array, keys)
-        XCTAssertEqual(snap.clamp(after:  "" , to:       nil).keys.array, keys)
-        XCTAssertEqual(snap.clamp(after:  "" , through:  nil).keys.array, keys)
+        XCTAssertEqual(Array(snap.clampFrom(   "" , to:       nil).keys), keys)
+        XCTAssertEqual(Array(snap.clampFrom(   "" , through:  nil).keys), keys)
+        XCTAssertEqual(Array(snap.clampAfter(  "" , to:       nil).keys), keys)
+        XCTAssertEqual(Array(snap.clampAfter(  "" , through:  nil).keys), keys)
     }
     
     func testRounding() {
-        let db = Database<String, String>(path)!
-        let keys = map(0 ..< 100) {i in "\(i / 10)\(i % 10)"}
+        let db: Database<String, String>
+        do {
+            db = try Database<String, String>(path: path)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
+        let keys = (0 ..< 100).map {i in "\(i / 10)\(i % 10)"}
         let batch = WriteBatch<String, String>()
         for k in keys {
             batch[k] = ""
         }
-        XCTAssert(db.write(batch, sync: false, error: nil))
+        do {
+            try db.write(batch, sync: false)
+        } catch let error as NSError {
+            XCTFail(error.description)
+        }
         
         let snap = db.snapshot()
         
@@ -222,7 +250,12 @@ class SnapshotTests : XCTestCase {
     }
     
     func testReadOptions() {
-        let db = Database<String, String>(path)!
+        let db: Database<String, String>
+        do {
+            db = try Database<String, String>(path: path)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
         
         db["foo"] = "FOO"
         db["bar"] = "BAR"
@@ -231,7 +264,7 @@ class SnapshotTests : XCTestCase {
         
         let foo = snapshot.checksummed |> {snap in snap["foo"]}
         let bar = snapshot.noncaching  |> {snap in snap["bar"]}
-        let all = snapshot.noncaching  |> {snap in snap.values.array}
+        let all = snapshot.noncaching  |> {snap in Array(snap.values)}
         XCTAssertEqual(foo, "FOO")
         XCTAssertEqual(bar, "BAR")
         XCTAssertEqual(all, ["BAR", "FOO"])

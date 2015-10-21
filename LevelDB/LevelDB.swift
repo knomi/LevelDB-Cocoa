@@ -7,34 +7,26 @@
 
 import Foundation.NSError
 import Foundation.NSData
-import LevelDB
+//import LevelDB
 
 public extension LDBDatabase {
 
     public typealias Element = (key: NSData, value: NSData)
     
-    /// Convenience constructor for creating a default database in the given
-    /// `path`, with `createIfMissing: true` and a default Bloom filter set.
-    public convenience init?(_ path: String) {
-        self.init(path: path)
-    }
-    
-    /// Convenience constructor for creating a custom database in the given
-    /// `path`. If the database doesn't exist, you should at least use
-    /// `createIfMissing: true` to not fail.
-    public convenience init?(path:                 String,
-                             inout error:          NSError?,
-                             createIfMissing:      Bool?           = nil,
-                             errorIfExists:        Bool?           = nil,
-                             paranoidChecks:       Bool?           = nil,
-                             infoLog:              (String -> ())? = nil,
-                             writeBufferSize:      Int?            = nil,
-                             maxOpenFiles:         Int?            = nil,
-                             cacheCapacity:        Int?            = nil,
-                             blockSize:            Int?            = nil,
-                             blockRestartInterval: Int?            = nil,
-                             compression:          LDBCompression? = nil,
-                             bloomFilterBits:      Int?            = nil)
+    /// Convenience constructor for setting up database options.
+    public static func options(createIfMissing createIfMissing: Bool? = nil,
+                               errorIfExists:        Bool?           = nil,
+                               paranoidChecks:       Bool?           = nil,
+                               infoLog:              (String -> ())? = nil,
+                               writeBufferSize:      Int?            = nil,
+                               maxOpenFiles:         Int?            = nil,
+                               cacheCapacity:        Int?            = nil,
+                               blockSize:            Int?            = nil,
+                               blockRestartInterval: Int?            = nil,
+                               compression:          LDBCompression? = nil,
+                               bloomFilterBits:      Int?            = nil,
+                               // Suppress trailing closure warning for infoLog.
+                               _: (() -> ())? = nil) -> [String: AnyObject]
     {
         var opts = [String: AnyObject]()
         if let x = createIfMissing { opts[LDBOptionCreateIfMissing] = x }
@@ -48,12 +40,20 @@ public extension LDBDatabase {
         if let x = blockRestartInterval { opts[LDBOptionBlockRestartInterval] = x }
         if let x = compression     { opts[LDBOptionCompression] = x.rawValue }
         if let x = bloomFilterBits { opts[LDBOptionBloomFilterBits] = x }
-        self.init(path: path, options: opts, error: &error)
+        return opts
     }
-    
+
+    /// Convenience function to write the batch as set in `block`.
+    public func write(sync sync: Bool = true,
+                      block: LDBWriteBatch throws -> ()) throws
+    {
+        let batch = LDBWriteBatch()
+        try block(batch)
+        try write(batch, sync: sync)
+    }
 }
 
-extension LDBInterval : Hashable {
+extension LDBInterval {
     public convenience init(from: NSData?) {
         self.init(uncheckedStart: from, end: nil)
     }
@@ -106,10 +106,6 @@ extension LDBInterval : Hashable {
     }
 }
 
-public func == (a: LDBInterval, b: LDBInterval) -> Bool {
-    return a.isEqual(b)
-}
-
 extension LDBEnumerator : GeneratorType {
 
     public typealias Element = LDBDatabase.Element
@@ -138,69 +134,67 @@ extension LDBSnapshot : SequenceType {
 
 extension LDBSnapshot {
 
-    public typealias Element = (key: NSData, value: NSData)
+    public typealias Element = LDBDatabase.Element
     
-    public func clamp(#from: NSData?) -> LDBSnapshot {
+    public func clampFrom(from: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(from: from))
     }
     
-    public func clamp(#after: NSData?) -> LDBSnapshot {
+    public func clampAfter(after: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(after: after))
     }
     
-    public func clamp(#to: NSData?) -> LDBSnapshot {
+    public func clampTo(to: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(to: to))
     }
     
-    public func clamp(#through: NSData?) -> LDBSnapshot {
+    public func clampThrough(through: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(through: through))
     }
     
-    public func clamp(#from: NSData?, to: NSData?) -> LDBSnapshot {
+    public func clampFrom(from: NSData?, to: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(from: from, to: to))
     }
 
-    public func clamp(#from: NSData?, through: NSData?) -> LDBSnapshot {
+    public func clampFrom(from: NSData?, through: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(from: from, through: through))
     }
     
-    public func clamp(#after: NSData?, to: NSData?) -> LDBSnapshot {
+    public func clampAfter(after: NSData?, to: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(after: after, to: to))
     }
     
-    public func clamp(#after: NSData?, through: NSData?) -> LDBSnapshot {
+    public func clampAfter(after: NSData?, through: NSData?) -> LDBSnapshot {
         return clampToInterval(LDBInterval(after: after, through: through))
     }
     
-    public var keys: LazySequence<MapSequenceView<LDBSnapshot, NSData>> {
-        return lazy(self).map {k, _ in k}
+    public var keys: LazyMapSequence<LDBSnapshot, NSData> {
+        return lazy.map {k, _ in k}
     }
 
-    public var values: LazySequence<MapSequenceView<LDBSnapshot, NSData>> {
-        return lazy(self).map {_, v in v}
+    public var values: LazyMapSequence<LDBSnapshot, NSData> {
+        return lazy.map {_, v in v}
     }
     
     public var first: Element? {
-        var g = generate()
+        let g = generate()
         return g.next()
     }
     
     public var last: Element? {
         let r = reversed
-        var g = r.generate()
+        let g = r.generate()
         return g.next()
     }
     
 }
 
-public final class Database<K : protocol<DataSerializable, Comparable>,
-                            V : DataSerializable>
+public final class Database<Key : protocol<DataSerializable, Comparable>,
+                            Value : DataSerializable>
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
     
-    private let _raw: LDBDatabase?
+    private var _raw: LDBDatabase?
     public var raw: LDBDatabase {
         return _raw!
     }
@@ -209,11 +203,9 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
         _raw = LDBDatabase()
     }
     
-    public init?(_ path: String) {
-        _raw = LDBDatabase(path)
-        if _raw == nil {
-            return nil
-        }
+    public init(path: String) throws {
+        _raw = nil
+        _raw = try LDBDatabase(path: path)
     }
     
     public init(_ database: LDBDatabase) {
@@ -234,10 +226,18 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     }
     
     public func write(batch: WriteBatch<Key, Value>,
-                      sync: Bool,
-                      error: NSErrorPointer) -> Bool
+                      sync: Bool) throws
     {
-        return raw.write(batch.raw, sync: sync, error: error)
+        try raw.write(batch.raw, sync: sync)
+    }
+    
+    /// Convenience function to write the batch as set in `block`.
+    public func write(sync sync: Bool = true,
+                      block: WriteBatch<Key, Value> throws -> ()) throws
+    {
+        let batch = WriteBatch<Key, Value>()
+        try block(batch)
+        try write(batch, sync: sync)
     }
     
     public func approximateSizes(intervals: [(Key?, Key?)]) -> [UInt64] {
@@ -246,7 +246,7 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
                         end: end?.serializedData)
         }
         return raw.approximateSizesForIntervals(dataIntervals).map {n in
-            (n as! NSNumber).unsignedLongLongValue
+            n.unsignedLongLongValue
         }
     }
 
@@ -260,11 +260,9 @@ public final class Database<K : protocol<DataSerializable, Comparable>,
     }
 }
 
-public struct Snapshot<K : protocol<DataSerializable, Comparable>,
-                       V : DataSerializable>
+public struct Snapshot<Key : protocol<DataSerializable, Comparable>,
+                       Value : DataSerializable>
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
     
     public let raw: LDBSnapshot
@@ -286,40 +284,40 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
         return Snapshot(raw.prefixed(prefix.serializedData))
     }
     
-    public func clamp(#from: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(from: from?.serializedData))
+    public func clampFrom(from: Key?) -> Snapshot {
+        return Snapshot(raw.clampFrom(from?.serializedData))
     }
     
-    public func clamp(#after: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(after: after?.serializedData))
+    public func clampAfter(after: Key?) -> Snapshot {
+        return Snapshot(raw.clampAfter(after?.serializedData))
     }
     
-    public func clamp(#to: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(to: to?.serializedData))
+    public func clampTo(to: Key?) -> Snapshot {
+        return Snapshot(raw.clampTo(to?.serializedData))
     }
     
-    public func clamp(#through: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(through: through?.serializedData))
+    public func clampThrough(through: Key?) -> Snapshot {
+        return Snapshot(raw.clampThrough(through?.serializedData))
     }
 
-    public func clamp(#from: Key?, to: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(from: from?.serializedData,
-                                  to:   to?.serializedData))
+    public func clampFrom(from: Key?, to: Key?) -> Snapshot {
+        return Snapshot(raw.clampFrom(from?.serializedData,
+                                      to: to?.serializedData))
     }
     
-    public func clamp(#from: Key?, through: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(from:    from?.serializedData,
-                                  through: through?.serializedData))
+    public func clampFrom(from: Key?, through: Key?) -> Snapshot {
+        return Snapshot(raw.clampFrom(from?.serializedData,
+                                      through: through?.serializedData))
     }
     
-    public func clamp(#after: Key?, to: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(after: after?.serializedData,
-                                  to:    to?.serializedData))
+    public func clampAfter(after: Key?, to: Key?) -> Snapshot {
+        return Snapshot(raw.clampAfter(after?.serializedData,
+                                       to: to?.serializedData))
     }
     
-    public func clamp(#after: Key?, through: Key?) -> Snapshot {
-        return Snapshot(raw.clamp(after:   after?.serializedData,
-                                  through: through?.serializedData))
+    public func clampAfter(after: Key?, through: Key?) -> Snapshot {
+        return Snapshot(raw.clampAfter(after?.serializedData,
+                                       through: through?.serializedData))
     }
     
     public subscript(key: Key) -> Value? {
@@ -327,25 +325,23 @@ public struct Snapshot<K : protocol<DataSerializable, Comparable>,
     }
     
     public subscript(interval: HalfOpenInterval<Key>) -> Snapshot {
-        return clamp(from: interval.start, to: interval.end)
+        return clampFrom(interval.start, to: interval.end)
     }
     
     public subscript(interval: ClosedInterval<Key>) -> Snapshot {
-        return clamp(from: interval.start, through: interval.end)
+        return clampFrom(interval.start, through: interval.end)
     }
     
 }
 
-public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
-                                V : DataSerializable> : GeneratorType
+public struct SnapshotGenerator<Key : protocol<DataSerializable, Comparable>,
+                                Value : DataSerializable> : GeneratorType
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
 
     private let enumerator: LDBEnumerator
     
-    internal init(snapshot: Snapshot<K, V>) {
+    internal init(snapshot: Snapshot<Key, Value>) {
         self.enumerator = snapshot.raw.enumerator()
     }
     
@@ -363,7 +359,7 @@ public struct SnapshotGenerator<K : protocol<DataSerializable, Comparable>,
 
 extension Snapshot : SequenceType {
 
-    public typealias Generator = SnapshotGenerator<K, V>
+    public typealias Generator = SnapshotGenerator<Key, Value>
 
     public func generate() -> Generator {
         return Generator(snapshot: self)
@@ -372,32 +368,30 @@ extension Snapshot : SequenceType {
 
 extension Snapshot {
     
-    public var keys: LazySequence<MapSequenceView<Snapshot, Key>> {
-        return lazy(self).map {k, _ in k}
+    public var keys: LazyMapSequence<Snapshot, Key> {
+        return lazy.map {k, _ in k}
     }
 
-    public var values: LazySequence<MapSequenceView<Snapshot, Value>> {
-        return lazy(self).map {_, v in v}
+    public var values: LazyMapSequence<Snapshot, Value> {
+        return lazy.map {_, v in v}
     }
     
     public var first: Element? {
-        var g = generate()
+        let g = generate()
         return g.next()
     }
     
     public var last: Element? {
         let r = reversed
-        var g = r.generate()
+        let g = r.generate()
         return g.next()
     }
     
 }
 
-public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
-                              V : DataSerializable>
+public final class WriteBatch<Key : protocol<DataSerializable, Comparable>,
+                              Value : DataSerializable>
 {
-    public typealias Key = K
-    public typealias Value = V
     public typealias Element = (key: Key, value: Value)
 
     public let raw: LDBWriteBatch
@@ -406,7 +400,7 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
         self.raw = LDBWriteBatch()
     }
     
-    public init(prefix: K) {
+    public init(prefix: Key) {
         self.raw = LDBWriteBatch(prefix: prefix.serializedData)
     }
     
@@ -414,7 +408,7 @@ public final class WriteBatch<K : protocol<DataSerializable, Comparable>,
         self.raw = batch
     }
     
-    public func prefixed(prefix: K) -> WriteBatch {
+    public func prefixed(prefix: Key) -> WriteBatch {
         return WriteBatch(raw.prefixed(prefix.serializedData))
     }
     

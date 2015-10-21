@@ -79,7 +79,7 @@ private func fromData<T : UnsignedIntegerType>(data: NSData) -> T? {
         return nil
     } else {
         let bytes = UnsafeBufferPointer(start: UnsafePointer<UInt8>(data.bytes), count: data.length)
-        return T(reduce(bytes, UIntMax(0)) {total, n in total * 256 + UIntMax(n)})
+        return T(bytes.reduce(UIntMax(0)) {total, n -> UIntMax in total * 256 + UIntMax(n)})
     }
 }
 

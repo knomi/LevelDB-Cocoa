@@ -43,8 +43,8 @@ class LevelDBObjCTests: XCTestCase {
 
             XCTAssertEqual(db["a".utf8Data], "A".utf8Data)
             XCTAssertEqual(snap["a".utf8Data]?.utf8String, "A")
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["a"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["A"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["a"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["A"])
         }
         
         if true {
@@ -56,50 +56,50 @@ class LevelDBObjCTests: XCTestCase {
             
             let snap = db.snapshot()
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "a", "b", "c", "z", "zzz"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["", "A", "B", "C", "Z", "ZZZ"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["", "a", "b", "c", "z", "zzz"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["", "A", "B", "C", "Z", "ZZZ"])
         }
         
         if true {
             let snap = db.snapshot().reversed
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["zzz", "z", "c", "b", "a", ""])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["ZZZ", "Z", "C", "B", "A", ""])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["zzz", "z", "c", "b", "a", ""])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["ZZZ", "Z", "C", "B", "A", ""])
         }
         
         if true {
             let snap = db.snapshot().clampStart("a".utf8Data, end: "c!".utf8Data)
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["a", "b", "c"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["A", "B", "C"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["a", "b", "c"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["A", "B", "C"])
         }
         
         if true {
             let snap = db.snapshot().clampStart(NSData(), end: "c".utf8Data)
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "a", "b"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["", "A", "B"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["", "a", "b"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["", "A", "B"])
         }
         
         if true {
             let snap = db.snapshot().after("a".utf8Data).clampStart(NSData(), end: "zz".utf8Data)
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["b", "c", "z"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["B", "C", "Z"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["b", "c", "z"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["B", "C", "Z"])
         }
         
         if true {
             let snap = db.snapshot().prefixed("z".utf8Data)
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "zz"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["Z", "ZZZ"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["", "zz"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["Z", "ZZZ"])
         }
         
         if true {
             let snap = db.snapshot().prefixed("z".utf8Data).reversed
             
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["zz", ""])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["ZZZ", "Z"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["zz", ""])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["ZZZ", "Z"])
         }
         
         if true {
@@ -107,8 +107,8 @@ class LevelDBObjCTests: XCTestCase {
         
             let snap = db.snapshot()
 
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array, ["", "b", "c", "z", "zzz"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["", "B", "C", "Z", "ZZZ"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["", "b", "c", "z", "zzz"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["", "B", "C", "Z", "ZZZ"])
         }
         
         if true {
@@ -127,14 +127,16 @@ class LevelDBObjCTests: XCTestCase {
             ahs["a".utf8Data] = "aa".utf8Data
             ahs["b".utf8Data] = "bb".utf8Data
             
-            var error: NSError?
-            let ok = db.write(batch, sync: false, error: &error)
+            do {
+                try db.write(batch, sync: false)
+            } catch let error as NSError {
+                XCTFail(error.description)
+            }
 
             let snap = db.snapshot()
             
-            XCTAssert(ok, "\(error?.description)")
-            XCTAssertEqual(snap.keys.map{$0.utf8String!}.array,   ["",      "/.", "/a", "/a/a", "/a/b", "a", "z", "zzz"])
-            XCTAssertEqual(snap.values.map{$0.utf8String!}.array, ["empty", "..", "A",  "aa",   "bb",   "?", "Z", "ZZZ"])
+            XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}),   ["",      "/.", "/a", "/a/a", "/a/b", "a", "z", "zzz"])
+            XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["empty", "..", "A",  "aa",   "bb",   "?", "Z", "ZZZ"])
         }
         
     }
@@ -146,20 +148,17 @@ class LevelDBObjCTests: XCTestCase {
 
     func testOnDisk() {
         var logMessages = [String]()
-        var error: NSError?
-        let maybeDb = LDBDatabase(
-            path: path,
-            error: &error,
-            createIfMissing: true,
-            infoLog: logMessages.append
-        )
-        if let db = maybeDb {
-            useDatabase(db)
-            NSLog("LevelDB log contents:\n%@",
-                "\n".join(logMessages.map {m in ">>> \(m)"}))
-        } else {
-            XCTFail(error!.description)
+        let db: LDBDatabase
+        do {
+            db = try LDBDatabase(path: path, options: LDBDatabase.options(
+                createIfMissing: true,
+                infoLog: { message in logMessages.append(message) }))
+        } catch let error as NSError {
+            return XCTFail(error.description)
         }
+        useDatabase(db)
+        NSLog("LevelDB log contents:\n%@",
+            logMessages.map {m in ">>> \(m)"}.joinWithSeparator("\n"))
     }
 
 }
