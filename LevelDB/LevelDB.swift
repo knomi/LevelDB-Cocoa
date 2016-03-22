@@ -26,7 +26,7 @@ public extension LDBDatabase {
                                reuseLogs:            Bool?           = nil,
                                bloomFilterBits:      Int?            = nil,
                                // Suppress trailing closure warning for infoLog.
-                               _: (() -> ())? = nil) -> [String: AnyObject]
+                               _ignored: (() -> ())? = nil) -> [String: AnyObject]
     {
         var opts = [String: AnyObject]()
         if let x = createIfMissing { opts[LDBOptionCreateIfMissing] = x }

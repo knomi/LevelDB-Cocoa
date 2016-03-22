@@ -53,6 +53,37 @@ class DatabaseTests : XCTestCase {
         XCTAssertNil(db[NSData()])
     }
     
+    func testOptions() {
+        var log: [String] = []
+        defer {
+            NSLog("log: %@", log.description)
+        }
+        let options = LDBDatabase.options(
+            createIfMissing: true,
+            errorIfExists: false,
+            paranoidChecks: true,
+            infoLog: {log.append($0)},
+            writeBufferSize: 64 << 10,
+            maxOpenFiles: 100,
+            cacheCapacity: 4 << 20,
+            blockSize: 2048,
+            blockRestartInterval: 8,
+            compression: .SnappyCompression,
+            reuseLogs: true,
+            bloomFilterBits: 16)
+        let rawDb: LDBDatabase
+        do {
+            rawDb = try LDBDatabase(path: path, options: options)
+        } catch let error as NSError {
+            return XCTFail(error.description)
+        }
+        let db = Database<String, String>(rawDb)
+        db["x"] = "X"
+        NSLog("contents at 'x': %@", db["x"]?.debugDescription ?? "nil")
+        rawDb.pruneCache()
+        XCTAssertEqual(db["x"], "X")
+    }
+    
     func testStringDatabase() {
     
         let db = Database<String, String>()

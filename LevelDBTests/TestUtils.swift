@@ -94,18 +94,6 @@ func destroyTempDb(path: String) {
     assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
 }
 
-func AssertEqual<A : Equatable>(x: A?, _ y: A?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
-    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
-}
-
-func AssertEqual<A : Equatable>(x: A, _ y: A?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
-    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
-}
-
-func AssertEqual<A : Equatable>(x: A?, _ y: A, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
-    XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
-}
-
 func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], _ ys: [(A, B)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
     for (x, y) in Zip2Sequence(xs, ys) {
