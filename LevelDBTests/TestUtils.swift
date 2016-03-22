@@ -94,19 +94,19 @@ func destroyTempDb(path: String) {
     assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
 }
 
-func AssertEqual<A : Equatable>(x: A?, _ y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func AssertEqual<A : Equatable>(x: A?, _ y: A?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
 }
 
-func AssertEqual<A : Equatable>(x: A, _ y: A?, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func AssertEqual<A : Equatable>(x: A, _ y: A?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
 }
 
-func AssertEqual<A : Equatable>(x: A?, _ y: A, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func AssertEqual<A : Equatable>(x: A?, _ y: A, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssert(x == y, "\(x) is not equal to \(y) -- \(message)", file: file, line: line)
 }
 
-func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], _ ys: [(A, B)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], _ ys: [(A, B)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
     for (x, y) in Zip2Sequence(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)
@@ -114,7 +114,7 @@ func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], _ ys: [(A, B)], _ m
     }
 }
 
-func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], _ ys: [(A, B?)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], _ ys: [(A, B?)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
     for (x, y) in Zip2Sequence(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)
@@ -122,7 +122,7 @@ func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], _ ys: [(A, B?)], _
     }
 }
 
-func AssertEqual<A : Equatable, B : Equatable>(xs: [(key: A, value: B?)], _ ys: [(key: A, value: B?)], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func AssertEqual<A : Equatable, B : Equatable>(xs: [(key: A, value: B?)], _ ys: [(key: A, value: B?)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
     for (x, y) in Zip2Sequence(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)

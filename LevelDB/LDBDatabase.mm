@@ -36,6 +36,7 @@ NSString * const LDBOptionCacheCapacity        = @"LDBOptionCacheCapacity";
 NSString * const LDBOptionBlockSize            = @"LDBOptionBlockSize";
 NSString * const LDBOptionBlockRestartInterval = @"LDBOptionBlockRestartInterval";
 NSString * const LDBOptionCompression          = @"LDBOptionCompression";
+NSString * const LDBOptionReuseLogs            = @"LDBOptionReuseLogs";
 NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
 
 
@@ -245,6 +246,13 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     }
 }
 
+- (void)pruneCache
+{
+    if (_cache) {
+        _cache->Prune();
+    }
+}
+
 // -----------------------------------------------------------------------------
 #pragma mark - Private parts
 
@@ -301,6 +309,7 @@ NSString * const LDBOptionBloomFilterBits      = @"LDBOptionBloomFilterBits";
     parse_bool(LDBOptionCreateIfMissing, opts.create_if_missing);
     parse_bool(LDBOptionErrorIfExists, opts.error_if_exists);
     parse_bool(LDBOptionParanoidChecks, opts.paranoid_checks);
+    parse_bool(LDBOptionReuseLogs, opts.reuse_logs);
     parse_int(LDBOptionMaxOpenFiles, opts.max_open_files);
     parse_int(LDBOptionBlockRestartInterval, opts.block_restart_interval);
     parse_size_t(LDBOptionWriteBufferSize, opts.write_buffer_size);

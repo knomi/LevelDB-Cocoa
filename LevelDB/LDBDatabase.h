@@ -36,6 +36,7 @@ extern NSString * const LDBOptionCacheCapacity;   // NSNumber with integer
 extern NSString * const LDBOptionBlockSize;       // NSNumber with size_t 1K…4M
 extern NSString * const LDBOptionBlockRestartInterval; // NSNumber with int > 0
 extern NSString * const LDBOptionCompression;     // NSNumber with LDBCompression
+extern NSString * const LDBOptionReuseLogs;       // NSNumber with BOOL
 extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…32
 
 #ifdef __cplusplus
@@ -102,6 +103,7 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 /// - `LDBOptionBlockSize`:       `size_t`-valued `NSNumber`, default 4 K
 /// - `LDBOptionBlockRestartInterval`: `int`-valued `NSNumber`, default 16
 /// - `LDBOptionCompression`:     `LDBCompression`-valued `NSNumber`, default 1
+/// - `LDBOptionReuseLogs`:       `BOOL`-valued `NSNumber`, default `NO` for now
 /// - `LDBOptionBloomFilterBits`: `int`-valued `NSNumber` 0...32, default 0
 ///
 /// Iff there is an error, returns `NO` and sets the `error` pointer with
@@ -211,6 +213,8 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 ///   about the internal operation of the DB.
 /// - `"leveldb.sstables"` -- returns a multi-line string that describes all
 ///   of the sstables that make up the db contents.
+/// - `"leveldb.approximate-memory-usage"` -- returns the approximate number of
+///   bytes of memory in use by the DB.
 - (NSString *)propertyNamed:(NSString *)name;
 
 /// Retrieve as an `NSArray` of `NSNumber`s the approximate file system space
@@ -226,6 +230,9 @@ extern NSString * const LDBOptionBloomFilterBits; // NSNumber with integer 0…3
 ///
 /// To compact the entire database, pass `[LDBInterval everything]` as interval.
 - (void)compactInterval:(LDBInterval *)interval;
+
+/// Drop the on-memory read cache of the database to relief memory shortage.
+- (void)pruneCache;
 
 @end
 

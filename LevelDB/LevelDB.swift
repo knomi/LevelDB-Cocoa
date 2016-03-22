@@ -7,7 +7,6 @@
 
 import Foundation.NSError
 import Foundation.NSData
-//import LevelDB
 
 public extension LDBDatabase {
 
@@ -24,6 +23,7 @@ public extension LDBDatabase {
                                blockSize:            Int?            = nil,
                                blockRestartInterval: Int?            = nil,
                                compression:          LDBCompression? = nil,
+                               reuseLogs:            Bool?           = nil,
                                bloomFilterBits:      Int?            = nil,
                                // Suppress trailing closure warning for infoLog.
                                _: (() -> ())? = nil) -> [String: AnyObject]
@@ -39,6 +39,7 @@ public extension LDBDatabase {
         if let x = blockSize       { opts[LDBOptionBlockSize] = x }
         if let x = blockRestartInterval { opts[LDBOptionBlockRestartInterval] = x }
         if let x = compression     { opts[LDBOptionCompression] = x.rawValue }
+        if let x = reuseLogs       { opts[LDBOptionReuseLogs] = x }
         if let x = bloomFilterBits { opts[LDBOptionBloomFilterBits] = x }
         return opts
     }
