@@ -18,13 +18,13 @@ public protocol DataSerializable {
     ///
     /// If the result is `.Some(x)`, then `x.serializedData` should be equal to
     /// `data`.
-    static func fromSerializedData(data: NSData) -> Self?
+    static func fromSerializedData(_ data: Data) -> Self?
     
     /// Get the serialized data representation of `self`.
     ///
     /// The serialization should round-trip, i.e.
     /// `Self.fromSerializedData(x.serializedData)` should return `.Some(x)` for
     /// all values of `x`.
-    var serializedData: NSData { get }
+    var serializedData: Data { get }
     
 }

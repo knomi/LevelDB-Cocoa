@@ -9,15 +9,15 @@ import XCTest
 import Foundation
 import LevelDB
 
-extension NSData {
+extension Data {
     var utf8String: String? {
-        return NSString(data: self, encoding: NSUTF8StringEncoding) as String?
+        return NSString(data: self, encoding: String.Encoding.utf8.rawValue) as String?
     }
 }
 
 extension String {
-    var utf8Data: NSData {
-        return dataUsingEncoding(NSUTF8StringEncoding)!
+    var utf8Data: Data {
+        return data(using: String.Encoding.utf8)!
     }
 }
 
@@ -35,7 +35,7 @@ class LevelDBObjCTests: XCTestCase {
         super.tearDown()
     }
     
-    func useDatabase(db: LDBDatabase) {
+    func useDatabase(_ db: LDBDatabase) {
         if true {
             db["a".utf8Data] = "A".utf8Data
         
@@ -75,14 +75,14 @@ class LevelDBObjCTests: XCTestCase {
         }
         
         if true {
-            let snap = db.snapshot().clampStart(NSData(), end: "c".utf8Data)
+            let snap = db.snapshot().clampStart(Data(), end: "c".utf8Data)
             
             XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["", "a", "b"])
             XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["", "A", "B"])
         }
         
         if true {
-            let snap = db.snapshot().after("a".utf8Data).clampStart(NSData(), end: "zz".utf8Data)
+            let snap = db.snapshot().after("a".utf8Data).clampStart(Data(), end: "zz".utf8Data)
             
             XCTAssertEqual(Array(snap.keys.map{$0.utf8String!}), ["b", "c", "z"])
             XCTAssertEqual(Array(snap.values.map{$0.utf8String!}), ["B", "C", "Z"])
@@ -158,7 +158,7 @@ class LevelDBObjCTests: XCTestCase {
         }
         useDatabase(db)
         NSLog("LevelDB log contents:\n%@",
-            logMessages.map {m in ">>> \(m)"}.joinWithSeparator("\n"))
+            logMessages.map {m in ">>> \(m)"}.joined(separator: "\n"))
     }
 
 }

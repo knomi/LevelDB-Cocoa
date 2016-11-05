@@ -8,11 +8,11 @@
 import Foundation.NSData
 
 extension String : DataSerializable {
-    public static func fromSerializedData(data: NSData) -> String? {
-        return String(data: data, encoding: NSUTF8StringEncoding)
+    public static func fromSerializedData(_ data: Data) -> String? {
+        return String(data: data, encoding: .utf8)
     }
     
-    public var serializedData: NSData {
-        return dataUsingEncoding(NSUTF8StringEncoding)!
+    public var serializedData: Data {
+        return data(using: .utf8)!
     }
 }
