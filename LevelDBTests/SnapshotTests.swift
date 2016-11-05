@@ -33,7 +33,7 @@ class SnapshotTests : XCTestCase {
             XCTFail("Expected empty database, found \(k): \(v)")
         }
         
-        db[NSData()]  = NSData()
+        db[Data()]  = Data()
         db["a".UTF8]  = "foo".UTF8
         db["b".UTF8]  = "bar".UTF8
         db["ab".UTF8] = "qux".UTF8
@@ -113,8 +113,8 @@ class SnapshotTests : XCTestCase {
         XCTAssertEqual(bardogs.prefixed("/people/bar").raw.start, "".utf8Data)
         XCTAssertEqual(bardogs.prefixed("/people/bart").raw.start, "".utf8Data)
         XCTAssertEqual(bardogs.prefixed("/pets").raw.start,        "".utf8Data)
-        XCTAssertEqual(bardogs.raw.end,                 "/pets/dog".utf8Data.ldb_lexicographicalFirstChild())
-        XCTAssertEqual(bardogs.prefixed("/pets").raw.end,    "/dog".utf8Data.ldb_lexicographicalFirstChild())
+        XCTAssertEqual(bardogs.raw.end,                 ("/pets/dog".utf8Data as NSData).ldb_lexicographicalFirstChild())
+        XCTAssertEqual(bardogs.prefixed("/pets").raw.end,    ("/dog".utf8Data as NSData).ldb_lexicographicalFirstChild())
         XCTAssertEqual(bardogs.prefixed("/people").raw.end,        nil)
         
         let people = snapshot.prefixed("/people/")
@@ -262,9 +262,9 @@ class SnapshotTests : XCTestCase {
         
         let snapshot = db.snapshot()
         
-        let foo = snapshot.checksummed |> {snap in snap["foo"]}
-        let bar = snapshot.noncaching  |> {snap in snap["bar"]}
-        let all = snapshot.noncaching  |> {snap in Array(snap.values)}
+        let foo = snapshot.checksummed["foo"]
+        let bar = snapshot.noncaching["bar"]
+        let all = Array(snapshot.noncaching.values)
         XCTAssertEqual(foo, "FOO")
         XCTAssertEqual(bar, "BAR")
         XCTAssertEqual(all, ["BAR", "FOO"])

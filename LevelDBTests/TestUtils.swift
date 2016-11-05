@@ -9,31 +9,27 @@ import Foundation
 import XCTest
 import LevelDB
 
-infix operator |> { associativity left precedence 95 }
-
-func |> <A, B>(a: A, f: A -> B) -> B { return f(a) }
-
 extension String {
-    var UTF8: NSData {
-        return dataUsingEncoding(NSUTF8StringEncoding)!
+    var UTF8: Data {
+        return data(using: String.Encoding.utf8)!
     }
 }
 
-internal func midIndex<Ix : RandomAccessIndexType>(start: Ix, end: Ix) -> Ix {
-    return start.advancedBy(start.distanceTo(end) / 2)
+internal func midIndex(_ start: Int, end: Int) -> Int {
+    return start + (end - start) / 2
 }
 
-internal func forkEqualRange<Ix : RandomAccessIndexType>
-    (range: Range<Ix>, ord: Ix -> NSComparisonResult) -> (lower: Range<Ix>,
-                                                          upper: Range<Ix>)
+internal func forkEqualRange(_ range: CountableRange<Int>,
+                             ordering ord: (Int) -> ComparisonResult)
+    -> (lower: CountableRange<Int>, upper: CountableRange<Int>)
 {
-    var (lo, hi) = (range.startIndex, range.endIndex)
+    var (lo, hi) = (range.lowerBound, range.upperBound)
     while lo < hi {
         let m = midIndex(lo, end: hi)
         switch ord(m) {
-        case .OrderedAscending:  lo = m.successor()
-        case .OrderedSame:       return (lo ..< m, m ..< hi)
-        case .OrderedDescending: hi = m
+        case .orderedAscending:  lo = m + 1
+        case .orderedSame:       return (lo ..< m, m ..< hi)
+        case .orderedDescending: hi = m
         }
     }
     return (lo ..< lo, lo ..< lo)
@@ -45,14 +41,14 @@ extension WriteBatch {
         var diffs: [(key: Key, value: Value?)] = []
         enumerate {key, value in
             let (lower, upper) = forkEqualRange(diffs.indices) {i in
-                return diffs[i].0 < key  ? .OrderedAscending
-                     : diffs[i].0 == key ? .OrderedSame
-                                         : .OrderedDescending
+                return diffs[i].0 < key  ? .orderedAscending
+                     : diffs[i].0 == key ? .orderedSame
+                                         : .orderedDescending
             }
-            if lower.startIndex != upper.endIndex {
-                diffs[lower.endIndex] = (key, value)
+            if lower.lowerBound != upper.upperBound {
+                diffs[lower.upperBound] = (key, value)
             } else {
-                diffs.insert((key, value), atIndex: lower.endIndex)
+                diffs.insert((key, value), at: lower.upperBound)
             }
         }
         return diffs
@@ -60,59 +56,52 @@ extension WriteBatch {
     
 }
 
-extension NSData {
-    convenience init(bytes: [UInt8]) {
-        let (address, length) = bytes.withUnsafeBufferPointer {buffer in
-            (buffer.baseAddress, buffer.count)
-        }
-        self.init(bytes: address, length: length)
-    }
-    convenience init(bytes: UInt8...) {
+extension Data {
+    init(bytes: UInt8...) {
         self.init(bytes: bytes)
     }
 
     var UTF8String: String {
-        return NSString(data: self, encoding: NSUTF8StringEncoding)! as String
+        return NSString(data: self, encoding: String.Encoding.utf8.rawValue)! as String
     }
 }
 
-extension NSData : Comparable {}
+extension Data : Comparable {}
 
-public func == (a: NSData, b: NSData) -> Bool { return a.isEqualToData(b) }
-public func < (a: NSData, b: NSData) -> Bool { return NSData.ldb_compareLeft(a, right: b).rawValue < 0 }
+public func < (a: Data, b: Data) -> Bool { return NSData.ldb_compareLeft(a, right: b).rawValue < 0 }
 
 func tempDbPath() -> String {
-    let unique = NSProcessInfo.processInfo().globallyUniqueString
+    let unique = ProcessInfo.processInfo.globallyUniqueString
     return NSTemporaryDirectory() + "/" + unique
 }
 
-func destroyTempDb(path: String) {
+func destroyTempDb(_ path: String) {
     do {
-        try LDBDatabase.destroyDatabaseAtPath(path)
+        try LDBDatabase.destroy(atPath: path)
     } catch _ {
     }
-    assert(!NSFileManager.defaultManager().fileExistsAtPath(path))
+    assert(!FileManager.default.fileExists(atPath: path))
 }
 
-func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B)], _ ys: [(A, B)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+func AssertEqual<A : Equatable, B : Equatable>(_ xs: [(A, B)], _ ys: [(A, B)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
-    for (x, y) in Zip2Sequence(xs, ys) {
+    for (x, y) in zip(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)
         XCTAssertEqual(x.1, y.1, message, file: file, line: line)
     }
 }
 
-func AssertEqual<A : Equatable, B : Equatable>(xs: [(A, B?)], _ ys: [(A, B?)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+func AssertEqual<A : Equatable, B : Equatable>(_ xs: [(A, B?)], _ ys: [(A, B?)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
-    for (x, y) in Zip2Sequence(xs, ys) {
+    for (x, y) in zip(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)
         XCTAssertEqual(x.1, y.1, message, file: file, line: line)
     }
 }
 
-func AssertEqual<A : Equatable, B : Equatable>(xs: [(key: A, value: B?)], _ ys: [(key: A, value: B?)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+func AssertEqual<A : Equatable, B : Equatable>(_ xs: [(key: A, value: B?)], _ ys: [(key: A, value: B?)], _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(xs.count, ys.count, message, file: file, line: line)
-    for (x, y) in Zip2Sequence(xs, ys) {
+    for (x, y) in zip(xs, ys) {
         XCTAssertEqual(x.0, y.0, message, file: file, line: line)
         XCTAssertEqual(x.1, y.1, message, file: file, line: line)
     }

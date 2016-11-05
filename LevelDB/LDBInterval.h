@@ -47,7 +47,7 @@
 
 @property (readonly) NSUInteger hash;
 
-- (BOOL)isEqual:(id)object;
+- (BOOL)isEqual:(id __nullable)object;
 
 /// Test whether `self` contains `key`, i.e. `self.start` ≤ `key` and `key` <
 /// `self.end`.

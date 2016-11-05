@@ -25,11 +25,11 @@ class DatabaseTests : XCTestCase {
     
     func testInMemory() {
         let db: LDBDatabase = LDBDatabase()
-        XCTAssertNil(db[NSData()])
-        db[NSData()] = NSData()
-        XCTAssertNotNil(db[NSData()])
-        db[NSData()] = nil
-        XCTAssertNil(db[NSData()])
+        XCTAssertNil(db[Data()])
+        db[Data()] = Data()
+        XCTAssertNotNil(db[Data()])
+        db[Data()] = nil
+        XCTAssertNil(db[Data()])
     }
     
     func testOnDisk() {
@@ -40,17 +40,17 @@ class DatabaseTests : XCTestCase {
             return XCTFail(error.description)
         }
         
-        XCTAssertNil(db[NSData()])
+        XCTAssertNil(db[Data()])
         
-        db[NSData()] = NSData()
-        XCTAssertNotNil(db[NSData()])
+        db[Data()] = Data()
+        XCTAssertNotNil(db[Data()])
 
-        NSLog("approximate size: %u", db.approximateSizesForIntervals([
-            LDBInterval(start: NSData(), end: nil)
+        NSLog("approximate size: %u", db.approximateSizes(for: [
+            LDBInterval(start: Data(), end: nil)
         ]))
         
-        db[NSData()] = nil
-        XCTAssertNil(db[NSData()])
+        db[Data()] = nil
+        XCTAssertNil(db[Data()])
     }
     
     func testOptions() {
@@ -68,7 +68,7 @@ class DatabaseTests : XCTestCase {
             cacheCapacity: 4 << 20,
             blockSize: 2048,
             blockRestartInterval: 8,
-            compression: .SnappyCompression,
+            compression: .snappyCompression,
             reuseLogs: true,
             bloomFilterBits: 16)
         let rawDb: LDBDatabase
@@ -210,7 +210,7 @@ class DatabaseTests : XCTestCase {
     
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        self.measureBlock() {
+        self.measure() {
             // Put the code you want to measure the time of here.
         }
     }

@@ -8,14 +8,14 @@
 import Foundation
 
 extension Double : DataSerializable {
-    public static func fromSerializedData(data: NSData) -> Double? {
+    public static func fromSerializedData(_ data: Data) -> Double? {
         return OrderPreservingValue.fromSerializedData(data).map {value in
             Double(orderPreservingValue: value)
         }
     }
 
-    public var serializedData: NSData {
-        return orderPreservingValue.serializedData
+    public var serializedData: Data {
+        return orderPreservingValue.serializedData as Data
     }
 }
 
@@ -38,15 +38,15 @@ extension Double {
         } else if mantBits == 0 {
             self = sign * Double.infinity
         } else {
-            self = Double.NaN
+            self = Double.nan
         }
     }
 
     public var orderPreservingValue: UInt64 {
         typealias U = UInt64
         let zeroValue: U = ~(~0 / 2) // = 0b1000...000
-        let isNegative = signbit(self) != 0
-        let fixSign: U -> U = {u in isNegative ? ~u + 1 : u}
+        let isNegative = self.sign == .minus
+        let fixSign: (U) -> U = {u in isNegative ? ~u + 1 : u}
         if isNaN {
             return U.max
         } else if !isFinite {

@@ -8,12 +8,12 @@
 
 import Foundation
 
-extension NSData : DataSerializable {
-    public class func fromSerializedData(data: NSData) -> Self? {
-        return self.init(data: data)
+extension Data : DataSerializable {
+    public static func fromSerializedData(_ data: Data) -> Data? {
+        return data
     }
     
-    public var serializedData: NSData {
+    public var serializedData: Data {
         return self
     }
 }

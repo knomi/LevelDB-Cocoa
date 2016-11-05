@@ -56,16 +56,16 @@ class DataSerializableTests : XCTestCase {
             }
         }
         
-        XCTAssert(Double(orderPreservingValue: Double.NaN.orderPreservingValue).isNaN)
+        XCTAssert(Double(orderPreservingValue: Double.nan.orderPreservingValue).isNaN)
     }
     
-    private func check<T : DataSerializable>(a: T, _ b: T, equal: (T, T) -> Bool, less: (T, T) -> Bool) {
-        let x: NSData   = a.serializedData
-        let y: NSData   = b.serializedData
-        let a1: T?      = T.fromSerializedData(x)
-        let b1: T?      = T.fromSerializedData(y)
-        let x1: NSData? = a1?.serializedData
-        let y1: NSData? = b1?.serializedData
+    fileprivate func check<T : DataSerializable>(_ a: T, _ b: T, equal: (T, T) -> Bool, less: (T, T) -> Bool) {
+        let x: Data   = a.serializedData
+        let y: Data   = b.serializedData
+        let a1: T?    = T.fromSerializedData(x)
+        let b1: T?    = T.fromSerializedData(y)
+        let x1: Data? = a1?.serializedData
+        let y1: Data? = b1?.serializedData
         
         XCTAssert(a1 != nil, "\(a) failed to round trip the conversion")
         XCTAssert(b1 != nil, "\(b) failed to round trip the conversion")
@@ -81,7 +81,7 @@ class DataSerializableTests : XCTestCase {
         XCTAssertEqual(less(b, a), y < x, "\(b) and \(a) compare differently from \(y) and \(x)")
     }
     
-    private func check<T : protocol<DataSerializable, Comparable>>(a: T, _ b: T) {
+    fileprivate func check<T : DataSerializable & Comparable>(_ a: T, _ b: T) {
         check(a, b, equal: {$0 == $1}, less: {$0 < $1})
     }
     
@@ -112,25 +112,25 @@ class DataSerializableTests : XCTestCase {
     }
     
     func testNSData() {
-        let objects: [NSData] = [
-            NSData(),
-            NSData(bytes: 0),
-            NSData(bytes: 0, 0),
-            NSData(bytes: 0, 0, 0),
-            NSData(bytes: 0, 1),
-            NSData(bytes: 1),
-            NSData(bytes: 1, 0),
-            NSData(bytes: 1, 1),
-            NSData(bytes: 1, 2),
-            NSData(bytes: 1, 2, 0),
-            NSData(bytes: 1, 2, 1),
-            NSData(bytes: 1, 2, 2),
-            NSData(bytes: 1, 2, 3),
-            NSData(bytes: 2),
-            NSData(bytes: 255),
-            NSData(bytes: 255, 0),
-            NSData(bytes: 255, 255),
-            NSData(bytes: 255, 255, 255, 255),
+        let objects: [Data] = [
+            Data(),
+            Data(bytes: 0),
+            Data(bytes: 0, 0),
+            Data(bytes: 0, 0, 0),
+            Data(bytes: 0, 1),
+            Data(bytes: 1),
+            Data(bytes: 1, 0),
+            Data(bytes: 1, 1),
+            Data(bytes: 1, 2),
+            Data(bytes: 1, 2, 0),
+            Data(bytes: 1, 2, 1),
+            Data(bytes: 1, 2, 2),
+            Data(bytes: 1, 2, 3),
+            Data(bytes: 2),
+            Data(bytes: 255),
+            Data(bytes: 255, 0),
+            Data(bytes: 255, 255),
+            Data(bytes: 255, 255, 255, 255),
         ]
         for a in objects {
             for b in objects {
