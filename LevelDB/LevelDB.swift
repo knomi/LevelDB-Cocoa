@@ -137,35 +137,35 @@ extension LDBSnapshot {
 
     public typealias Element = LDBDatabase.Element
     
-    public func clampFrom(_ from: Data?) -> LDBSnapshot {
+    public func clamp(from: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(from: from))
     }
     
-    public func clampAfter(_ after: Data?) -> LDBSnapshot {
+    public func clamp(after: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(after: after))
     }
     
-    public func clampTo(_ to: Data?) -> LDBSnapshot {
+    public func clamp(to: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(to: to))
     }
     
-    public func clampThrough(_ through: Data?) -> LDBSnapshot {
+    public func clamp(through: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(through: through))
     }
     
-    public func clampFrom(_ from: Data?, to: Data?) -> LDBSnapshot {
+    public func clamp(from: Data?, to: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(from: from, to: to))
     }
 
-    public func clampFrom(_ from: Data?, through: Data?) -> LDBSnapshot {
+    public func clamp(from: Data?, through: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(from: from, through: through))
     }
     
-    public func clampAfter(_ after: Data?, to: Data?) -> LDBSnapshot {
+    public func clamp(after: Data?, to: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(after: after, to: to))
     }
     
-    public func clampAfter(_ after: Data?, through: Data?) -> LDBSnapshot {
+    public func clamp(after: Data?, through: Data?) -> LDBSnapshot {
         return clamp(to: LDBInterval(after: after, through: through))
     }
     
@@ -285,40 +285,40 @@ public struct Snapshot<Key : DataSerializable & Comparable,
         return Snapshot(raw.prefixed(prefix.serializedData as Data))
     }
     
-    public func clampFrom(_ from: Key?) -> Snapshot {
-        return Snapshot(raw.clampFrom(from?.serializedData as Data?))
+    public func clamp(from: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(from: from?.serializedData as Data?))
     }
     
-    public func clampAfter(_ after: Key?) -> Snapshot {
-        return Snapshot(raw.clampAfter(after?.serializedData as Data?))
+    public func clamp(after: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(after: after?.serializedData as Data?))
     }
     
-    public func clampTo(_ to: Key?) -> Snapshot {
-        return Snapshot(raw.clampTo(to?.serializedData as Data?))
+    public func clamp(to: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(to: to?.serializedData as Data?))
     }
     
-    public func clampThrough(_ through: Key?) -> Snapshot {
-        return Snapshot(raw.clampThrough(through?.serializedData as Data?))
+    public func clamp(through: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(through: through?.serializedData as Data?))
     }
 
-    public func clampFrom(_ from: Key?, to: Key?) -> Snapshot {
-        return Snapshot(raw.clampFrom(from?.serializedData as Data?,
-                                      to: to?.serializedData as Data?))
+    public func clamp(from: Key?, to: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(from: from?.serializedData as Data?,
+                                  to: to?.serializedData as Data?))
     }
     
-    public func clampFrom(_ from: Key?, through: Key?) -> Snapshot {
-        return Snapshot(raw.clampFrom(from?.serializedData as Data?,
-                                      through: through?.serializedData as Data?))
+    public func clamp(from: Key?, through: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(from: from?.serializedData as Data?,
+                                  through: through?.serializedData as Data?))
     }
     
-    public func clampAfter(_ after: Key?, to: Key?) -> Snapshot {
-        return Snapshot(raw.clampAfter(after?.serializedData as Data?,
-                                       to: to?.serializedData as Data?))
+    public func clamp(after: Key?, to: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(after: after?.serializedData as Data?,
+                                  to: to?.serializedData as Data?))
     }
     
-    public func clampAfter(_ after: Key?, through: Key?) -> Snapshot {
-        return Snapshot(raw.clampAfter(after?.serializedData as Data?,
-                                       through: through?.serializedData as Data?))
+    public func clamp(after: Key?, through: Key?) -> Snapshot {
+        return Snapshot(raw.clamp(after: after?.serializedData as Data?,
+                                  through: through?.serializedData as Data?))
     }
     
     public subscript(key: Key) -> Value? {
@@ -326,11 +326,11 @@ public struct Snapshot<Key : DataSerializable & Comparable,
     }
     
     public subscript(interval: Range<Key>) -> Snapshot {
-        return clampFrom(interval.lowerBound, to: interval.upperBound)
+        return clamp(from: interval.lowerBound, to: interval.upperBound)
     }
     
     public subscript(interval: ClosedRange<Key>) -> Snapshot {
-        return clampFrom(interval.lowerBound, through: interval.upperBound)
+        return clamp(from: interval.lowerBound, through: interval.upperBound)
     }
     
 }
