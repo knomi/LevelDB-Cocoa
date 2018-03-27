@@ -69,6 +69,7 @@ extension Int64 : DataSerializable {
 
 // MARK: - Implementation details
 
-private func offsetSign<T : UnsignedInteger>(_ value: T) -> T {
-    return value &+ ~(~0 / 2) // 0b10000...000
+private func offsetSign<T : UnsignedInteger & FixedWidthInteger>(_ value: T) -> T {
+    let offset: T = (.max / 2 + 1) // 0b10000...000
+    return value &+ offset
 }

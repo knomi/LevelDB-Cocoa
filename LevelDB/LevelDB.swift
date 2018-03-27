@@ -107,15 +107,21 @@ extension LDBInterval {
     }
 }
 
-extension LDBEnumerator : IteratorProtocol {
+public struct LDBIterator : IteratorProtocol {
+
+    public let enumerator: LDBEnumerator
+    
+    public init(enumerator: LDBEnumerator) {
+        self.enumerator = enumerator
+    }
 
     public typealias Element = LDBDatabase.Element
     
-    public func next() -> Element? {
-        if let k = key,
-           let v = value
+    public mutating func next() -> LDBDatabase.Element? {
+        if let k = enumerator.key,
+           let v = enumerator.value
         {
-            self.step()
+            enumerator.step()
             return (k, v)
         } else {
             return nil
@@ -126,10 +132,10 @@ extension LDBEnumerator : IteratorProtocol {
 
 extension LDBSnapshot : Sequence {
     
-    public typealias Iterator = LDBEnumerator
+    public typealias Iterator = LDBIterator
     
     public func makeIterator() -> Iterator {
-        return enumerator()
+        return LDBIterator(enumerator: enumerator())
     }
 }
 
@@ -178,13 +184,13 @@ extension LDBSnapshot {
     }
     
     public var first: Element? {
-        let g = makeIterator()
+        var g = makeIterator()
         return g.next()
     }
     
     public var last: Element? {
         let r = reversed
-        let g = r.makeIterator()
+        var g = r.makeIterator()
         return g.next()
     }
     
@@ -340,14 +346,14 @@ public struct SnapshotGenerator<Key : DataSerializable & Comparable,
 {
     public typealias Element = (key: Key, value: Value)
 
-    fileprivate let enumerator: LDBEnumerator
+    fileprivate var iterator: LDBIterator
     
     internal init(snapshot: Snapshot<Key, Value>) {
-        self.enumerator = snapshot.raw.enumerator()
+        self.iterator = snapshot.raw.makeIterator()
     }
     
-    public func next() -> Element? {
-        while let (k, v) = enumerator.next() {
+    public mutating func next() -> Element? {
+        while let (k, v) = iterator.next() {
             if let key = Key.fromSerializedData(k),
                let value = Value.fromSerializedData(v)
             {
@@ -378,13 +384,13 @@ extension Snapshot {
     }
     
     public var first: Element? {
-        let g = makeIterator()
+        var g = makeIterator()
         return g.next()
     }
     
     public var last: Element? {
         let r = reversed
-        let g = r.makeIterator()
+        var g = r.makeIterator()
         return g.next()
     }
     
