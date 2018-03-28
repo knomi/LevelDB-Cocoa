@@ -14,30 +14,30 @@ class DataSerializableTests : XCTestCase {
     func testDoubleOrderPreserving() {
         let doubles: [Double] = [
             -Double.infinity,
-            -DBL_MAX,
+            -Double.greatestFiniteMagnitude,
             -1.0e10,
             -2015.0,
             -20.1,
             -2.0,
             -1.0,
             -0.5,
-            -3.0 * DBL_MIN,
-            -DBL_MIN,
-            -DBL_MIN + DBL_TRUE_MIN,
-            -DBL_TRUE_MIN,
+            -3.0 * Double.leastNormalMagnitude,
+            -Double.leastNormalMagnitude,
+            -Double.leastNormalMagnitude + Double.leastNonzeroMagnitude,
+            -Double.leastNonzeroMagnitude,
             -0.0,
             0.0,
-            DBL_TRUE_MIN,
-            2.0 * DBL_TRUE_MIN,
-            DBL_MIN - DBL_TRUE_MIN,
-            DBL_MIN,
-            0.5 * (2.0 - DBL_EPSILON),
+            Double.leastNonzeroMagnitude,
+            2.0 * Double.leastNonzeroMagnitude,
+            Double.leastNormalMagnitude - Double.leastNonzeroMagnitude,
+            Double.leastNormalMagnitude,
+            0.5 * (2.0 - Double.ulpOfOne),
             1.0,
-            1 + DBL_EPSILON,
+            1 + Double.ulpOfOne,
             2.0,
             2015.0,
             1e100 as Double,
-            DBL_MAX as Double,
+            Double.greatestFiniteMagnitude,
             Double.infinity
         ]
         
@@ -73,8 +73,8 @@ class DataSerializableTests : XCTestCase {
         XCTAssert(equal(a1 ?? a, a), "\(a1 ?? a), converted from \(x), is not equal to \(a)")
         XCTAssert(equal(b1 ?? b, b), "\(b1 ?? b), converted from \(y), is not equal to \(b)")
         
-        XCTAssertEqual(x, x1 ?? x, "serialized values of \(a) and \(a1) don't match")
-        XCTAssertEqual(y, y1 ?? y, "serialized values of \(b) and \(b1) don't match")
+        XCTAssertEqual(x, x1 ?? x, "serialized values of \(a) and \(String(describing: a1)) don't match")
+        XCTAssertEqual(y, y1 ?? y, "serialized values of \(b) and \(String(describing: b1)) don't match")
         
         XCTAssertEqual(equal(a, b), x == y, "\(a) and \(b) compare differently from \(x) and \(y)")
         XCTAssertEqual(less(a, b), x < y, "\(a) and \(b) compare differently from \(x) and \(y)")
@@ -142,30 +142,30 @@ class DataSerializableTests : XCTestCase {
     func testDouble() {
         let values: [Double] = [
             -Double.infinity,
-            -DBL_MAX,
+            -Double.greatestFiniteMagnitude,
             -1.0e10,
             -2015.0,
             -20.1,
             -2.0,
             -1.0,
             -0.5,
-            -3.0 * DBL_MIN,
-            -DBL_MIN,
-            -DBL_MIN + DBL_TRUE_MIN,
-            -DBL_TRUE_MIN,
+            -3.0 * Double.leastNormalMagnitude,
+            -Double.leastNormalMagnitude,
+            -Double.leastNormalMagnitude + Double.leastNonzeroMagnitude,
+            -Double.leastNonzeroMagnitude,
             -0.0,
             0.0,
-            DBL_TRUE_MIN,
-            2.0 * DBL_TRUE_MIN,
-            DBL_MIN - DBL_TRUE_MIN,
-            DBL_MIN,
-            0.5 * (2.0 - DBL_EPSILON),
+            Double.leastNonzeroMagnitude,
+            2.0 * Double.leastNonzeroMagnitude,
+            Double.leastNormalMagnitude - Double.leastNonzeroMagnitude,
+            Double.leastNormalMagnitude,
+            0.5 * (2.0 - Double.ulpOfOne),
             1.0,
-            1 + DBL_EPSILON,
+            1 + Double.ulpOfOne,
             2.0,
             2015.0,
             1e100 as Double,
-            DBL_MAX as Double,
+            Double.greatestFiniteMagnitude,
             Double.infinity
         ]
         
